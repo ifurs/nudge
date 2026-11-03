@@ -41,6 +41,27 @@ object SettingsWeakening {
     fun requiresUnlock(toggle: LockedToggle, enable: Boolean, strictModeEnabled: Boolean): Boolean =
         strictModeEnabled && isWeakening(toggle, enable)
 
+    /**
+     * True when changing the Strict Mode difficulty from [currentLength] to [newLength] must pass
+     * the unlock challenge first.
+     *
+     * A shorter challenge makes every later unlock cheaper (turning Strict Mode off, deleting
+     * rules, the Settings escape routes), so lowering it weakens the lock even though the lock stays
+     * on; raising or re-selecting the same length strengthens or changes nothing and stays free, as
+     * does any change while Strict Mode is off. The challenge that gates a lowering is generated at
+     * [currentLength], the length the user committed to, never at [newLength].
+     */
+    fun requiresUnlockForLength(currentLength: Int, newLength: Int, strictModeEnabled: Boolean): Boolean =
+        strictModeEnabled && isChallengeLengthLowered(currentLength, newLength)
+
+    /**
+     * The one definition of "the challenge got easier", shared by this Settings gate and by
+     * [ImportedSettingsWeakening] so the two paths cannot drift. An absent side (null: the backup
+     * file does not carry the field, or the device has no value) is nothing to compare, so false.
+     */
+    fun isChallengeLengthLowered(current: Int?, incoming: Int?): Boolean =
+        current != null && incoming != null && incoming < current
+
     private fun isWeakening(toggle: LockedToggle, enable: Boolean): Boolean = when (toggle) {
         LockedToggle.STRICT_MODE,
         LockedToggle.CONTENT_FILTER,

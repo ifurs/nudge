@@ -86,4 +86,81 @@ class SettingsWeakeningTest {
             }
         }
     }
+
+    // --- Strict Mode difficulty (challenge length): lowering it weakens, raising it does not ---
+
+    @Test
+    fun `lowering the challenge length under strict mode requires the unlock`() {
+        assertTrue(
+            "Hard -> Easy cuts every later unlock from 48 characters to 12 -- that is weakening",
+            SettingsWeakening.requiresUnlockForLength(
+                currentLength = StrictModeChallenge.LENGTH_HARD,
+                newLength = StrictModeChallenge.LENGTH_EASY,
+                strictModeEnabled = true
+            )
+        )
+        assertTrue(
+            SettingsWeakening.requiresUnlockForLength(
+                currentLength = StrictModeChallenge.LENGTH_HARD,
+                newLength = StrictModeChallenge.LENGTH_MEDIUM,
+                strictModeEnabled = true
+            )
+        )
+        assertTrue(
+            SettingsWeakening.requiresUnlockForLength(
+                currentLength = StrictModeChallenge.LENGTH_MEDIUM,
+                newLength = StrictModeChallenge.LENGTH_EASY,
+                strictModeEnabled = true
+            )
+        )
+    }
+
+    @Test
+    fun `raising the challenge length under strict mode is free`() {
+        assertFalse(
+            SettingsWeakening.requiresUnlockForLength(
+                currentLength = StrictModeChallenge.LENGTH_EASY,
+                newLength = StrictModeChallenge.LENGTH_HARD,
+                strictModeEnabled = true
+            )
+        )
+        assertFalse(
+            SettingsWeakening.requiresUnlockForLength(
+                currentLength = StrictModeChallenge.LENGTH_MEDIUM,
+                newLength = StrictModeChallenge.LENGTH_HARD,
+                strictModeEnabled = true
+            )
+        )
+    }
+
+    @Test
+    fun `re-selecting the current challenge length is free`() {
+        assertFalse(
+            SettingsWeakening.requiresUnlockForLength(
+                currentLength = StrictModeChallenge.LENGTH_HARD,
+                newLength = StrictModeChallenge.LENGTH_HARD,
+                strictModeEnabled = true
+            )
+        )
+    }
+
+    @Test
+    fun `any challenge length change while strict mode is off is free`() {
+        assertFalse(
+            SettingsWeakening.requiresUnlockForLength(
+                currentLength = StrictModeChallenge.LENGTH_HARD,
+                newLength = StrictModeChallenge.LENGTH_EASY,
+                strictModeEnabled = false
+            )
+        )
+    }
+
+    @Test
+    fun `the shared lowered predicate treats an absent side as nothing to compare`() {
+        assertTrue(SettingsWeakening.isChallengeLengthLowered(48, 12))
+        assertFalse(SettingsWeakening.isChallengeLengthLowered(12, 48))
+        assertFalse(SettingsWeakening.isChallengeLengthLowered(24, 24))
+        assertFalse(SettingsWeakening.isChallengeLengthLowered(null, 12))
+        assertFalse(SettingsWeakening.isChallengeLengthLowered(48, null))
+    }
 }

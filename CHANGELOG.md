@@ -4,6 +4,9 @@ All notable changes to Nudge are documented here. Format follows [Keep a Changel
 
 ## [Unreleased]
 
+### Fixed
+- Lowering the Strict Mode difficulty while Strict Mode is on now asks for the unlock challenge first, like every other change that weakens it. Raising it is still instant.
+
 ## [1.26.1] - 2026-11-02
 
 ### Fixed

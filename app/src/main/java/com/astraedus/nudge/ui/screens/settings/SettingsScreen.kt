@@ -398,8 +398,21 @@ fun SettingsScreen(
                 modifier = Modifier.clickable { onStrictModeChange(!strictModeEnabled) }
             )
 
-            // Difficulty selector. Changing difficulty is not a weakening action (it doesn't undo
-            // any block), so it's editable freely even while Strict Mode is on.
+            // Difficulty selector. Lowering the difficulty IS a weakening action: a shorter challenge
+            // makes every later unlock cheaper. So while Strict Mode is on, a lower length takes the
+            // unlock challenge first -- generated at the CURRENT length (requestUnlock reads
+            // strictModeLength before the write lands), never the shorter one being asked for.
+            // Raising it, re-selecting it, or any change while Strict Mode is off applies at once.
+            val onDifficultySelect: (Int) -> Unit = { newLength ->
+                val apply: () -> Unit = {
+                    coroutineScope.launch { preferences.setStrictModeChallengeLength(newLength) }
+                }
+                if (SettingsWeakening.requiresUnlockForLength(strictModeLength, newLength, strictModeEnabled)) {
+                    requestUnlock(DIFFICULTY_UNLOCK_PROMPT, apply)
+                } else {
+                    apply()
+                }
+            }
             Row(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -408,19 +421,19 @@ fun SettingsScreen(
                     label = "Easy",
                     length = StrictModeChallenge.LENGTH_EASY,
                     selected = strictModeLength == StrictModeChallenge.LENGTH_EASY,
-                    onSelect = { coroutineScope.launch { preferences.setStrictModeChallengeLength(it) } }
+                    onSelect = onDifficultySelect
                 )
                 StrictModeDifficultyChip(
                     label = "Medium",
                     length = StrictModeChallenge.LENGTH_MEDIUM,
                     selected = strictModeLength == StrictModeChallenge.LENGTH_MEDIUM,
-                    onSelect = { coroutineScope.launch { preferences.setStrictModeChallengeLength(it) } }
+                    onSelect = onDifficultySelect
                 )
                 StrictModeDifficultyChip(
                     label = "Hard",
                     length = StrictModeChallenge.LENGTH_HARD,
                     selected = strictModeLength == StrictModeChallenge.LENGTH_HARD,
-                    onSelect = { coroutineScope.launch { preferences.setStrictModeChallengeLength(it) } }
+                    onSelect = onDifficultySelect
                 )
             }
 
@@ -688,6 +701,9 @@ private data class PendingSettingsUnlock(
     val prompt: String,
     val onUnlock: () -> Unit
 )
+
+/** Dialog copy when the Strict Mode difficulty chips are asked to LOWER the challenge length. */
+private const val DIFFICULTY_UNLOCK_PROMPT = "Make the Strict Mode challenge shorter"
 
 /**
  * Dialog copy per lockable toggle. Only the WEAKENING direction is ever gated

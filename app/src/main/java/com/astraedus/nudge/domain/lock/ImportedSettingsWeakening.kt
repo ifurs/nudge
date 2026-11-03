@@ -43,8 +43,13 @@ object ImportedSettingsWeakening {
 
         // Strict Mode difficulty. A shorter challenge is less friction between the impulse and the
         // unlock, which is the entire mechanism -- so lowering it weakens the lock even though the
-        // lock stays on. (RAISING it is strengthening and stays free.)
-        if (lowered(current.strictModeChallengeLength, incoming.strictModeChallengeLength)) {
+        // lock stays on. (RAISING it is strengthening and stays free.) One predicate, shared with the
+        // Settings difficulty chips (SettingsWeakening.requiresUnlockForLength).
+        if (SettingsWeakening.isChallengeLengthLowered(
+                current.strictModeChallengeLength,
+                incoming.strictModeChallengeLength
+            )
+        ) {
             return true
         }
 
@@ -95,8 +100,4 @@ object ImportedSettingsWeakening {
     /** A switch whose ON position weakens (the escape hatch), being switched on. */
     private fun turnedOn(current: Boolean?, incoming: Boolean?): Boolean =
         current == false && incoming == true
-
-    /** A numeric difficulty the file lowers. Absent on either side -> nothing to compare. */
-    private fun lowered(current: Int?, incoming: Int?): Boolean =
-        current != null && incoming != null && incoming < current
 }
