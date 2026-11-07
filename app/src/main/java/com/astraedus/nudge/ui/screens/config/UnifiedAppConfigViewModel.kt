@@ -11,6 +11,7 @@ import com.astraedus.nudge.data.repository.BlockRuleRepository
 import com.astraedus.nudge.data.repository.InstalledAppsRepository
 import com.astraedus.nudge.domain.lock.ChallengeState
 import com.astraedus.nudge.domain.engine.CoverageFacts
+import com.astraedus.nudge.domain.lock.FeatureOverrideWeakening
 import com.astraedus.nudge.domain.lock.RuleWeakening
 import com.astraedus.nudge.domain.packages.EssentialPackages
 import com.astraedus.nudge.domain.packages.PackageFacts
@@ -447,6 +448,84 @@ class UnifiedAppConfigViewModel @Inject constructor(
         return rule.copy(armedAt = RuleArming.carriedArmedAt(existingDefaultRule, rule))
     }
 
+    /**
+     * The feature override rows [save] would write for the app-level (always-on) rules, keyed by
+     * feature. INHERIT writes no row. The ONE construction: [save] judges these against the rows on
+     * disk, [performSave] writes them, so what is judged is what is written.
+     */
+    internal fun buildDefaultFeatureRules(state: UnifiedAppConfigState): Map<String, BlockRule> {
+        val rules = linkedMapOf<String, BlockRule>()
+        for ((featureKey, override) in state.featureOverrides) {
+            if (override.mode == FeatureMode.INHERIT) continue
+            val ruleMode = override.mode.toBlockMode()?.name ?: continue
+            rules[featureKey] = BlockRule(
+                packageName = packageName,
+                mode = ruleMode,
+                delaySeconds = override.delaySeconds,
+                enabled = state.enabled,
+                inAppFeatures = featureKey,
+                autoKickAfter = if (override.autoKickEnabled) override.autoKickAfter else null,
+                autoKickCooldownSeconds = DurationInput.resolveCooldownSeconds(
+                    override.autoKickCooldownMinutesText,
+                    override.originalAutoKickCooldownSeconds
+                ),
+                showCounter = state.showCounter,
+                // The engine reads tabVanish off the rule that DECIDED the block. A feature
+                // override rule for a vanishable feature can be the deciding rule, so it must
+                // carry the same tabVanish value as every other rule for this package -- else
+                // whether the cover shows would depend on which rule happened to win, a coin
+                // flip from the user's point of view.
+                tabVanish = state.tabVanish,
+                // Same reasoning (#110): the deciding rule's value is the one handed to the
+                // grant, so it must not depend on which of this app's rules happened to win.
+                keepPassOnShortTrips = state.effectiveKeepPassOnShortTrips
+            )
+        }
+        return rules
+    }
+
+    /**
+     * The feature override rows for the scheduled override [scheduledRule], keyed by feature (the
+     * same one construction as [buildDefaultFeatureRules]). Each carries the parent's schedule,
+     * read off [scheduledRule], so an override can never be in a different window from the rule
+     * that owns it (first-unlock included).
+     */
+    internal fun buildScheduledFeatureRules(
+        state: UnifiedAppConfigState,
+        scheduledRule: BlockRule
+    ): Map<String, BlockRule> {
+        val rules = linkedMapOf<String, BlockRule>()
+        for ((featureKey, override) in state.scheduledFeatureOverrides) {
+            if (override.mode == FeatureMode.INHERIT) continue
+            val ruleMode = override.mode.toBlockMode()?.name ?: continue
+            rules[featureKey] = BlockRule(
+                packageName = packageName,
+                mode = ruleMode,
+                delaySeconds = override.delaySeconds,
+                enabled = state.enabled,
+                inAppFeatures = featureKey,
+                autoKickAfter = if (override.autoKickEnabled) override.autoKickAfter else null,
+                autoKickCooldownSeconds = DurationInput.resolveCooldownSeconds(
+                    override.autoKickCooldownMinutesText,
+                    override.originalAutoKickCooldownSeconds
+                ),
+                showCounter = state.showCounter,
+                scheduleDays = scheduledRule.scheduleDays,
+                scheduleStartMinute = scheduledRule.scheduleStartMinute,
+                scheduleEndMinute = scheduledRule.scheduleEndMinute,
+                firstUnlockMinutes = scheduledRule.firstUnlockMinutes,
+                // The caller stamps `armedAt` (carried across the delete and re-add): without it a
+                // free save re-armed the override and ended the window for the feature it blocks
+                // (review blocker 2).
+                // tabVanish and keepPassOnShortTrips must be uniform across all of this package's
+                // rules, since the engine reads them off whichever rule decides the block.
+                tabVanish = state.tabVanish,
+                keepPassOnShortTrips = state.effectiveKeepPassOnShortTrips
+            )
+        }
+        return rules
+    }
+
     fun save() {
         viewModelScope.launch {
             val state = _uiState.value
@@ -465,7 +544,18 @@ class UnifiedAppConfigViewModel @Inject constructor(
                 oldScheduled,
                 newScheduled ?: oldScheduled.copy(enabled = false)
             )
-            val weakens = defaultWeakens || scheduledWeakens
+            // Feature overrides (Reels, Shorts, the TikTok feed) are rules in their own right. Taking
+            // one off (Hard Block to Inherit, which writes no row), softening it or dropping it with
+            // its scheduled parent removes protection just as the rows above do; strengthening one,
+            // or adding one, stays free.
+            val featureWeakens = FeatureOverrideWeakening.isWeakened(
+                old = existingDefaultFeatureRules,
+                new = buildDefaultFeatureRules(state)
+            ) || FeatureOverrideWeakening.isWeakened(
+                old = existingScheduledFeatureRules,
+                new = newScheduled?.let { buildScheduledFeatureRules(state, it) }.orEmpty()
+            )
+            val weakens = defaultWeakens || scheduledWeakens || featureWeakens
             if (weakens) {
                 strictModeGate.run(prompt = context.getString(R.string.config_prompt_weaken)) {
                     performSave(state, newDefault)
@@ -489,31 +579,7 @@ class UnifiedAppConfigViewModel @Inject constructor(
 
         // 3. Create feature override rules (non-INHERIT only)
         val writtenDefaultFeatureRules = mutableMapOf<String, BlockRule>()
-        for ((featureKey, override) in state.featureOverrides) {
-            if (override.mode == FeatureMode.INHERIT) continue
-            val ruleMode = override.mode.toBlockMode()?.name ?: continue
-            val candidate = BlockRule(
-                    packageName = packageName,
-                    mode = ruleMode,
-                    delaySeconds = override.delaySeconds,
-                    enabled = state.enabled,
-                    inAppFeatures = featureKey,
-                    autoKickAfter = if (override.autoKickEnabled) override.autoKickAfter else null,
-                    autoKickCooldownSeconds = DurationInput.resolveCooldownSeconds(
-                        override.autoKickCooldownMinutesText,
-                        override.originalAutoKickCooldownSeconds
-                    ),
-                    showCounter = state.showCounter,
-                    // The engine reads tabVanish off the rule that DECIDED the block. A feature
-                    // override rule for a vanishable feature can be the deciding rule, so it must
-                    // carry the same tabVanish value as every other rule for this package -- else
-                    // whether the cover shows would depend on which rule happened to win, a coin
-                    // flip from the user's point of view.
-                    tabVanish = state.tabVanish,
-                    // Same reasoning (#110): the deciding rule's value is the one handed to the
-                    // grant, so it must not depend on which of this app's rules happened to win.
-                    keepPassOnShortTrips = state.effectiveKeepPassOnShortTrips
-            )
+        for ((featureKey, candidate) in buildDefaultFeatureRules(state)) {
             val id = blockRuleRepository.addRule(
                 candidate.copy(
                     armedAt = RuleArming.carriedArmedAt(
@@ -541,38 +607,7 @@ class UnifiedAppConfigViewModel @Inject constructor(
 
             // Scheduled feature override rules
             val writtenScheduledFeatureRules = mutableMapOf<String, BlockRule>()
-            for ((featureKey, override) in state.scheduledFeatureOverrides) {
-                if (override.mode == FeatureMode.INHERIT) continue
-                val ruleMode = override.mode.toBlockMode()?.name ?: continue
-                val candidate = BlockRule(
-                    packageName = packageName,
-                    mode = ruleMode,
-                    delaySeconds = override.delaySeconds,
-                    enabled = state.enabled,
-                    inAppFeatures = featureKey,
-                    autoKickAfter = if (override.autoKickEnabled) override.autoKickAfter else null,
-                    autoKickCooldownSeconds = DurationInput.resolveCooldownSeconds(
-                        override.autoKickCooldownMinutesText,
-                        override.originalAutoKickCooldownSeconds
-                    ),
-                    showCounter = state.showCounter,
-                    // The schedule is the parent rule's, read off the one construction, so a
-                    // feature override can never be in a different window from the rule that
-                    // owns it (first-unlock included).
-                    scheduleDays = scheduledRule.scheduleDays,
-                    scheduleStartMinute = scheduledRule.scheduleStartMinute,
-                    scheduleEndMinute = scheduledRule.scheduleEndMinute,
-                    firstUnlockMinutes = scheduledRule.firstUnlockMinutes,
-                    // The override carries the schedule's window, so it carries its stamp too.
-                    // Without it, `performSave`'s delete and re-add re-armed the override on every
-                    // save, and a free save ended the window for the feature it blocks (review
-                    // blocker 2).
-                    // Same reasoning as every other rule persisted here: tabVanish must be
-                    // uniform across all of this package's rules, since the engine reads it
-                    // off whichever rule decides the block.
-                    tabVanish = state.tabVanish,
-                    keepPassOnShortTrips = state.effectiveKeepPassOnShortTrips
-                )
+            for ((featureKey, candidate) in buildScheduledFeatureRules(state, scheduledRule)) {
                 val id = blockRuleRepository.addRule(
                     candidate.copy(
                         armedAt = RuleArming.carriedArmedAt(

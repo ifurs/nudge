@@ -694,4 +694,78 @@ class UnifiedAppConfigViewModelTest {
         assertNotNull("removing a rule is turning it off (spec 5.6)", vm.challenge.value)
         assertEquals("nothing is deleted before the challenge passes", 1, db.rules.count { it.scheduleDays != null })
     }
+
+    // ── Feature overrides under Strict Mode ───────────────────────────────
+
+    /** An app-level rule plus a Hard Block Reels override: what Home's "Block short videos" leaves. */
+    private fun withReelsBlocked() = listOf(
+        aBlockRule(id = 1, packageName = packageName, mode = "DELAY", delaySeconds = 15),
+        aBlockRule(id = 2, packageName = packageName, mode = "HARD_BLOCK", inAppFeatures = "REELS")
+    )
+
+    private fun reelsRows() = db.rules.filter { it.inAppFeatures == "REELS" }
+
+    @Test
+    fun `taking Reels from Hard Block to Inherit takes the challenge and keeps the row until it passes`() = runTest {
+        val vm = viewModel(rules = withReelsBlocked(), strictMode = true)
+
+        vm.setFeatureOverride("REELS", FeatureOverride(mode = FeatureMode.INHERIT))
+        vm.save()
+
+        assertNotNull("a deleted feature row is a weakening (Strict Mode hole)", vm.challenge.value)
+        assertEquals("nothing is written before the challenge passes", "HARD_BLOCK", reelsRows().single().mode)
+
+        vm.verifyChallenge(vm.challenge.value!!.target)
+        assertTrue("passing the challenge saves", reelsRows().isEmpty())
+    }
+
+    @Test
+    fun `softening Reels from Hard Block to Delay takes the challenge`() = runTest {
+        val vm = viewModel(rules = withReelsBlocked(), strictMode = true)
+
+        vm.setFeatureOverride("REELS", FeatureOverride(mode = FeatureMode.DELAY))
+        vm.save()
+
+        assertNotNull(vm.challenge.value)
+        assertEquals("HARD_BLOCK", reelsRows().single().mode)
+    }
+
+    @Test
+    fun `strengthening or adding a feature override stays free under Strict Mode`() = runTest {
+        val vm = viewModel(
+            rules = listOf(aBlockRule(id = 1, packageName = packageName, mode = "DELAY", delaySeconds = 15)),
+            strictMode = true
+        )
+
+        vm.setFeatureOverride("REELS", FeatureOverride(mode = FeatureMode.DELAY))
+        vm.save()
+        assertNull("adding is strengthening", vm.challenge.value)
+        assertEquals("DELAY", reelsRows().single().mode)
+
+        vm.setFeatureOverride("REELS", FeatureOverride(mode = FeatureMode.BLOCK))
+        vm.save()
+        assertNull("Delay to Hard Block is strengthening", vm.challenge.value)
+        assertEquals("HARD_BLOCK", reelsRows().single().mode)
+    }
+
+    @Test
+    fun `saving with the Reels override untouched does not ask`() = runTest {
+        val vm = viewModel(rules = withReelsBlocked(), strictMode = true)
+
+        vm.save()
+
+        assertNull(vm.challenge.value)
+        assertEquals("HARD_BLOCK", reelsRows().single().mode)
+    }
+
+    @Test
+    fun `without Strict Mode the same weakening saves freely`() = runTest {
+        val vm = viewModel(rules = withReelsBlocked(), strictMode = false)
+
+        vm.setFeatureOverride("REELS", FeatureOverride(mode = FeatureMode.INHERIT))
+        vm.save()
+
+        assertNull(vm.challenge.value)
+        assertTrue(reelsRows().isEmpty())
+    }
 }
