@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.overlay
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,7 +33,7 @@ fun HardBlockContent(
     appLabel: String? = null,
     dailyTimeRemainingMs: Long? = null,
     dailyLimitMinutes: Int? = null,
-    messagePool: List<String> = NudgeMessages.hardBlockMessages,
+    messagePool: List<String> = NudgeMessages.hardBlockMessages(),
     canUseEmergencyPass: Boolean = false,
     emergencyLocked: Boolean = false,
     nextPassMs: Long = 0L,
@@ -60,7 +62,7 @@ fun HardBlockContent(
         ) {
             Icon(
                 imageVector = Icons.Filled.Block,
-                contentDescription = "Blocked",
+                contentDescription = stringResource(R.string.overlay_blocked_icon),
                 modifier = Modifier.size(80.dp),
                 tint = MaterialTheme.colorScheme.error
             )
@@ -68,7 +70,7 @@ fun HardBlockContent(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = appLabel ?: "App Blocked",
+                text = appLabel ?: stringResource(R.string.overlay_app_blocked),
                 style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -76,7 +78,7 @@ fun HardBlockContent(
             if (dailyTimeRemainingMs != null && dailyTimeRemainingMs <= 0L && dailyLimitMinutes != null) {
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Daily limit reached",
+                    text = stringResource(R.string.overlay_daily_limit_reached),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.error
                 )
@@ -102,7 +104,7 @@ fun HardBlockContent(
 
             Spacer(Modifier.height(24.dp))
 
-            LeaveButton(text = "Go Back", onClick = onGoBack)
+            LeaveButton(text = stringResource(R.string.overlay_go_back), onClick = onGoBack)
 
             Spacer(Modifier.height(24.dp))
 

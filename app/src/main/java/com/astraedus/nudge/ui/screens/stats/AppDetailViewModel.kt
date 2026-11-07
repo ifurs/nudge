@@ -9,7 +9,10 @@ import com.astraedus.nudge.data.db.entity.isShownConfrontation
 import com.astraedus.nudge.data.repository.InstalledAppsRepository
 import com.astraedus.nudge.data.repository.ScreenTimeProvider
 import com.astraedus.nudge.data.repository.UsageRepository
+import com.astraedus.nudge.R
 import com.astraedus.nudge.di.IoDispatcher
+import com.astraedus.nudge.domain.text.UiText
+import com.astraedus.nudge.ui.text.DurationText
 import com.astraedus.nudge.domain.engine.TimeTracker
 import com.astraedus.nudge.domain.usage.WeeklyUsage
 import com.astraedus.nudge.ui.screens.stats.StatsViewModel.Companion.formatDayTotal
@@ -36,7 +39,7 @@ import kotlinx.coroutines.flow.stateIn
 data class AppDetailUiState(
     val packageName: String = "",
     val appName: String = "",
-    val todayFormatted: String = "0s",
+    val todayFormatted: UiText = DurationText.of(0L),
     val weeklyData: List<DayData> = emptyList(),
     val hourlyMs: List<Long> = List(24) { 0L },
     val trendData: List<TrendDay> = emptyList(),
@@ -46,11 +49,11 @@ data class AppDetailUiState(
     val walkedAwayCountTotal: Int = 0,
     val blockModeBreakdown: Map<String, Int> = emptyMap(),
     val isToday: Boolean = true,
-    val dateLabel: String = "Today",
+    val dateLabel: UiText = UiText.of(R.string.stats_today),
     val selectedDayIndex: Int = StatsDaySelection.WINDOW_DAYS - 1,
-    val weekRangeLabel: String = "Last 7 days",
+    val weekRangeLabel: UiText = UiText.of(R.string.stats_last_7_days),
     val canGoForward: Boolean = false,
-    val weekTotalFormatted: String = "0s"
+    val weekTotalFormatted: UiText = DurationText.of(0L)
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -198,7 +201,7 @@ class AppDetailViewModel @Inject constructor(
             selectedDayIndex = selection.selectedIndex,
             weekRangeLabel = StatsDateLabels.range(loadedWeekStart, loadedWeekEnd, today),
             canGoForward = selection.canGoForward(today),
-            weekTotalFormatted = timeTracker.formatDuration(weeklyTotals.sum())
+            weekTotalFormatted = DurationText.of(weeklyTotals.sum())
         )
     }
 

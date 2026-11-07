@@ -1,8 +1,10 @@
 package com.astraedus.nudge.ui.components.rule
 
+import com.astraedus.nudge.R
 import com.astraedus.nudge.data.db.entity.BlockRule
 import com.astraedus.nudge.domain.model.BlockRuleData
 import com.astraedus.nudge.domain.model.ExceptCsv
+import com.astraedus.nudge.domain.text.UiText
 
 /**
  * The one way a rule is put into words on a list: "Delay 15s Mon–Fri 9:00–17:00 · 30min limit".
@@ -35,7 +37,7 @@ object RuleSummary {
      *   "30min limit" (a NONE rule that only caps the day)
      *   "30min limit Sat, Sun" (the same, at weekends: the schedule follows the limit)
      */
-    fun buildSummaryText(rules: List<BlockRule>): String {
+    fun buildSummaryText(rules: List<BlockRule>): UiText {
         val (featureRules, appRules) = rules.partition { !it.inAppFeatures.isNullOrBlank() }
         val ordered = appRules.sortedBy { scheduleText(it) != null } + featureRules
 
@@ -49,19 +51,19 @@ object RuleSummary {
             val pieces = listOfNotNull(
                 // A NONE rule with a limit is only a limit: "30min limit", not "Not blocked · 30min limit".
                 when {
-                    features != null -> "$features: $mode"
+                    features != null -> UiText.of(R.string.components_summary_feature_mode, features, mode)
                     rule.mode == NONE && rule.dailyLimitMinutes != null -> null
                     else -> mode
                 },
-                rule.dailyLimitMinutes?.let { "${it}min limit" }
+                rule.dailyLimitMinutes?.let { UiText.of(R.string.components_summary_limit_minutes, it) }
             )
             // The schedule joins the rule's first piece (its mode, or its limit when that is all it
             // is) with a space, so it can never read as a rule of its own.
             val schedule = scheduleText(rule) ?: return@flatMap pieces
-            listOf("${pieces.first()} $schedule") + pieces.drop(1)
+            listOf(UiText.Joined(listOf(pieces.first(), schedule), " ")) + pieces.drop(1)
         }
 
-        return if (parts.isEmpty()) "Configured" else parts.joinToString(SEPARATOR)
+        return if (parts.isEmpty()) UiText.of(R.string.components_summary_configured) else UiText.Joined(parts, SEPARATOR)
     }
 
     /**
@@ -70,15 +72,15 @@ object RuleSummary {
      * blocked, and the line must not suggest it is). [groupNames] are the covering groups in the
      * order they should read.
      */
-    fun coveredByText(groupNames: List<String>): String? = when (groupNames.size) {
+    fun coveredByText(groupNames: List<String>): UiText? = when (groupNames.size) {
         0 -> null
-        1, 2 -> "In ${groupNames.joinToString(", ")}"
-        else -> "In ${groupNames.size} groups"
+        1, 2 -> UiText.plural(R.plurals.components_summary_in_groups_named, groupNames.size, groupNames.joinToString(", "))
+        else -> UiText.plural(R.plurals.components_summary_in_groups_count, groupNames.size, groupNames.size)
     }
 
     /** A group row's title on Manage Apps: "Social · 9 apps", "Work · 1 app". */
-    fun groupTitle(name: String, memberCount: Int): String =
-        "$name$SEPARATOR$memberCount ${if (memberCount == 1) "app" else "apps"}"
+    fun groupTitle(name: String, memberCount: Int): UiText =
+        UiText.plural(R.plurals.components_summary_group_title, memberCount, name, memberCount)
 
     /**
      * An All apps rule's title, everywhere it is named (Manage Apps, the Home lock card, the block
@@ -89,10 +91,14 @@ object RuleSummary {
      * (groups first, as the editor lists them). The caller passes only names it can resolve: an
      * allowed app that is not installed is left out, as the editor hides it.
      */
-    fun allAppsTitle(allowedNames: List<String>): String = when (allowedNames.size) {
-        0 -> ALL_APPS
-        1, 2 -> "$ALL_APPS except ${allowedNames.joinToString(", ")}"
-        else -> "$ALL_APPS except ${allowedNames.take(2).joinToString(", ")} +${allowedNames.size - 2}"
+    fun allAppsTitle(allowedNames: List<String>): UiText = when (allowedNames.size) {
+        0 -> UiText.of(R.string.components_summary_all_apps)
+        1, 2 -> UiText.of(R.string.components_summary_all_apps_except, allowedNames.joinToString(", "))
+        else -> UiText.of(
+            R.string.components_summary_all_apps_except_more,
+            allowedNames.take(2).joinToString(", "),
+            allowedNames.size - 2
+        )
     }
 
     /**
@@ -105,13 +111,13 @@ object RuleSummary {
         rule: BlockRule,
         groupNames: Map<Long, String>,
         appLabels: Map<String, String>
-    ): String = allAppsTitle(
+    ): UiText = allAppsTitle(
         ExceptCsv.groupIds(rule.exceptGroupIds).mapNotNull { groupNames[it] } +
             ExceptCsv.packages(rule.exceptPackages).mapNotNull { appLabels[it] }
     )
 
     /** [allAppsTitle] for the domain form of a rule, whose allowed groups are already named. */
-    fun allAppsTitle(rule: BlockRuleData, appLabels: Map<String, String>): String = allAppsTitle(
+    fun allAppsTitle(rule: BlockRuleData, appLabels: Map<String, String>): UiText = allAppsTitle(
         rule.exceptGroupNames + rule.exceptPackages.mapNotNull { appLabels[it] }
     )
 
@@ -120,22 +126,22 @@ object RuleSummary {
      * ("Hard Block Mon–Fri 9:00–17:00", "Delay 15s"; "All the time" is left out). An All apps
      * rule has no daily limit and no in-app features (spec 3.4), so nothing else can appear.
      */
-    fun allAppsSummaryText(rule: BlockRule): String = buildSummaryText(listOf(rule))
+    fun allAppsSummaryText(rule: BlockRule): UiText = buildSummaryText(listOf(rule))
 
     /**
      * "Until 8:42 AM" / "Until 17:00": the end of the window a scheduled block is in (spec 3.8, 3.9).
      * [clockText] is the time already formatted in the user's 12/24-hour setting (the caller has the
      * Android `DateFormat`; this stays pure).
      */
-    fun untilText(clockText: String): String = "Until $clockText"
+    fun untilText(clockText: String): UiText = UiText.of(R.string.components_summary_until, clockText)
 
     /**
      * A group row's one summary line: its own rule in the same words an app's rules use
      * ("Delay 15s · 30min limit"), or "Not blocked" for a group with no rule of its own (an
      * imported one, say). Whether the rule is on is the row's switch, not this text.
      */
-    fun groupSummaryText(ownRule: BlockRule?): String =
-        if (ownRule == null) "Not blocked" else buildSummaryText(listOf(ownRule))
+    fun groupSummaryText(ownRule: BlockRule?): UiText =
+        if (ownRule == null) UiText.of(R.string.components_summary_not_blocked) else buildSummaryText(listOf(ownRule))
 
     /**
      * When [rule] is active, in words: "Mon–Fri 9:00–17:00", "Sat, Sun", "Every day 22:00–6:00".
@@ -145,7 +151,7 @@ object RuleSummary {
      * claim a window the engine does not enforce: a time window needs BOTH ends, and no days (or
      * all seven) means every day.
      */
-    fun scheduleText(rule: BlockRule): String? {
+    fun scheduleText(rule: BlockRule): UiText? {
         val days = rule.scheduleDays?.split(",")?.mapNotNull { it.trim().toIntOrNull() }
         val firstUnlockMinutes = rule.firstUnlockMinutes
         if (firstUnlockMinutes != null) return firstUnlockText(days, firstUnlockMinutes)
@@ -164,18 +170,26 @@ object RuleSummary {
      * The days are the logical day's (spec 3.5), which is what the engine checks; no time range is
      * shown because the window's start is the user's own unlock, not a clock time.
      */
-    fun firstUnlockText(days: List<Int>?, minutes: Int): String {
+    fun firstUnlockText(days: List<Int>?, minutes: Int): UiText {
         val dayText = dayText(days)
-        val window = "${durationText(minutes)} after first unlock"
-        return if (dayText == null) window else "$window on $dayText"
+        val duration = durationText(minutes)
+        return if (dayText == null) {
+            UiText.of(R.string.components_summary_first_unlock, duration)
+        } else {
+            UiText.of(R.string.components_summary_first_unlock_on_days, duration, dayText)
+        }
     }
 
     /** "30min", "1 h", "4 h": minutes under an hour, whole hours above it. */
-    private fun durationText(minutes: Int): String =
-        if (minutes >= 60 && minutes % 60 == 0) "${minutes / 60} h" else "${minutes}min"
+    private fun durationText(minutes: Int): UiText =
+        if (minutes >= 60 && minutes % 60 == 0) {
+            UiText.of(R.string.components_summary_duration_hours, minutes / 60)
+        } else {
+            UiText.of(R.string.components_summary_duration_minutes, minutes)
+        }
 
     /** [scheduleText] on raw values; ISO days (1 = Mon .. 7 = Sun), minutes from midnight. */
-    fun scheduleText(days: List<Int>?, startMinute: Int?, endMinute: Int?): String? {
+    fun scheduleText(days: List<Int>?, startMinute: Int?, endMinute: Int?): UiText? {
         val dayText = dayText(days)
         val timeText = if (startMinute != null && endMinute != null) {
             "${clock(startMinute)}–${clock(endMinute)}"
@@ -184,14 +198,14 @@ object RuleSummary {
         }
         return when {
             dayText == null && timeText == null -> null
-            dayText == null -> "Every day $timeText"
+            dayText == null -> UiText.of(R.string.components_summary_every_day, timeText!!)
             timeText == null -> dayText
-            else -> "$dayText $timeText"
+            else -> UiText.Joined(listOf(dayText, UiText.Raw(timeText)), " ")
         }
     }
 
     /** "Mon–Fri", "Sat, Sun", "Mon, Wed, Fri", "Mon–Wed, Sat"; null for every day. */
-    private fun dayText(days: List<Int>?): String? {
+    private fun dayText(days: List<Int>?): UiText? {
         val picked = days.orEmpty().filter { it in 1..7 }.toSortedSet()
         if (picked.isEmpty() || picked.size == 7) return null
 
@@ -202,10 +216,16 @@ object RuleSummary {
             else runs += day..day
         }
         // A run of three or more reads as a range; two days read better as a pair ("Sat, Sun").
-        return runs.joinToString(", ") { run ->
-            if (run.last - run.first >= 2) "${DAY_NAMES[run.first]}–${DAY_NAMES[run.last]}"
-            else run.joinToString(", ") { DAY_NAMES.getValue(it) }
-        }
+        return UiText.Joined(
+            runs.map { run ->
+                if (run.last - run.first >= 2) {
+                    UiText.of(R.string.components_summary_day_range, DAY_NAMES.getValue(run.first), DAY_NAMES.getValue(run.last))
+                } else {
+                    UiText.Joined(run.map { DAY_NAMES.getValue(it) }, ", ")
+                }
+            },
+            ", "
+        )
     }
 
     /** 540 -> "9:00", 1020 -> "17:00", 0 -> "0:00". */
@@ -215,21 +235,25 @@ object RuleSummary {
     }
 
     /** The mode in words. Every [com.astraedus.nudge.domain.model.BlockMode] has a branch. */
-    private fun formatMode(mode: String, delaySeconds: Int): String = when (mode) {
+    private fun formatMode(mode: String, delaySeconds: Int): UiText = when (mode) {
         // The app itself is not gated; only this rule's feature overrides and daily limit are.
-        NONE -> "Not blocked"
-        "HARD_BLOCK" -> "Hard Block"
-        "DELAY" -> "Delay ${delaySeconds}s"
-        "HOLD" -> "Hold ${delaySeconds}s"
-        "BREATHING" -> "Breathing ${delaySeconds}s"
-        else -> mode
+        NONE -> UiText.of(R.string.components_summary_not_blocked)
+        "HARD_BLOCK" -> UiText.of(R.string.components_summary_mode_hard_block)
+        "DELAY" -> UiText.of(R.string.components_summary_mode_delay, delaySeconds)
+        "HOLD" -> UiText.of(R.string.components_summary_mode_hold, delaySeconds)
+        "BREATHING" -> UiText.of(R.string.components_summary_mode_breathing, delaySeconds)
+        else -> UiText.Raw(mode)
     }
 
     private const val NONE = "NONE"
 
-    private const val ALL_APPS = "All apps"
-
-    private val DAY_NAMES = mapOf(
-        1 to "Mon", 2 to "Tue", 3 to "Wed", 4 to "Thu", 5 to "Fri", 6 to "Sat", 7 to "Sun"
+    private val DAY_NAMES: Map<Int, UiText> = mapOf(
+        1 to UiText.of(R.string.components_day_short_mon),
+        2 to UiText.of(R.string.components_day_short_tue),
+        3 to UiText.of(R.string.components_day_short_wed),
+        4 to UiText.of(R.string.components_day_short_thu),
+        5 to UiText.of(R.string.components_day_short_fri),
+        6 to UiText.of(R.string.components_day_short_sat),
+        7 to UiText.of(R.string.components_day_short_sun)
     )
 }

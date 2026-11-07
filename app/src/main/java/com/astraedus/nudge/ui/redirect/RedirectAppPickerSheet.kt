@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.redirect
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -101,13 +103,13 @@ fun RedirectAppPickerSheet(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Pick a better app",
+                        text = stringResource(R.string.redirect_pick_better_app),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        text = "It sits on every block screen. One tap takes you there instead.",
+                        text = stringResource(R.string.redirect_picker_subtitle),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -117,7 +119,7 @@ fun RedirectAppPickerSheet(
                     TextButton(onClick = { closeThen(onRemove) }) {
                         Icon(Icons.Outlined.Close, contentDescription = null)
                         Spacer(Modifier.width(4.dp))
-                        Text("Remove")
+                        Text(stringResource(R.string.redirect_picker_remove))
                     }
                 }
             }
@@ -128,7 +130,7 @@ fun RedirectAppPickerSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 12.dp),
-                placeholder = { Text("Search apps…") },
+                placeholder = { Text(stringResource(R.string.redirect_picker_search)) },
                 leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
                 singleLine = true
             )
@@ -140,7 +142,11 @@ fun RedirectAppPickerSheet(
                 ) { CircularProgressIndicator() }
 
                 rows.isEmpty() -> Text(
-                    text = if (query.isBlank()) "No apps to offer." else "No apps match \"$query\".",
+                    text = if (query.isBlank()) {
+                        stringResource(R.string.redirect_picker_empty)
+                    } else {
+                        stringResource(R.string.redirect_picker_no_match, query)
+                    },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
@@ -156,7 +162,7 @@ fun RedirectAppPickerSheet(
                                 {
                                     Icon(
                                         Icons.Filled.Check,
-                                        contentDescription = "Current choice",
+                                        contentDescription = stringResource(R.string.redirect_picker_current),
                                         tint = MaterialTheme.colorScheme.primary
                                     )
                                 }
@@ -167,8 +173,7 @@ fun RedirectAppPickerSheet(
                     }
                     item {
                         Text(
-                            text = "Apps you block, and apps on your Nuke list, are not offered: " +
-                                "going there would only meet another block.",
+                            text = stringResource(R.string.redirect_picker_not_offered),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)

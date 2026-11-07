@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nuke_title">Ядерний режим</string>
+    <string name="nuke_back">Назад</string>
+    <string name="nuke_apps_title">Застосунки для вимкнення</string>
+    <string name="nuke_apps_never_listed">Телефон, повідомлення, годинник, лаунчер, клавіатура й Налаштування ніколи не потрапляють до цього списку.</string>
+    <string name="nuke_search_apps">Пошук застосунків…</string>
+    <string name="nuke_share_chooser">Збережіть свій ядерний код</string>
+
+    <string name="nuke_intro_1">Ядерний режим — це другий список, окремий від ваших правил. Коли режим увімкнено, ці застосунки не відкриваються взагалі.</string>
+    <string name="nuke_intro_2">Вмикаєте й вимикаєте його скануванням коду, який зберігаєте в незручному місці.</string>
+    <string name="nuke_intro_3">Загубили код? Є аварійний вихід: ввести вручну 64 символи. Це навмисно дратує.</string>
+
+    <plurals name="nuke_status_on">
+        <item quantity="one">Ядерний режим увімкнено · %1$d застосунок</item>
+        <item quantity="few">Ядерний режим увімкнено · %1$d застосунки</item>
+        <item quantity="many">Ядерний режим увімкнено · %1$d застосунків</item>
+        <item quantity="other">Ядерний режим увімкнено · %1$d застосунку</item>
+    </plurals>
+    <string name="nuke_status_off">Ядерний режим вимкнено</string>
+    <string name="nuke_scan_to_end">Сканувати, щоб завершити</string>
+    <string name="nuke_scan_to_start">Сканувати, щоб почати</string>
+    <string name="nuke_emergency_end">Аварійно: завершити без коду</string>
+    <string name="nuke_active_note">Щоб прибрати застосунки або змінити код, теж потрібен код.</string>
+    <string name="nuke_now">Увімкнути зараз</string>
+    <string name="nuke_hint_pair_first">Спершу прив’яжіть ядерний код.</string>
+    <string name="nuke_hint_add_app">Спершу додайте принаймні один застосунок нижче.</string>
+
+    <string name="nuke_key_title">Ваш ядерний код</string>
+    <string name="nuke_key_needs_camera">Щоб прив’язати ядерний код, потрібна камера, а на цьому телефоні її немає.</string>
+    <string name="nuke_key_pair_first">Спершу прив’яжіть код. Покладіть його в незручне місце: в іншому кінці дому, в авто, у друга.</string>
+    <string name="nuke_key_create_qr">Створити ядерний QR-код</string>
+    <string name="nuke_key_use_barcode">Використати наявний штрихкод</string>
+    <string name="nuke_key_any_barcode">Підійде будь-який QR-код чи штрихкод товару. Навіть із коробки пластівців.</string>
+    <string name="nuke_key_paired_qr">Прив’язано: ядерний QR-код</string>
+    <string name="nuke_key_paired_own">Прив’язано: ваш штрихкод</string>
+    <string name="nuke_key_paired">Прив’язано</string>
+    <string name="nuke_key_replace">Замінити</string>
+    <string name="nuke_key_new_qr">Новий QR</string>
+    <string name="nuke_key_own_barcode">Свій штрихкод</string>
+    <string name="nuke_key_remove">Видалити</string>
+
+    <string name="nuke_pairing_qr_description">Ваш ядерний QR-код</string>
+    <string name="nuke_pairing_save_note">Збережіть, роздрукуйте або надішліть кудись, куди важко дістатися. Ви скануватимете його, щоб почати й завершити ядерний режим.</string>
+    <string name="nuke_pairing_save_share">Зберегти або поділитися</string>
+    <string name="nuke_pairing_confirm">Збережено. Сканувати для підтвердження</string>
+
+    <string name="nuke_scan_title_end">Скануйте ядерний код, щоб завершити режим</string>
+    <string name="nuke_scan_title_start">Скануйте ядерний код, щоб почати режим</string>
+    <string name="nuke_scan_title_confirm">Скануйте код, який щойно збережено</string>
+    <string name="nuke_scan_title_pair">Скануйте будь-який QR-код чи штрихкод</string>
+    <string name="nuke_scan_subtitle_end">Завершити ядерний режим</string>
+    <string name="nuke_scan_subtitle_start">Почати ядерний режим</string>
+    <string name="nuke_scan_subtitle_confirm">Це доводить, що код лежить там, де ви можете його дістати</string>
+    <string name="nuke_scan_subtitle_pair">Підійде будь-який наявний штрихкод</string>
+
+    <string name="nuke_prompt_remove_app">Прибрати цей застосунок зі списку ядерного режиму</string>
+    <string name="nuke_prompt_end">Завершити ядерний режим</string>
+    <string name="nuke_prompt_end_no_code">Завершити ядерний режим без коду</string>
+    <string name="nuke_prompt_replace_code">Замінити ядерний код</string>
+    <string name="nuke_prompt_remove_code">Видалити ядерний код</string>
+
+    <string name="nuke_msg_armed">Ядерний режим увімкнено.</string>
+    <string name="nuke_msg_disarmed">Ядерний режим вимкнено.</string>
+    <string name="nuke_msg_no_key">Спершу прив’яжіть ядерний код.</string>
+    <string name="nuke_msg_empty_list">Спершу додайте до списку принаймні один застосунок.</string>
+    <string name="nuke_msg_paired">Прив’язано. Зберігайте код у незручному місці.</string>
+    <string name="nuke_msg_code_removed">Ядерний код видалено.</string>
+    <string name="nuke_msg_not_code_on_screen">Це не той код, що на екрані. Скануйте код, який щойно збережено.</string>
+
+    <string name="nuke_gate_wrong_key">Це не ваш ядерний код.</string>
+    <string name="nuke_unlock_title">Ядерний режим увімкнено</string>
+    <string name="nuke_unlock_needs_code">%1$s? Для цього потрібен ваш ядерний код. Візьміть його й проскануйте тут.</string>
+    <string name="nuke_unlock_needs_code_no_camera">%1$s? Для цього потрібен ваш ядерний код, а на цьому телефоні немає камери, щоб його просканувати. Вихід — аварійний код.</string>
+    <string name="nuke_unlock_use_emergency">Немає коду під рукою? Введіть аварійний код</string>
+    <string name="nuke_unlock_scan_title">Скануйте ваш ядерний код</string>
+    <string name="nuke_unlock_scan">Сканувати код</string>
+    <string name="nuke_unlock_never_mind">Не треба</string>
+    <string name="nuke_unlock_emergency_title">Аварійно: завершення ядерного режиму</string>
+    <string name="nuke_unlock_emergency_prompt">%1$s. Немає коду під рукою? Введіть нижче всі %2$d символів точно як є. Кожна спроба дає новий код.</string>
+    <string name="nuke_unlock_emergency_confirm">Завершити</string>
+
+    <string name="nuke_block_this_app">Цей застосунок</string>
+    <string name="nuke_block_title">Вимкнено ядерним режимом.</string>
+    <string name="nuke_block_body">%1$s вимкнено, доки не завершено ядерний режим. Проскануйте ядерний код, щоб завершити його.</string>
+
+    <string name="lock_guard_prompt_nuke">Ядерний режим увімкнено, а цей екран — спосіб його обійти. Введіть код, щоб змінити системні налаштування Nudge, або поверніться назад.</string>
+    <string name="lock_guard_prompt_strict">Суворий режим захищає цей екран. Розблокуйте, щоб змінити системні налаштування Nudge, або поверніться назад.</string>
+    <string name="lock_guard_title_nuke">Ядерний режим увімкнено</string>
+    <string name="lock_guard_title_strict">Суворий режим заблоковано</string>
+</resources>

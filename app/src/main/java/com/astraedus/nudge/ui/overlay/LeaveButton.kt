@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.overlay
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.widthIn
@@ -24,7 +26,7 @@ import com.astraedus.nudge.ui.testtags.UiTags
  */
 @Composable
 fun LeaveButton(
-    text: String = "I changed my mind",
+    text: String = stringResource(R.string.overlay_changed_my_mind),
     onClick: () -> Unit
 ) {
     Button(

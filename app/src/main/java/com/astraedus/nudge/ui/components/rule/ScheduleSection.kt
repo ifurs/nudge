@@ -1,5 +1,8 @@
 package com.astraedus.nudge.ui.components.rule
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -24,14 +27,17 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.astraedus.nudge.domain.model.BlockMode
 
-private val DAY_LABELS = listOf(
-    1 to "M" to "Monday",
-    2 to "T" to "Tuesday",
-    3 to "W" to "Wednesday",
-    4 to "T" to "Thursday",
-    5 to "F" to "Friday",
-    6 to "S" to "Saturday",
-    7 to "S" to "Sunday"
+/** ISO day, the one-letter chip label, the full name announced to accessibility services. */
+private data class DayChip(val day: Int, @StringRes val letter: Int, @StringRes val fullName: Int)
+
+private val DAY_CHIPS = listOf(
+    DayChip(1, R.string.components_day_letter_mon, R.string.components_day_full_mon),
+    DayChip(2, R.string.components_day_letter_tue, R.string.components_day_full_tue),
+    DayChip(3, R.string.components_day_letter_wed, R.string.components_day_full_wed),
+    DayChip(4, R.string.components_day_letter_thu, R.string.components_day_full_thu),
+    DayChip(5, R.string.components_day_letter_fri, R.string.components_day_full_fri),
+    DayChip(6, R.string.components_day_letter_sat, R.string.components_day_full_sat),
+    DayChip(7, R.string.components_day_letter_sun, R.string.components_day_full_sun)
 )
 
 /**
@@ -53,12 +59,12 @@ fun DayOfWeekChips(
             .selectableGroup(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        DAY_LABELS.forEach { (pair, fullName) ->
-            val (day, label) = pair
+        DAY_CHIPS.forEach { chip ->
+            val day = chip.day
             val selected = day in days
             CompactDayChip(
-                label = label,
-                fullName = fullName,
+                label = stringResource(chip.letter),
+                fullName = stringResource(chip.fullName),
                 selected = selected,
                 onClick = { onDaysChange(if (selected) days - day else days + day) },
                 modifier = Modifier.weight(1f)
@@ -188,15 +194,15 @@ fun DaysAndTimesFields(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            "Active days",
+            stringResource(R.string.components_schedule_active_days),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         DayOfWeekChips(days = days, onDaysChange = onDaysChange)
 
-        TimeRow("Start time", startHour, startMinute, onStartTimeChange)
-        TimeRow("End time", endHour, endMinute, onEndTimeChange)
+        TimeRow(stringResource(R.string.components_schedule_start_time), startHour, startMinute, onStartTimeChange)
+        TimeRow(stringResource(R.string.components_schedule_end_time), endHour, endMinute, onEndTimeChange)
     }
 }
 

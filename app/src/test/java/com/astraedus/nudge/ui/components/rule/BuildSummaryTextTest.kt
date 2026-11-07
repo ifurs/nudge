@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.components.rule
 
+import com.astraedus.nudge.testing.RuleSummaryEn as RuleSummary
 import com.astraedus.nudge.domain.model.BlockMode
 import com.astraedus.nudge.testing.aBlockRule
 import com.astraedus.nudge.ui.screens.groups.GroupRuleForm

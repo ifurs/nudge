@@ -1,5 +1,6 @@
 package com.astraedus.nudge.domain.engine
 
+import com.astraedus.nudge.domain.model.RuleLabel
 import com.astraedus.nudge.domain.engine.FirstUnlockState
 import com.astraedus.nudge.domain.model.ActiveRule
 import com.astraedus.nudge.domain.model.BlockDecision
@@ -247,7 +248,7 @@ class BlockEngineTest {
                 dailyLimitMinutes = 60,
                 enabled = true,
                 grayscale = true,
-                ruleName = "Hold Rule"
+                ruleName = RuleLabel.named("Hold Rule")
             )
         )
         // 10 minutes used out of 60 minute limit -- 50 minutes remaining
@@ -257,7 +258,7 @@ class BlockEngineTest {
         val block = decision as BlockDecision.Block
         assertEquals(BlockMode.HOLD, block.mode)
         assertTrue(block.grayscale)
-        assertEquals("Hold Rule", block.ruleName)
+        assertEquals(RuleLabel.named("Hold Rule"), block.ruleName)
         assertEquals(50L * 60L * 1000L, block.dailyTimeRemainingMs)
         assertEquals(60, block.dailyLimitMinutes)
     }
@@ -345,7 +346,7 @@ class BlockEngineTest {
             dailyLimitMinutes = null,
             enabled = true,
             tabVanish = false,
-            ruleName = "Deciding rule"
+            ruleName = RuleLabel.named("Deciding rule")
         )
         val otherRule = ActiveRule(
             mode = BlockMode.HARD_BLOCK,
@@ -353,12 +354,12 @@ class BlockEngineTest {
             dailyLimitMinutes = null,
             enabled = true,
             tabVanish = true,
-            ruleName = "Other rule"
+            ruleName = RuleLabel.named("Other rule")
         )
         val decision = engine.evaluate("com.instagram.android", listOf(decidingRule, otherRule), 0L)
         assertTrue(decision is BlockDecision.Block)
         val block = decision as BlockDecision.Block
-        assertEquals("Deciding rule", block.ruleName)
+        assertEquals(RuleLabel.named("Deciding rule"), block.ruleName)
         assertFalse(
             "tabVanish must come from the deciding rule (false), not any{} across applicable rules (which would read true)",
             block.tabVanish

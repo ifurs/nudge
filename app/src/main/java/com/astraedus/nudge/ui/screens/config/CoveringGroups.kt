@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.config
 
+import com.astraedus.nudge.domain.text.UiText
 import androidx.compose.runtime.Immutable
 import com.astraedus.nudge.data.db.entity.AppGroup
 import com.astraedus.nudge.data.db.entity.AppGroupMember
@@ -16,7 +17,7 @@ import com.astraedus.nudge.ui.components.rule.RuleSummary
 
 /** One "Also covered by" row on App config: "Social · Delay 15s", opening that group. */
 @Immutable
-data class CoveringGroup(val groupId: Long, val label: String)
+data class CoveringGroup(val groupId: Long, val label: UiText)
 
 /**
  * The groups that cover [packageName] right now (spec 3.7): it is a member, and the group's own rule
@@ -33,12 +34,12 @@ fun coveringGroups(
     rules: List<BlockRule>
 ): List<CoveringGroup> = blockingGroupsOf(packageName, facts, groups, groupResolverOf(groups, members), rules)
     .map { (group, rule) ->
-        CoveringGroup(group.id, "${group.name} · ${RuleSummary.groupSummaryText(rule)}")
+        CoveringGroup(group.id, UiText.Joined(listOf(UiText.Raw(group.name), RuleSummary.groupSummaryText(rule)), " · "))
     }
 
 /** One "Also covered by" row for an All apps rule: its title and one summary line, opening the rule. */
 @Immutable
-data class CoveringAllApps(val ruleId: Long, val label: String)
+data class CoveringAllApps(val ruleId: Long, val label: UiText)
 
 /**
  * The All apps rules that cover [packageName] right now (spec 3.7): rules that are on and cover it
@@ -67,8 +68,10 @@ fun coveringAllApps(
         val rule = rowById[data.id] ?: return@mapNotNull null
         CoveringAllApps(
             ruleId = rule.id,
-            label = "${RuleSummary.allAppsTitle(rule, groupNames, appLabels)} · " +
-                RuleSummary.allAppsSummaryText(rule)
+            label = UiText.Joined(
+                listOf(RuleSummary.allAppsTitle(rule, groupNames, appLabels), RuleSummary.allAppsSummaryText(rule)),
+                " · "
+            )
         )
     }
 }

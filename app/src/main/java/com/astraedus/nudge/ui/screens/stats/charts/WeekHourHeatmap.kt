@@ -1,5 +1,9 @@
 package com.astraedus.nudge.ui.screens.stats.charts
 
+import com.astraedus.nudge.ui.text.asString
+import com.astraedus.nudge.ui.text.HourText
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,8 +41,16 @@ private val CELL_GAP = 1.dp
 fun WeekHourHeatmap(
     grid: List<List<Int>>,
     modifier: Modifier = Modifier,
-    rowLabels: List<String> = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"),
-    emptyMessage: String = "No blocks yet in this period"
+    rowLabels: List<String> = listOf(
+        stringResource(R.string.components_day_short_mon),
+        stringResource(R.string.components_day_short_tue),
+        stringResource(R.string.components_day_short_wed),
+        stringResource(R.string.components_day_short_thu),
+        stringResource(R.string.components_day_short_fri),
+        stringResource(R.string.components_day_short_sat),
+        stringResource(R.string.components_day_short_sun)
+    ),
+    emptyMessage: String = stringResource(R.string.stats_no_blocks_period)
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary
     val surfaceVariantColor = MaterialTheme.colorScheme.surfaceVariant
@@ -122,10 +134,14 @@ fun WeekHourHeatmap(
                 .padding(top = 2.dp, start = LABEL_COLUMN_WIDTH),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("12am", style = MaterialTheme.typography.labelSmall, color = onSurfaceVariant, fontSize = 9.sp)
-            Text("6am", style = MaterialTheme.typography.labelSmall, color = onSurfaceVariant, fontSize = 9.sp)
-            Text("12pm", style = MaterialTheme.typography.labelSmall, color = onSurfaceVariant, fontSize = 9.sp)
-            Text("6pm", style = MaterialTheme.typography.labelSmall, color = onSurfaceVariant, fontSize = 9.sp)
+            listOf(0, 6, 12, 18).forEach { hour ->
+                Text(
+                    HourText.of(hour).asString(),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = onSurfaceVariant,
+                    fontSize = 9.sp
+                )
+            }
         }
     }
 }

@@ -1,6 +1,10 @@
 package com.astraedus.nudge.ui.screens.stats
 
+import androidx.annotation.StringRes
+import com.astraedus.nudge.R
 import com.astraedus.nudge.data.db.entity.UsageEvent
+import com.astraedus.nudge.domain.text.UiText
+import com.astraedus.nudge.ui.text.HourText
 import com.astraedus.nudge.data.db.entity.isShownConfrontation
 import com.astraedus.nudge.domain.model.BlockMode
 import java.time.Instant
@@ -331,14 +335,16 @@ class InsightsCalculator @Inject constructor() {
      * to a readable last segment ("com.zhiliaoapp.musically" -> "Musically") rather than
      * showing a raw package id in a leaderboard.
      */
-    fun appDisplayLabel(packageName: String, resolvedName: String?): String {
-        if (packageName == WEB_PSEUDO_PACKAGE) return "Websites"
-        if (!resolvedName.isNullOrBlank() && resolvedName != packageName) return resolvedName
+    fun appDisplayLabel(packageName: String, resolvedName: String?): UiText {
+        if (packageName == WEB_PSEUDO_PACKAGE) return UiText.of(R.string.stats_websites)
+        if (!resolvedName.isNullOrBlank() && resolvedName != packageName) return UiText.Raw(resolvedName)
         val tail = packageName.substringAfterLast('.').replace('_', ' ').replace('-', ' ').trim()
-        if (tail.isEmpty()) return packageName
-        return tail.split(' ')
-            .filter { it.isNotEmpty() }
-            .joinToString(" ") { word -> word.replaceFirstChar { it.uppercaseChar() } }
+        if (tail.isEmpty()) return UiText.Raw(packageName)
+        return UiText.Raw(
+            tail.split(' ')
+                .filter { it.isNotEmpty() }
+                .joinToString(" ") { word -> word.replaceFirstChar { it.uppercaseChar() } }
+        )
     }
 
     /** "38%" — one shared formatter so the ring, the callouts and the rows never disagree. */
@@ -349,31 +355,30 @@ class InsightsCalculator @Inject constructor() {
     fun percentOf(rate: Float): Int =
         if (rate.isNaN()) 0 else (rate.coerceIn(0f, 1f) * 100f).roundToInt()
 
-    /** 0 -> "12am", 13 -> "1pm". Out-of-range hours degrade to the raw number. */
-    fun hourLabel(hour: Int): String = when {
-        hour !in 0 until HOURS_PER_DAY -> hour.toString()
-        hour == 0 -> "12am"
-        hour < 12 -> "${hour}am"
-        hour == 12 -> "12pm"
-        else -> "${hour - 12}pm"
-    }
+    /**
+     * 0 -> "12am", 13 -> "1pm" (English); "0:00", "13:00" (Ukrainian, a 24-hour clock). Out-of-range
+     * hours degrade to the raw number. Both the 12-hour and the 24-hour value are passed, and each
+     * language's string uses the one it reads.
+     */
+    fun hourLabel(hour: Int): UiText = HourText.of(hour)
 
     /** Short axis label for a weekday index. Index 0 is Monday — see [interventions]. */
-    fun weekdayLabel(index: Int): String = WEEKDAY_LABELS.getOrElse(index) { "" }
+    fun weekdayLabel(index: Int): UiText = WEEKDAY_LABELS.getOrElse(index) { null }?.let { UiText.of(it) } ?: UiText.Raw("")
 
     /**
      * Full weekday name for the same index. Lives here beside [weekdayLabel] so the
      * Monday-first ordering is asserted in exactly one place; a screen keeping its own
      * name list would silently mislabel every day if that ordering ever changed.
      */
-    fun weekdayFullLabel(index: Int): String = WEEKDAY_FULL_LABELS.getOrElse(index) { "" }
+    fun weekdayFullLabel(index: Int): UiText =
+        WEEKDAY_FULL_LABELS.getOrElse(index) { null }?.let { UiText.of(it) } ?: UiText.Raw("")
 
-    fun modeLabel(mode: String): String = when (mode) {
-        "HARD_BLOCK" -> "Hard block"
-        "DELAY" -> "Delay"
-        "HOLD" -> "Hold"
-        "BREATHING" -> "Breathing"
-        else -> "Other"
+    fun modeLabel(mode: String): UiText = when (mode) {
+        "HARD_BLOCK" -> UiText.of(R.string.stats_mode_hard_block)
+        "DELAY" -> UiText.of(R.string.components_block_mode_delay)
+        "HOLD" -> UiText.of(R.string.components_block_mode_hold)
+        "BREATHING" -> UiText.of(R.string.components_block_mode_breathing)
+        else -> UiText.of(R.string.stats_mode_other)
     }
 
     private fun normalizeMode(mode: String?): String =
@@ -397,10 +402,9 @@ class InsightsCalculator @Inject constructor() {
     private fun daysBetween(from: LocalDate, to: LocalDate): Int =
         ChronoUnit.DAYS.between(from, to).toInt()
 
-    private fun weekLabel(weeksAgo: Int): String = when (weeksAgo) {
-        0 -> "This wk"
-        1 -> "1w ago"
-        else -> "${weeksAgo}w ago"
+    private fun weekLabel(weeksAgo: Int): UiText = when (weeksAgo) {
+        0 -> UiText.of(R.string.stats_week_this)
+        else -> UiText.of(R.string.stats_week_ago, weeksAgo)
     }
 
     /** Mutable accumulator; [attempts]/[rate] apply the orphan-walk-away rule per bucket. */
@@ -445,9 +449,17 @@ class InsightsCalculator @Inject constructor() {
          */
         val KNOWN_MODES: Set<String> =
             BlockMode.entries.filter { it != BlockMode.NONE }.mapTo(mutableSetOf()) { it.name }
-        private val WEEKDAY_LABELS = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
-        private val WEEKDAY_FULL_LABELS = listOf(
-            "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+        private val WEEKDAY_LABELS: List<Int?> = listOf(
+            R.string.components_day_short_mon, R.string.components_day_short_tue,
+            R.string.components_day_short_wed, R.string.components_day_short_thu,
+            R.string.components_day_short_fri, R.string.components_day_short_sat,
+            R.string.components_day_short_sun
+        )
+        private val WEEKDAY_FULL_LABELS: List<Int?> = listOf(
+            R.string.components_day_full_mon, R.string.components_day_full_tue,
+            R.string.components_day_full_wed, R.string.components_day_full_thu,
+            R.string.components_day_full_fri, R.string.components_day_full_sat,
+            R.string.components_day_full_sun
         )
 
         /**
@@ -469,9 +481,9 @@ class InsightsCalculator @Inject constructor() {
 }
 
 /** The two windows offered by the range toggle on both insight screens. */
-enum class InsightsRange(val days: Int, val label: String) {
-    SEVEN_DAYS(7, "7 days"),
-    THIRTY_DAYS(30, "30 days")
+enum class InsightsRange(val days: Int, @StringRes val labelRes: Int) {
+    SEVEN_DAYS(7, R.string.stats_range_7_days),
+    THIRTY_DAYS(30, R.string.stats_range_30_days)
 }
 
 data class WillpowerInsights(
@@ -502,7 +514,7 @@ data class AppResistance(
 )
 
 data class WeekResistance(
-    val label: String,
+    val label: UiText,
     val startMs: Long,
     val attempts: Int,
     val walkAways: Int,

@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.home
 
+import com.astraedus.nudge.testing.en
 import com.astraedus.nudge.domain.model.BlockMode
 import com.astraedus.nudge.domain.engine.ScheduleEvaluator
 import com.astraedus.nudge.domain.engine.FirstUnlockState
@@ -94,9 +95,9 @@ class LockCardTest {
         val shown = card(listOf(allApps(7)), monday(10))!!
 
         assertEquals(7L, shown.ruleId)
-        assertEquals("All apps are blocked", shown.headline)
+        assertEquals("All apps are blocked", shown.headline?.en())
         assertNull(shown.untilMs)
-        assertNull(shown.untilText { error("an all-the-time rule has no end to format") })
+        assertNull(shown.untilText { error("an all-the-time rule has no end to format") }?.en())
     }
 
     @Test
@@ -106,8 +107,8 @@ class LockCardTest {
         val shown = card(listOf(rule), monday(10, 30))!!
 
         assertEquals(monday(17).timeInMillis, shown.untilMs)
-        assertEquals("Until 5:00 PM", shown.untilText { "5:00 PM" })
-        assertEquals("Until 17:00", shown.untilText { "17:00" })
+        assertEquals("Until 5:00 PM", shown.untilText { "5:00 PM" }?.en())
+        assertEquals("Until 17:00", shown.untilText { "17:00" }?.en())
     }
 
     @Test
@@ -118,7 +119,7 @@ class LockCardTest {
             exceptGroupNames = listOf("Work")
         )
 
-        assertEquals("All apps except Work, Spotify are blocked", card(listOf(rule), monday(10))!!.headline)
+        assertEquals("All apps except Work, Spotify are blocked", card(listOf(rule), monday(10))!!.headline?.en())
     }
 
     // -- Disappears at the window end -------------------------------------------------------

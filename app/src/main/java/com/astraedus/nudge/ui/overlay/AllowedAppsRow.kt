@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.overlay
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -39,7 +41,7 @@ fun AllowedAppsRow(apps: List<AllowedApp>, onOpen: (packageName: String) -> Unit
     if (apps.isEmpty()) return
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = "Open an allowed app",
+            text = stringResource(R.string.overlay_open_allowed_app),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -47,13 +49,14 @@ fun AllowedAppsRow(apps: List<AllowedApp>, onOpen: (packageName: String) -> Unit
         Spacer(Modifier.height(8.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             apps.forEach { app ->
+                val openLabel = stringResource(R.string.overlay_open_app, app.label)
                 val bitmap = remember(app.packageName) { app.icon.toBitmap().asImageBitmap() }
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .widthIn(max = 76.dp)
                         .clip(RoundedCornerShape(16.dp))
-                        .clickable(role = Role.Button, onClickLabel = "Open ${app.label}") {
+                        .clickable(role = Role.Button, onClickLabel = openLabel) {
                             onOpen(app.packageName)
                         }
                         .padding(horizontal = 8.dp, vertical = 6.dp)

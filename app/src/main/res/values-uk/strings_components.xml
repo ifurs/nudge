@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="components_action_cancel">Скасувати</string>
+    <string name="components_action_done">Готово</string>
+    <string name="components_action_got_it">Зрозуміло</string>
+    <string name="components_action_set">Задати</string>
+    <string name="components_action_back">Назад</string>
+    <string name="components_action_add">Додати</string>
+    <string name="components_action_save">Зберегти</string>
+    <string name="components_action_delete">Видалити</string>
+    <string name="components_action_close">Закрити</string>
+    <string name="components_state_off">Вимкнено</string>
+    <string name="components_chip_custom">Свій</string>
+    <string name="components_info_more">Докладніше</string>
+    <string name="components_unit_min_short">хв</string>
+    <string name="components_unit_minutes">хвилини</string>
+    <string name="components_unit_seconds">секунди</string>
+
+    <string name="components_duration_short_seconds">%1$d с</string>
+    <string name="components_duration_short_minutes">%1$d хв</string>
+    <string name="components_duration_short_hours">%1$d год</string>
+    <string name="components_duration_short_hours_minutes">%1$d год %2$d хв</string>
+    <string name="components_duration_spaced_minutes">%1$d хв</string>
+    <string name="components_duration_spaced_hours">%1$d год</string>
+    <string name="components_duration_short_minutes_seconds">%1$d хв %2$d с</string>
+    <string name="components_duration_under_minute">&lt; 1 хв</string>
+    <string name="components_duration_spoken_minutes">%1$d хв</string>
+    <string name="components_duration_spoken_hours">%1$d год</string>
+    <string name="components_duration_spoken_hours_minutes">%1$d год %2$d хв</string>
+
+    <string name="components_custom_time_value_label">Значення (%1$s)</string>
+    <string name="components_custom_time_range_error">Введіть число від %1$d до %2$d</string>
+    <string name="components_minutes_field_invalid">Введіть від 1 до %1$d хв або залиште поле порожнім, щоб вимкнути</string>
+
+    <string name="components_disclosure_title">Як працює Nudge</string>
+    <string name="components_disclosure_what">Nudge використовує службу спеціальних можливостей Android, щоб визначити, який застосунок зараз відкрито на екрані.</string>
+    <string name="components_disclosure_why">Завдяки цьому Nudge може показувати дихальні вправи, затримки або блокування, коли ви відкриваєте застосунки, які вирішили обмежити.</string>
+    <string name="components_disclosure_reads">Nudge зчитує лише назву застосунку на передньому плані. Він не читає ваші повідомлення, натискання клавіш, паролі чи вміст екрана.</string>
+    <string name="components_disclosure_local">Усі дані залишаються на вашому пристрої. У Nudge немає дозволу на доступ до інтернету, тож він не може нікуди надсилати дані.</string>
+    <string name="components_disclosure_confirm">Зрозуміло</string>
+    <string name="components_disclosure_dismiss">Не зараз</string>
+
+    <string name="components_challenge_title_strict">Суворий режим заблоковано</string>
+    <string name="components_challenge_unlock">Розблокувати</string>
+    <string name="components_challenge_type_code">Введіть код, щоб продовжити:</string>
+    <string name="components_challenge_code_label">Код розблокування</string>
+    <string name="components_challenge_no_match">Не збігається</string>
+    <string name="components_challenge_changed_mind">Передумати</string>
+
+    <string name="components_block_mode_none">Вимкнено</string>
+    <string name="components_block_mode_hard_block">Повне блокування</string>
+    <string name="components_block_mode_delay">Затримка</string>
+    <string name="components_block_mode_hold">Утримання</string>
+    <string name="components_block_mode_breathing">Дихальна пауза</string>
+    <string name="components_block_mode_short_hard_block">Повне</string>
+    <string name="components_block_mode_short_breathing">Дихання</string>
+    <string name="components_block_mode_desc_none">Не заблоковано.</string>
+    <string name="components_block_mode_desc_hard_block_one">Повністю блокує застосунок. Можна лише повернутися на головний екран.</string>
+    <string name="components_block_mode_desc_hard_block_many">Повністю блокує ці застосунки. Можна лише повернутися на головний екран.</string>
+    <string name="components_block_mode_desc_delay">Показує таймер зворотного відліку, перш ніж пустити вас. Дає час передумати.</string>
+    <string name="components_block_mode_desc_hold">Кнопку потрібно утримувати весь час очікування. Відпустите — і відлік почнеться знову.</string>
+    <string name="components_block_mode_desc_breathing">Перед відкриттям проводить вас крізь дихальну вправу. Вгамовує імпульс.</string>
+
+    <string name="components_category_social">Соцмережі та спілкування</string>
+    <string name="components_category_video">Фільми та відео</string>
+    <string name="components_category_game">Ігри</string>
+    <string name="components_category_news">Новини та журнали</string>
+    <string name="components_category_audio">Музика та аудіо</string>
+    <string name="components_category_image">Фото та зображення</string>
+    <string name="components_category_maps">Карти та навігація</string>
+    <string name="components_category_productivity">Продуктивність</string>
+    <string name="components_category_undefined">Інше</string>
+    <string name="components_category_short_social">Соцмережі</string>
+    <string name="components_category_short_video">Фільми</string>
+    <string name="components_category_short_news">Новини</string>
+    <string name="components_category_short_audio">Музика</string>
+    <string name="components_category_short_image">Фото</string>
+    <string name="components_category_short_maps">Карти</string>
+
+    <string name="components_day_short_mon">Пн</string>
+    <string name="components_day_short_tue">Вт</string>
+    <string name="components_day_short_wed">Ср</string>
+    <string name="components_day_short_thu">Чт</string>
+    <string name="components_day_short_fri">Пт</string>
+    <string name="components_day_short_sat">Сб</string>
+    <string name="components_day_short_sun">Нд</string>
+    <string name="components_day_letter_mon">П</string>
+    <string name="components_day_letter_tue">В</string>
+    <string name="components_day_letter_wed">С</string>
+    <string name="components_day_letter_thu">Ч</string>
+    <string name="components_day_letter_fri">П</string>
+    <string name="components_day_letter_sat">С</string>
+    <string name="components_day_letter_sun">Н</string>
+    <string name="components_day_full_mon">Понеділок</string>
+    <string name="components_day_full_tue">Вівторок</string>
+    <string name="components_day_full_wed">Середа</string>
+    <string name="components_day_full_thu">Четвер</string>
+    <string name="components_day_full_fri">П’ятниця</string>
+    <string name="components_day_full_sat">Субота</string>
+    <string name="components_day_full_sun">Неділя</string>
+
+    <string name="components_schedule_active_days">Дні дії</string>
+    <string name="components_schedule_start_time">Початок</string>
+    <string name="components_schedule_end_time">Кінець</string>
+    <string name="components_when_all_time">Завжди</string>
+    <string name="components_when_days_times">Дні та час</string>
+    <string name="components_when_first_unlock">Після першого розблокування</string>
+    <string name="components_when_for">Тривалість</string>
+    <string name="components_when_days">Дні</string>
+    <string name="components_when_starts_next_unlock">Почнеться з наступного першого розблокування.</string>
+    <string name="components_when_custom_duration">Власна тривалість</string>
+    <string name="components_when_new_day_starts_at">Новий день починається о %1$s</string>
+    <string name="components_when_new_day_starts">Новий день починається о</string>
+
+    <string name="components_picker_search_apps">Пошук застосунків</string>
+    <string name="components_picker_search_apps_groups">Пошук застосунків і груп</string>
+    <string name="components_picker_clear_search">Очистити пошук</string>
+    <string name="components_picker_groups">Групи</string>
+    <string name="components_picker_apps">Застосунки</string>
+    <string name="components_picker_title_add_apps">Додати застосунки</string>
+    <string name="components_picker_title_add_apps_groups">Додати застосунки або групи</string>
+    <string name="components_picker_no_match_apps">Немає застосунків за запитом «%1$s»</string>
+    <string name="components_picker_no_match_apps_groups">Немає застосунків чи груп за запитом «%1$s»</string>
+    <string name="components_picker_selected">Вибрано: %1$d</string>
+
+    <string name="components_usage_reminder_title">Нагадування про час</string>
+    <string name="components_usage_reminder_field_label">Нагадати через</string>
+    <string name="components_usage_reminder_field_supporting">Рахує час у застосунку за один сеанс. Одне попередження, нічого не закривається.</string>
+    <string name="components_usage_reminder_blocked_warning">Сповіщення для Nudge вимкнено, тож це нагадування не дійде до вас. Торкніться, щоб увімкнути.</string>
+    <string name="components_usage_reminder_superseded">Автовихід через %1$d хв спрацює першим, тож нагадування не з’явиться. Задайте менше за %1$d хв, щоб отримувати обидва.</string>
+    <string name="components_usage_reminder_info">Отримайте одне делікатне сповіщення, коли проведете в застосунку стільки часу за один сеанс. Воно нічого не закриває, лише повідомляє.\n\nЛічильник скидається так само, як в автовиході: коротка відлучка в інший застосунок не перериває сеанс, а справжня перерва (від 5 хвилин) починає новий. Якщо автовихід за часом налаштовано на такий самий або коротший час, спрацює автовихід, а нагадування буде пропущено.</string>
+    <string name="components_usage_reminder_info_apps_only">Лише для застосунків: на сайти нижче не поширюється.</string>
+
+    <string name="components_summary_configured">Налаштовано</string>
+    <string name="components_lockcard_headline">Заблоковано: %1$s</string>
+    <string name="components_summary_not_blocked">Не заблоковано</string>
+    <string name="components_summary_mode_hard_block">Повне блокування</string>
+    <string name="components_summary_mode_delay">Затримка %1$d с</string>
+    <string name="components_summary_mode_hold">Утримання %1$d с</string>
+    <string name="components_summary_mode_breathing">Дихальна пауза %1$d с</string>
+    <string name="components_summary_feature_mode">%1$s: %2$s</string>
+    <string name="components_summary_limit_minutes">Ліміт %1$d хв</string>
+    <string name="components_summary_every_day">Щодня %1$s</string>
+    <string name="components_summary_day_range">%1$s–%2$s</string>
+    <string name="components_summary_duration_minutes">%1$d хв</string>
+    <string name="components_summary_duration_hours">%1$d год</string>
+    <string name="components_summary_first_unlock">%1$s після першого розблокування</string>
+    <string name="components_summary_first_unlock_on_days">%1$s після першого розблокування (%2$s)</string>
+    <string name="components_summary_until">До %1$s</string>
+    <string name="components_summary_all_apps">Усі застосунки</string>
+    <string name="components_summary_all_apps_except">Усі застосунки, крім %1$s</string>
+    <string name="components_summary_all_apps_except_more">Усі застосунки, крім %1$s і ще %2$d</string>
+    <plurals name="components_summary_in_groups_named">
+        <item quantity="one">У групі: %1$s</item>
+        <item quantity="few">У групах: %1$s</item>
+        <item quantity="many">У групах: %1$s</item>
+        <item quantity="other">У групах: %1$s</item>
+    </plurals>
+    <plurals name="components_summary_in_groups_count">
+        <item quantity="one">У %1$d групі</item>
+        <item quantity="few">У %1$d групах</item>
+        <item quantity="many">У %1$d групах</item>
+        <item quantity="other">У %1$d групах</item>
+    </plurals>
+    <plurals name="components_summary_group_title">
+        <item quantity="one">%1$s · %2$d застосунок</item>
+        <item quantity="few">%1$s · %2$d застосунки</item>
+        <item quantity="many">%1$s · %2$d застосунків</item>
+        <item quantity="other">%1$s · %2$d застосунку</item>
+    </plurals>
+</resources>

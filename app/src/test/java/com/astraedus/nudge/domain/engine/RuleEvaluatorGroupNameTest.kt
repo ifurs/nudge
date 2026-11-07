@@ -1,5 +1,7 @@
 package com.astraedus.nudge.domain.engine
 
+import com.astraedus.nudge.testing.enText
+import com.astraedus.nudge.testing.en
 import com.astraedus.nudge.data.repository.RuleSnapshot
 import com.astraedus.nudge.domain.model.BlockMode
 import com.astraedus.nudge.testing.aBlockRule
@@ -18,6 +20,10 @@ class RuleEvaluatorGroupNameTest {
 
     private val evaluator = RuleEvaluator()
 
+    /** The label the engine builds, as the block screen reads it in English. */
+    private fun name(rule: com.astraedus.nudge.domain.model.BlockRuleData): String =
+        evaluator.buildRuleName(rule).enText()
+
     /** The subject: a group rule (group 7, "Social"), everything else as the app ships it. */
     private val socialRule = aBlockRuleData(id = 1, groupId = 7L, groupName = "Social")
 
@@ -26,47 +32,59 @@ class RuleEvaluatorGroupNameTest {
 
     @Test
     fun `a group rule is its group's name`() {
-        assertEquals("Social", evaluator.buildRuleName(socialRule))
+        assertEquals("Social", name(socialRule))
     }
 
     @Test
-    fun `whatever the mode`() {
-        for (mode in BlockMode.values()) {
-            assertEquals("mode $mode", "Social", evaluator.buildRuleName(socialRule.copy(mode = mode)))
-        }
-    }
-
-    @Test
-    fun `the qualifiers stay`() {
-        assertEquals("Social (scheduled)", evaluator.buildRuleName(socialRule.copy(scheduleDays = listOf(1, 2))))
-        assertEquals("Social (30 min/day)", evaluator.buildRuleName(socialRule.copy(dailyLimitMinutes = 30)))
+    fun `the label is data, not words`() {
         assertEquals(
-            "Social (scheduled, 30 min/day)",
+            com.astraedus.nudge.domain.model.RuleLabel(
+                subject = com.astraedus.nudge.domain.model.RuleLabel.Subject.Group("Social"),
+                scheduled = true,
+                dailyLimitMinutes = 30
+            ),
             evaluator.buildRuleName(socialRule.copy(scheduleDays = listOf(1), dailyLimitMinutes = 30))
         )
     }
 
     @Test
+    fun `whatever the mode`() {
+        for (mode in BlockMode.values()) {
+            assertEquals("mode $mode", "Social", name(socialRule.copy(mode = mode)))
+        }
+    }
+
+    @Test
+    fun `the qualifiers stay`() {
+        assertEquals("Social (scheduled)", name(socialRule.copy(scheduleDays = listOf(1, 2))))
+        assertEquals("Social (30 min/day)", name(socialRule.copy(dailyLimitMinutes = 30)))
+        assertEquals(
+            "Social (scheduled, 30 min/day)",
+            name(socialRule.copy(scheduleDays = listOf(1), dailyLimitMinutes = 30))
+        )
+    }
+
+    @Test
     fun `a feature group rule keeps its feature prefix`() {
-        assertEquals("Reels - Social", evaluator.buildRuleName(socialRule.copy(inAppFeatures = listOf("reels"))))
+        assertEquals("Reels - Social", name(socialRule.copy(inAppFeatures = listOf("reels"))))
     }
 
     @Test
     fun `a group rule with no name is Group, never a mode name`() {
-        assertEquals(RuleEvaluator.GROUP_FALLBACK_NAME, evaluator.buildRuleName(socialRule.copy(groupName = null)))
-        assertEquals(RuleEvaluator.GROUP_FALLBACK_NAME, evaluator.buildRuleName(socialRule.copy(groupName = "  ")))
+        assertEquals("Group", name(socialRule.copy(groupName = null)))
+        assertEquals("Group", name(socialRule.copy(groupName = "  ")))
         assertEquals(
             "Group (30 min/day)",
-            evaluator.buildRuleName(socialRule.copy(groupName = null, mode = BlockMode.HARD_BLOCK, dailyLimitMinutes = 30))
+            name(socialRule.copy(groupName = null, mode = BlockMode.HARD_BLOCK, dailyLimitMinutes = 30))
         )
     }
 
     @Test
     fun `a direct rule is unchanged`() {
-        assertEquals("Delay", evaluator.buildRuleName(directRule))
+        assertEquals("Delay", name(directRule))
         assertEquals(
             "Hard Block (30 min/day)",
-            evaluator.buildRuleName(directRule.copy(mode = BlockMode.HARD_BLOCK, dailyLimitMinutes = 30))
+            name(directRule.copy(mode = BlockMode.HARD_BLOCK, dailyLimitMinutes = 30))
         )
     }
 
@@ -78,7 +96,7 @@ class RuleEvaluatorGroupNameTest {
             membership(7L to "com.instagram.android"),
             CoverageFacts(essential = false, launchable = true, category = null, browser = false)
         )
-        assertEquals("Social", resolved.single().ruleName)
+        assertEquals("Social", resolved.single().ruleName.en())
     }
 
     /** The snapshot is where the name comes from: the groups table, by the rule's group id. */
@@ -97,6 +115,6 @@ class RuleEvaluatorGroupNameTest {
         assertEquals("Social", byId.getValue(1).groupName)
         assertNull("a missing group row leaves the name null", byId.getValue(2).groupName)
         assertNull("a direct rule has no group name", byId.getValue(3).groupName)
-        assertEquals("Group", evaluator.buildRuleName(byId.getValue(2)))
+        assertEquals("Group", name(byId.getValue(2)))
     }
 }

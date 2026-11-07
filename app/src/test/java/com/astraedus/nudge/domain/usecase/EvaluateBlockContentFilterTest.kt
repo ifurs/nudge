@@ -1,5 +1,6 @@
 package com.astraedus.nudge.domain.usecase
 
+import com.astraedus.nudge.testing.en
 import com.astraedus.nudge.domain.engine.FirstUnlockState
 import com.astraedus.nudge.data.repository.ContentFilter
 import com.astraedus.nudge.domain.ContentFilterAllowlist
@@ -69,7 +70,7 @@ class EvaluateBlockContentFilterTest {
         assertTrue(result.decision is BlockDecision.Block)
         val block = result.decision as BlockDecision.Block
         assertEquals(BlockMode.HARD_BLOCK, block.mode)
-        assertEquals("Restricted content", block.ruleName)
+        assertEquals("Restricted content", block.ruleName.en())
         assertEquals("web", result.trackingPackage)
     }
 

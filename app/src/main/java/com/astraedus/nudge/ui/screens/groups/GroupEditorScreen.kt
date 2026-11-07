@@ -1,5 +1,9 @@
 package com.astraedus.nudge.ui.screens.groups
 
+import com.astraedus.nudge.ui.text.asString
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
@@ -130,12 +134,12 @@ fun GroupEditorScreen(
     if (state.showDiscardConfirmation) {
         AlertDialog(
             onDismissRequest = viewModel::keepEditing,
-            title = { Text("Discard changes?") },
+            title = { Text(stringResource(R.string.groups_discard_title)) },
             confirmButton = {
-                TextButton(onClick = viewModel::discardChanges) { Text("Discard") }
+                TextButton(onClick = viewModel::discardChanges) { Text(stringResource(R.string.groups_discard)) }
             },
             dismissButton = {
-                TextButton(onClick = viewModel::keepEditing) { Text("Keep editing") }
+                TextButton(onClick = viewModel::keepEditing) { Text(stringResource(R.string.groups_keep_editing)) }
             }
         )
     }
@@ -143,16 +147,16 @@ fun GroupEditorScreen(
     if (state.showDeleteConfirmation) {
         AlertDialog(
             onDismissRequest = viewModel::dismissDelete,
-            title = { Text("Delete this group?") },
-            text = { Text("Its apps will no longer be blocked by this group.") },
+            title = { Text(stringResource(R.string.groups_delete_title)) },
+            text = { Text(stringResource(R.string.groups_delete_body)) },
             confirmButton = {
                 TextButton(
                     onClick = viewModel::confirmDelete,
                     colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
-                ) { Text("Delete") }
+                ) { Text(stringResource(R.string.components_action_delete)) }
             },
             dismissButton = {
-                TextButton(onClick = viewModel::dismissDelete) { Text("Cancel") }
+                TextButton(onClick = viewModel::dismissDelete) { Text(stringResource(R.string.components_action_cancel)) }
             }
         )
     }
@@ -160,15 +164,15 @@ fun GroupEditorScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(state.savedName.ifBlank { "New group" }) },
+                title = { Text(state.savedName.ifBlank { stringResource(R.string.groups_new_group) }) },
                 navigationIcon = {
                     IconButton(onClick = viewModel::requestLeave) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.components_action_back))
                     }
                 },
                 actions = {
                     TextButton(onClick = viewModel::save, enabled = state.canSave) {
-                        Text("Save")
+                        Text(stringResource(R.string.components_action_save))
                     }
                 }
             )
@@ -184,7 +188,7 @@ fun GroupEditorScreen(
             OutlinedTextField(
                 value = state.name,
                 onValueChange = viewModel::setName,
-                label = { Text("Name") },
+                label = { Text(stringResource(R.string.groups_name_label)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                 modifier = Modifier
@@ -194,7 +198,13 @@ fun GroupEditorScreen(
 
             val members = state.members
             Spacer(Modifier.height(16.dp))
-            EditorSectionTitle(if (members.isEmpty()) "Apps" else "Apps · ${members.size}")
+            EditorSectionTitle(
+                if (members.isEmpty()) {
+                    stringResource(R.string.groups_apps)
+                } else {
+                    stringResource(R.string.groups_apps_count, members.size)
+                }
+            )
             CategoryChips(
                 chips = state.chips,
                 onToggle = viewModel::toggleCategory
@@ -202,7 +212,7 @@ fun GroupEditorScreen(
             members.forEach { row ->
                 MemberRow(row = row, onRemove = { viewModel.removeMember(row.app.packageName) })
             }
-            EditorAddRow("Add apps", onClick = viewModel::openPicker)
+            EditorAddRow(stringResource(R.string.components_picker_title_add_apps), onClick = viewModel::openPicker)
             RemovedByYouSection(
                 removed = state.removed,
                 expanded = state.showRemoved,
@@ -238,7 +248,7 @@ fun GroupEditorScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
-                ) { Text("Delete group") }
+                ) { Text(stringResource(R.string.groups_delete_group)) }
             }
             Spacer(Modifier.height(24.dp))
         }
@@ -262,6 +272,7 @@ private fun CategoryChips(chips: List<CategoryChip>, onToggle: (AppCategory) -> 
     ) {
         chips.forEach { chip ->
             val title = categoryTitle(chip.category)
+            val chipDescription = pluralStringResource(R.plurals.groups_chip_description, chip.count, title, chip.count)
             FilterChip(
                 selected = chip.checked,
                 onClick = { onToggle(chip.category) },
@@ -277,15 +288,13 @@ private fun CategoryChips(chips: List<CategoryChip>, onToggle: (AppCategory) -> 
                 } else {
                     null
                 },
-                modifier = Modifier.semantics {
-                    contentDescription = "$title, ${chip.count} ${if (chip.count == 1) "app" else "apps"}"
-                }
+                modifier = Modifier.semantics { contentDescription = chipDescription }
             )
         }
     }
     if (chips.any { it.checked }) {
         Text(
-            "New apps in these categories join automatically.",
+            stringResource(R.string.groups_chip_new_apps_join),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 4.dp)
@@ -315,7 +324,7 @@ private fun MemberRow(row: GroupMemberRow, onRemove: () -> Unit) {
                     )
                 }
                 IconButton(onClick = onRemove) {
-                    Icon(Icons.Default.Close, contentDescription = "Remove ${row.app.appName}")
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.groups_remove_member, row.app.appName))
                 }
             }
         }
@@ -337,7 +346,7 @@ private fun RemovedByYouSection(
     ListItem(
         headlineContent = {
             Text(
-                "Removed by you · ${removed.size}",
+                stringResource(R.string.groups_removed_by_you, removed.size),
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         },
@@ -350,7 +359,7 @@ private fun RemovedByYouSection(
         },
         modifier = Modifier.clickable(
             role = Role.Button,
-            onClickLabel = if (expanded) "Hide" else "Show",
+            onClickLabel = stringResource(if (expanded) R.string.groups_hide else R.string.groups_show),
             onClick = onToggle
         )
     )
@@ -361,7 +370,7 @@ private fun RemovedByYouSection(
                     appName = app.appName,
                     icon = app.icon,
                     trailingContent = {
-                        TextButton(onClick = { onAddBack(app.packageName) }) { Text("Add back") }
+                        TextButton(onClick = { onAddBack(app.packageName) }) { Text(stringResource(R.string.groups_add_back)) }
                     }
                 )
             }
@@ -385,7 +394,7 @@ private fun BlockingFields(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Spacer(Modifier.height(0.dp))
-        EditorSubsectionTitle("How")
+        EditorSubsectionTitle(stringResource(R.string.groups_how))
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             BlockModeSegmentedRow(
                 selected = form.mode,
@@ -402,12 +411,12 @@ private fun BlockingFields(
             WaitTimeChips(
                 seconds = form.waitSeconds,
                 onSelect = { seconds -> onFormChange { it.copy(waitSeconds = seconds) } },
-                customDialogTitle = "Custom wait"
+                customDialogTitle = stringResource(R.string.groups_custom_wait)
             )
         }
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             LabelledSwitch(
-                label = "Daily limit for each app",
+                label = stringResource(R.string.groups_daily_limit_each),
                 checked = form.dailyLimitEnabled,
                 onCheckedChange = { on -> onFormChange { it.copy(dailyLimitEnabled = on) } }
             )
@@ -415,13 +424,13 @@ private fun BlockingFields(
                 DailyLimitChips(
                     minutes = form.dailyLimitMinutes,
                     onSelect = { minutes -> onFormChange { it.copy(dailyLimitMinutes = minutes) } },
-                    customDialogTitle = "Custom daily limit"
+                    customDialogTitle = stringResource(R.string.groups_custom_daily_limit)
                 )
             }
         }
 
         Spacer(Modifier.height(0.dp))
-        EditorSubsectionTitle("When")
+        EditorSubsectionTitle(stringResource(R.string.groups_when))
         WhenSection(
             kind = when {
                 form.firstUnlock -> ScheduleKind.FIRST_UNLOCK
@@ -463,10 +472,10 @@ private fun BlockingFields(
 @Composable
 private fun AllowedDuringSection(rules: List<AllAppsRuleItem>, onOpen: (Long) -> Unit) {
     Spacer(Modifier.height(16.dp))
-    EditorSectionTitle("Allowed during")
+    EditorSectionTitle(stringResource(R.string.groups_allowed_during))
     rules.forEach { rule ->
         ListItem(
-            headlineContent = { Text(rule.title, maxLines = 2, overflow = TextOverflow.Ellipsis) },
+            headlineContent = { Text(rule.title.asString(), maxLines = 2, overflow = TextOverflow.Ellipsis) },
             leadingContent = { TonalIcon(AllAppsIcon) },
             trailingContent = {
                 Icon(
@@ -491,7 +500,7 @@ private fun BlockSwitchRow(checked: Boolean, onCheckedChange: (Boolean) -> Unit)
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            "Block these apps",
+            stringResource(R.string.groups_block_these_apps),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Medium
         )

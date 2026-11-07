@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.screens.stats.charts
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -32,7 +34,7 @@ fun WalkAwayRing(
     walkedAway: Int,
     gaveIn: Int,
     modifier: Modifier = Modifier,
-    emptyMessage: String = "No blocks yet in this period"
+    emptyMessage: String = stringResource(R.string.stats_no_blocks_period)
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary
     val trackColor = MaterialTheme.colorScheme.surfaceVariant
@@ -96,7 +98,7 @@ fun WalkAwayRing(
                     color = onSurfaceColor
                 )
                 Text(
-                    text = "walked away",
+                    text = stringResource(R.string.stats_ring_walked_away),
                     style = MaterialTheme.typography.labelMedium,
                     color = onSurfaceVariant
                 )

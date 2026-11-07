@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.apps
 
+import com.astraedus.nudge.domain.text.UiText
 import com.astraedus.nudge.testing.anApp
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -16,7 +17,7 @@ class ManageAppsRowsTest {
 
     private fun app(pkg: String, summary: String? = null) = AppRow(
         appInfo = anApp(pkg),
-        summary = summary,
+        summary = summary?.let { UiText.Raw(it) },
         isOn = summary != null
     )
 

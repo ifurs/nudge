@@ -1,5 +1,8 @@
 package com.astraedus.nudge.ui.screens.settings
 
+import androidx.annotation.StringRes
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -36,7 +39,7 @@ import kotlinx.coroutines.launch
  * A switch that reads on and never delivers anything is the "it doesn't work sometimes" review this
  * repo has already had about the accessibility tick, so the row says so and the tap goes to the fix.
  */
-internal data class BounceCheckInRowCopy(val subtitle: String, val tapFixesNotifications: Boolean)
+internal data class BounceCheckInRowCopy(@StringRes val subtitle: Int, val tapFixesNotifications: Boolean)
 
 internal fun bounceCheckInRowCopy(enabled: Boolean, canPostNotifications: Boolean): BounceCheckInRowCopy =
     if (enabled && !canPostNotifications) {
@@ -48,11 +51,9 @@ internal fun bounceCheckInRowCopy(enabled: Boolean, canPostNotifications: Boolea
         BounceCheckInRowCopy(subtitle = BOUNCE_ROW_SUBTITLE, tapFixesNotifications = false)
     }
 
-internal const val BOUNCE_ROW_TITLE = "Bro. wtf."
-internal const val BOUNCE_ROW_SUBTITLE =
-    "Get a nudge when you bounce between apps or blocked sites after hitting a wall."
-internal const val BOUNCE_ROW_BLOCKED_SUBTITLE =
-    "Notifications are off for Nudge, so these can't reach you. Tap to turn them on."
+internal val BOUNCE_ROW_TITLE: Int = R.string.settings_bounce_title
+internal val BOUNCE_ROW_SUBTITLE: Int = R.string.settings_bounce_subtitle
+internal val BOUNCE_ROW_BLOCKED_SUBTITLE: Int = R.string.settings_bounce_blocked_subtitle
 
 /**
  * The Settings row for the bounce check-in (docs/architecture/bounce-check-in.md).
@@ -91,10 +92,10 @@ internal fun BounceCheckInRow(preferences: NudgePreferences) {
 
     val copy = bounceCheckInRowCopy(enabled, canPost)
     ListItem(
-        headlineContent = { Text(BOUNCE_ROW_TITLE) },
+        headlineContent = { Text(stringResource(BOUNCE_ROW_TITLE)) },
         supportingContent = {
             Text(
-                copy.subtitle,
+                stringResource(copy.subtitle),
                 color = if (copy.tapFixesNotifications) {
                     MaterialTheme.colorScheme.error
                 } else {

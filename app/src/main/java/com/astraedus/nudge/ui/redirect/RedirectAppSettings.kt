@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.redirect
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
@@ -40,13 +42,13 @@ class RedirectAppSettingsViewModel @Inject constructor(
 fun RedirectAppSettingsRow(controller: RedirectAppController) {
     val target = controller.target
     ListItem(
-        headlineContent = { Text("Redirect app") },
+        headlineContent = { Text(stringResource(R.string.redirect_settings_title)) },
         supportingContent = {
             Text(
                 if (target == null) {
-                    "Offer one better app on every block screen, like a to-do list or a reader."
+                    stringResource(R.string.redirect_settings_summary_empty)
                 } else {
-                    "${target.appName} is offered on every block screen. Tap to change or remove."
+                    stringResource(R.string.redirect_settings_summary_set, target.appName)
                 }
             )
         },

@@ -1,5 +1,9 @@
 package com.astraedus.nudge.ui.screens.allapps
 
+import com.astraedus.nudge.domain.text.UiText
+import com.astraedus.nudge.ui.text.asString
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -42,7 +46,7 @@ import com.astraedus.nudge.ui.components.TonalIcon
 
 /** "Enabled" with its switch, and the one number that says how big the rule is under it. */
 @Composable
-internal fun EnabledRow(enabled: Boolean, blocksText: String, onEnabledChange: (Boolean) -> Unit) {
+internal fun EnabledRow(enabled: Boolean, blocksText: UiText, onEnabledChange: (Boolean) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -51,9 +55,9 @@ internal fun EnabledRow(enabled: Boolean, blocksText: String, onEnabledChange: (
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            Text("Enabled", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Medium)
+            Text(stringResource(R.string.allapps_enabled), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Medium)
             Text(
-                blocksText,
+                blocksText.asString(),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -66,8 +70,8 @@ internal fun EnabledRow(enabled: Boolean, blocksText: String, onEnabledChange: (
 @Composable
 internal fun AllowedGroupItem(row: AllowedGroupRow, onOpen: () -> Unit, onRemove: () -> Unit) {
     ListItem(
-        headlineContent = { Text(row.title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-        supportingContent = row.stillBlocked?.let { text -> { Text(text) } },
+        headlineContent = { Text(row.title.asString(), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        supportingContent = row.stillBlocked?.let { text -> { Text(text.asString()) } },
         leadingContent = { TonalIcon(Icons.Default.Folder) },
         trailingContent = {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -77,7 +81,7 @@ internal fun AllowedGroupItem(row: AllowedGroupRow, onOpen: () -> Unit, onRemove
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 IconButton(onClick = onRemove) {
-                    Icon(Icons.Default.Close, contentDescription = "Remove ${row.title}")
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.allapps_remove_item, row.title.asString()))
                 }
             }
         },
@@ -90,10 +94,10 @@ internal fun AllowedAppItem(row: AllowedAppRow, onRemove: () -> Unit) {
     AppListItem(
         appName = row.appName,
         icon = row.icon,
-        supportingText = row.alsoBlocked,
+        supportingText = row.alsoBlocked?.asString(),
         trailingContent = {
             IconButton(onClick = onRemove) {
-                Icon(Icons.Default.Close, contentDescription = "Remove ${row.appName}")
+                Icon(Icons.Default.Close, contentDescription = stringResource(R.string.allapps_remove_item, row.appName))
             }
         }
     )
@@ -101,9 +105,9 @@ internal fun AllowedAppItem(row: AllowedAppRow, onRemove: () -> Unit) {
 
 /** The locked essentials row: no ✕ and no checkbox, because these can never be blocked here. */
 @Composable
-internal fun AlwaysAllowedItem(text: String, onClick: () -> Unit) {
+internal fun AlwaysAllowedItem(text: UiText, onClick: () -> Unit) {
     ListItem(
-        headlineContent = { Text(text, maxLines = 2, overflow = TextOverflow.Ellipsis) },
+        headlineContent = { Text(text.asString(), maxLines = 2, overflow = TextOverflow.Ellipsis) },
         leadingContent = { TonalIcon(Icons.Default.Lock) },
         trailingContent = {
             Icon(
@@ -136,12 +140,12 @@ internal fun AlwaysAllowedSheet(
                 .verticalScroll(rememberScrollState())
         ) {
             Text(
-                "Always allowed",
+                stringResource(R.string.allapps_always_title),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
             Text(
-                "These apps are never blocked by a group or an All apps rule.",
+                stringResource(R.string.allapps_always_body),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 8.dp)
@@ -153,7 +157,7 @@ internal fun AlwaysAllowedSheet(
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.End
             ) {
-                TextButton(onClick = onClose) { Text("Close") }
+                TextButton(onClick = onClose) { Text(stringResource(R.string.components_action_close)) }
             }
         }
     }
@@ -167,12 +171,14 @@ internal fun AlwaysAllowedSheet(
 fun AllTheTimeConfirmDialog(blockedCount: Int, onConfirm: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(confirmTitle(blockedCount)) },
-        text = { Text(ALL_THE_TIME_CONFIRM_BODY) },
-        confirmButton = { TextButton(onClick = onConfirm) { Text("Block them") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }
+        title = { Text(confirmTitle(blockedCount).asString()) },
+        text = { Text(stringResource(ALL_THE_TIME_CONFIRM_BODY)) },
+        confirmButton = { TextButton(onClick = onConfirm) { Text(stringResource(R.string.allapps_confirm_block)) } },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.components_action_cancel)) }
+        }
     )
 }
 
 /** The confirm's body, word for word from the spec. */
-const val ALL_THE_TIME_CONFIRM_BODY = "Only the apps you listed and your essentials will open."
+val ALL_THE_TIME_CONFIRM_BODY: Int = R.string.allapps_confirm_body

@@ -1,5 +1,7 @@
 package com.astraedus.nudge.domain.health
 
+import com.astraedus.nudge.domain.text.UiText
+import com.astraedus.nudge.service.notificationCopy
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -156,8 +158,8 @@ class StatusNotificationGateTest {
     @Test
     fun `two health states with identical copy count as no change`() {
         val rule = gated()
-        val copy = ServiceHealthCopy("Nudge is active", "Blocking is on")
-        val sameWordsDifferentInstance = ServiceHealthCopy("Nudge is active", "Blocking is on")
+        val copy = ServiceHealthCopy(UiText.Raw("Nudge is active"), UiText.Raw("Blocking is on"))
+        val sameWordsDifferentInstance = ServiceHealthCopy(UiText.Raw("Nudge is active"), UiText.Raw("Blocking is on"))
 
         assertEquals(1, postsFor(rule, copy))
         assertEquals(
@@ -171,12 +173,12 @@ class StatusNotificationGateTest {
     @Test
     fun `a title-body split cannot be faked by concatenation`() {
         val gate = StatusNotificationGate()
-        gate.onPosted(ServiceHealthCopy("Nudge", "is active"))
+        gate.onPosted(ServiceHealthCopy(UiText.Raw("Nudge"), UiText.Raw("is active")))
 
         assertTrue(
             "\"Nudge\"/\"is active\" and \"Nudge is\"/\"active\" are different notifications and " +
                 "must not fingerprint the same",
-            gate.shouldPost(ServiceHealthCopy("Nudge is", "active"))
+            gate.shouldPost(ServiceHealthCopy(UiText.Raw("Nudge is"), UiText.Raw("active")))
         )
     }
 

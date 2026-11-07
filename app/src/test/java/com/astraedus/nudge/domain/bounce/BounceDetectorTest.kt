@@ -1,5 +1,9 @@
 package com.astraedus.nudge.domain.bounce
 
+import com.astraedus.nudge.service.bodyText
+import com.astraedus.nudge.service.titleText
+import com.astraedus.nudge.testing.uk
+import com.astraedus.nudge.testing.en
 import com.astraedus.nudge.BuildConfig
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -504,15 +508,15 @@ class BounceDetectorTest {
     @Test
     fun `the copy carries the real numbers and the owner's title`() {
         val alert = BounceAlert(count = 6, minutes = 4)
-        assertEquals("Bro. wtf.", alert.title)
-        assertEquals("You've bounced through 6 apps in 4 minutes. Wanna take a break?", alert.body)
+        assertEquals("Bro. wtf.", alert.titleText().en())
+        assertEquals("You've bounced through 6 apps in 4 minutes. Wanna take a break?", alert.bodyText().en())
     }
 
     @Test
     fun `one minute is singular`() {
         assertEquals(
             "You've bounced through 4 apps in 1 minute. Wanna take a break?",
-            BounceAlert(count = 4, minutes = 1).body
+            BounceAlert(count = 4, minutes = 1).bodyText().en()
         )
     }
 
@@ -520,11 +524,27 @@ class BounceDetectorTest {
     fun `the site copy says sites, and a single site is singular`() {
         assertEquals(
             "You've bounced through 3 sites in 2 minutes. Wanna take a break?",
-            BounceAlert(count = 3, minutes = 2, unit = BounceAlert.Unit.SITES).body
+            BounceAlert(count = 3, minutes = 2, unit = BounceAlert.Unit.SITES).bodyText().en()
         )
         assertEquals(
             "You've bounced through 1 site in 1 minute. Wanna take a break?",
-            BounceAlert(count = 1, minutes = 1, unit = BounceAlert.Unit.SITES).body
+            BounceAlert(count = 1, minutes = 1, unit = BounceAlert.Unit.SITES).bodyText().en()
+        )
+    }
+
+    @Test
+    fun `the ukrainian copy agrees in case and number`() {
+        assertEquals(
+            "Ви перемикаєтеся між 5 застосунками за 4 хвилини. Зробимо перерву?",
+            BounceAlert(count = 5, minutes = 4).bodyText().uk()
+        )
+        assertEquals(
+            "Ви перемикаєтеся між 3 сайтами за 1 хвилину. Зробимо перерву?",
+            BounceAlert(count = 3, minutes = 1, unit = BounceAlert.Unit.SITES).bodyText().uk()
+        )
+        assertEquals(
+            "Ви перемикаєтеся між 4 застосунками за 5 хвилин. Зробимо перерву?",
+            BounceAlert(count = 4, minutes = 5).bodyText().uk()
         )
     }
 

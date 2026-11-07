@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.screens.nuke
 
+import com.astraedus.nudge.domain.text.UiText
+import com.astraedus.nudge.R
 import android.graphics.drawable.Drawable
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
@@ -118,8 +120,8 @@ class NukeViewModel @Inject constructor(
     val scanRequest: StateFlow<NukeScanPurpose?> = _scanRequest.asStateFlow()
 
     /** One short line for a snackbar. Consumed by the screen. */
-    private val _message = MutableStateFlow<String?>(null)
-    val message: StateFlow<String?> = _message.asStateFlow()
+    private val _message = MutableStateFlow<UiText?>(null)
+    val message: StateFlow<UiText?> = _message.asStateFlow()
 
     val uiState: StateFlow<NukeUiState> = combine(
         preferences.nukeState,
@@ -189,7 +191,7 @@ class NukeViewModel @Inject constructor(
             val current = state()
             if (packageName in current.packages) {
                 val proposed = current.copy(packages = current.packages - packageName)
-                gate.run("Take this app off your Nuke list", NukePolicy.isWeakening(current, proposed)) {
+                gate.run(R.string.nuke_prompt_remove_app, NukePolicy.isWeakening(current, proposed)) {
                     preferences.removeNukePackages(listOf(packageName))
                 }
             } else {
@@ -218,7 +220,7 @@ class NukeViewModel @Inject constructor(
     fun endNuke() {
         viewModelScope.launch {
             val current = state()
-            gate.run("End Nuke", NukePolicy.isWeakening(current, current.copy(active = false))) {
+            gate.run(R.string.nuke_prompt_end, NukePolicy.isWeakening(current, current.copy(active = false))) {
                 preferences.setNukeActive(false)
                 _message.value = DISARMED_MESSAGE
             }
@@ -227,7 +229,7 @@ class NukeViewModel @Inject constructor(
 
     /** "Emergency: end without your code" -- straight to the 64-character code. */
     fun endWithEmergencyCode() {
-        gate.requireEmergencyCode("End Nuke without your code") {
+        gate.requireEmergencyCode(R.string.nuke_prompt_end_no_code) {
             preferences.setNukeActive(false)
             _message.value = DISARMED_MESSAGE
         }
@@ -242,7 +244,7 @@ class NukeViewModel @Inject constructor(
     fun startCreateQr() {
         viewModelScope.launch {
             val current = state()
-            gate.run("Replace your Nuke code", weaken = current.active && current.hasKey) {
+            gate.run(R.string.nuke_prompt_replace_code, weaken = current.active && current.hasKey) {
                 _pairing.value = NukePairing.ShowingNewQr(NukeKey.generateToken())
             }
         }
@@ -252,7 +254,7 @@ class NukeViewModel @Inject constructor(
     fun startPairExisting() {
         viewModelScope.launch {
             val current = state()
-            gate.run("Replace your Nuke code", weaken = current.active && current.hasKey) {
+            gate.run(R.string.nuke_prompt_replace_code, weaken = current.active && current.hasKey) {
                 _scanRequest.value = NukeScanPurpose.PAIR_EXISTING
             }
         }
@@ -266,10 +268,10 @@ class NukeViewModel @Inject constructor(
     fun unpair() {
         viewModelScope.launch {
             val current = state()
-            gate.run("Remove your Nuke code", NukePolicy.isWeakening(current, current.copy(keyHash = null, active = false))) {
+            gate.run(R.string.nuke_prompt_remove_code, NukePolicy.isWeakening(current, current.copy(keyHash = null, active = false))) {
                 preferences.clearNukeKey()
                 _pairing.value = NukePairing.Idle
-                _message.value = "Nuke code removed."
+                _message.value = UiText.of(R.string.nuke_msg_code_removed)
             }
         }
     }
@@ -330,7 +332,7 @@ class NukeViewModel @Inject constructor(
         val pairing = _pairing.value as? NukePairing.ShowingNewQr ?: return
         if (payload.isNullOrBlank()) return
         if (NukeKey.normalize(payload) != pairing.token) {
-            _message.value = "That's not the code on screen. Scan the one you just saved."
+            _message.value = UiText.of(R.string.nuke_msg_not_code_on_screen)
             return
         }
         preferences.setNukeKey(NukeKey.hashOrNull(pairing.token)!!, NukeKeyKind.GENERATED_QR)
@@ -346,10 +348,10 @@ class NukeViewModel @Inject constructor(
     }
 
     companion object {
-        const val ARMED_MESSAGE = "Nuke is on."
-        const val DISARMED_MESSAGE = "Nuke is off."
-        const val NO_KEY_MESSAGE = "Pair a Nuke code first."
-        const val EMPTY_LIST_MESSAGE = "Add at least one app to your Nuke list first."
-        const val PAIRED_MESSAGE = "Paired. Keep that code somewhere inconvenient."
+        val ARMED_MESSAGE: UiText = UiText.of(R.string.nuke_msg_armed)
+        val DISARMED_MESSAGE: UiText = UiText.of(R.string.nuke_msg_disarmed)
+        val NO_KEY_MESSAGE: UiText = UiText.of(R.string.nuke_msg_no_key)
+        val EMPTY_LIST_MESSAGE: UiText = UiText.of(R.string.nuke_msg_empty_list)
+        val PAIRED_MESSAGE: UiText = UiText.of(R.string.nuke_msg_paired)
     }
 }

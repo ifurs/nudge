@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.components
 
+import com.astraedus.nudge.testing.en
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -38,14 +39,14 @@ class AppPickerGroupsTest {
 
     @Test
     fun `the title counts apps and groups, or says what can be added`() {
-        assertEquals("Add apps or groups", pickerTitle(0, offersGroups = true))
-        assertEquals("Add apps", pickerTitle(0, offersGroups = false))
-        assertEquals("3 selected", pickerTitle(2 + 1, offersGroups = true))
+        assertEquals("Add apps or groups", pickerTitle(0, offersGroups = true).en())
+        assertEquals("Add apps", pickerTitle(0, offersGroups = false).en())
+        assertEquals("3 selected", pickerTitle(2 + 1, offersGroups = true).en())
     }
 
     @Test
     fun `no match names what was searched`() {
-        assertEquals("No apps or groups match \"zz\"", noMatchText(" zz ", offersGroups = true))
-        assertEquals("No apps match \"zz\"", noMatchText("zz", offersGroups = false))
+        assertEquals("No apps or groups match \"zz\"", noMatchText(" zz ", offersGroups = true).en())
+        assertEquals("No apps match \"zz\"", noMatchText("zz", offersGroups = false).en())
     }
 }

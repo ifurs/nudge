@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.apps
 
+import com.astraedus.nudge.testing.en
 import com.astraedus.nudge.data.db.entity.AppGroup
 import com.astraedus.nudge.data.db.entity.AppGroupMember
 import com.astraedus.nudge.data.db.entity.BlockRule
@@ -43,8 +44,8 @@ class BuildGroupRowsTest {
     fun `rows are sorted by name and carry count, summary and switch state`() {
         val rows = rows(listOf(social, games), members, rules)
 
-        assertEquals(listOf("games · 1 app", "Social · 3 apps"), rows.map { it.title })
-        assertEquals(listOf("Hard Block", "Delay 15s · 30min limit"), rows.map { it.summary })
+        assertEquals(listOf("games · 1 app", "Social · 3 apps"), rows.map { it.title?.en() })
+        assertEquals(listOf("Hard Block", "Delay 15s · 30min limit"), rows.map { it.summary?.en() })
         assertEquals(listOf(false, true), rows.map { it.blocking })
         assertEquals(listOf(11L, 10L), rows.map { it.rule?.id })
     }
@@ -53,7 +54,7 @@ class BuildGroupRowsTest {
     fun `a group with no rule reads Not blocked and its switch is off`() {
         val row = rows(listOf(social), members, emptyList()).single()
 
-        assertEquals("Not blocked", row.summary)
+        assertEquals("Not blocked", row.summary?.en())
         assertFalse(row.blocking)
         assertNull(row.rule)
     }
@@ -62,7 +63,7 @@ class BuildGroupRowsTest {
     fun `search matches the group's name, not its apps`() {
         assertEquals(
             listOf("Social · 3 apps"),
-            rows(listOf(social, games), members, rules, query = " soc ").map { it.title }
+            rows(listOf(social, games), members, rules, query = " soc ").map { it.title?.en() }
         )
         assertTrue(rows(listOf(social, games), members, rules, query = "com.a").isEmpty())
     }
@@ -81,7 +82,7 @@ class BuildGroupRowsTest {
             essentials = setOf("com.c")
         )
         // SOCIAL: a, b, c, e, f. Minus essential c, minus removed b -> a, e, f.
-        assertEquals("Social apps · 3 apps", rows.single().title)
+        assertEquals("Social apps · 3 apps", rows.single().title?.en())
     }
 
     @Test
@@ -93,12 +94,12 @@ class BuildGroupRowsTest {
             rules = emptyList()
         )
         // a, b, c by category; d by hand; a is both and counts once.
-        assertEquals("Mixed · 4 apps", rows.single().title)
+        assertEquals("Mixed · 4 apps", rows.single().title?.en())
     }
 
     @Test
     fun `a category with no installed apps gives an empty group`() {
         val cat = anAppGroup("News", id = 3, categories = "NEWS")
-        assertEquals("News · 0 apps", rows(listOf(cat), emptyList(), emptyList()).single().title)
+        assertEquals("News · 0 apps", rows(listOf(cat), emptyList(), emptyList()).single().title?.en())
     }
 }

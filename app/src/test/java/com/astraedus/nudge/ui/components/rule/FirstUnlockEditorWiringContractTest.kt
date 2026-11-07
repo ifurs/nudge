@@ -42,7 +42,8 @@ class FirstUnlockEditorWiringContractTest {
             )
             assertTrue(
                 "$path must challenge a weakening change",
-                text.contains("strictModeGate.run(prompt = \"Change when your day starts\"")
+                text.contains("strictModeGate.run(prompt = \"Change when your day starts\"") ||
+                    text.contains("strictModeGate.run(prompt = R.string.components_prompt_day_start")
             )
             assertTrue(
                 "$path must not call setDayStartMinute on the preferences itself",

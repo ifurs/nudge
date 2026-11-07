@@ -1,5 +1,6 @@
 package com.astraedus.nudge.service
 
+import com.astraedus.nudge.ui.text.resolve
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -33,11 +34,12 @@ object BounceCheckInNotifier {
 
     fun notify(context: Context, alert: BounceAlert) {
         createChannel(context)
+        val body = alert.bodyText().resolve(context)
 
         val notification = NotificationCompat.Builder(context, BOUNCE_CHANNEL_ID)
-            .setContentTitle(alert.title)
-            .setContentText(alert.body)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(alert.body))
+            .setContentTitle(alert.titleText().resolve(context))
+            .setContentText(body)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setSmallIcon(android.R.drawable.ic_popup_reminder)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)

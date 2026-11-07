@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.settings
 
+import com.astraedus.nudge.testing.enString
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -34,6 +35,6 @@ class BounceCheckInRowCopyTest {
 
     @Test
     fun `the row is named the way the owner named it`() {
-        assertEquals("Bro. wtf.", BOUNCE_ROW_TITLE)
+        assertEquals("Bro. wtf.", enString(BOUNCE_ROW_TITLE))
     }
 }

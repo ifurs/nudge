@@ -1,5 +1,8 @@
 package com.astraedus.nudge.ui.screens.home
 
+import com.astraedus.nudge.R
+import com.astraedus.nudge.domain.text.UiText
+import com.astraedus.nudge.ui.text.asString
 import android.text.format.DateFormat
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -43,13 +46,13 @@ import java.util.Date
 data class LockCard(
     val ruleId: Long,
     /** "All apps except Spotify, Maps"; the card reads "<title> are blocked". */
-    val title: String,
+    val title: UiText,
     val untilMs: Long?
 ) {
-    val headline: String get() = "$title are blocked"
+    val headline: UiText get() = UiText.of(R.string.components_lockcard_headline, title)
 
     /** "Until 8:42 AM", with [formatClock] turning the end into the user's 12/24-hour text. */
-    fun untilText(formatClock: (Long) -> String): String? =
+    fun untilText(formatClock: (Long) -> String): UiText? =
         untilMs?.let { RuleSummary.untilText(formatClock(it)) }
 }
 
@@ -113,13 +116,15 @@ fun LockCardTile(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val until = card.untilText { DateFormat.getTimeFormat(context).format(Date(it)) }
+    val until = card.untilText { DateFormat.getTimeFormat(context).format(Date(it)) }?.asString()
+    val headline = card.headline.asString()
+    val openLabel = card.title.asString()
     val contentColor = MaterialTheme.colorScheme.onSurfaceVariant
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick, onClickLabel = card.title)
-            .semantics { contentDescription = listOfNotNull(card.headline, until).joinToString(". ") },
+            .clickable(onClick = onClick, onClickLabel = openLabel)
+            .semantics { contentDescription = listOfNotNull(headline, until).joinToString(". ") },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Row(
@@ -135,7 +140,7 @@ fun LockCardTile(
             Spacer(Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    card.headline,
+                    card.headline.asString(),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Medium,
                     color = contentColor

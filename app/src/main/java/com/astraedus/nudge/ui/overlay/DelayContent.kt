@@ -1,5 +1,9 @@
 package com.astraedus.nudge.ui.overlay
 
+import com.astraedus.nudge.ui.text.asString
+import com.astraedus.nudge.domain.text.UiText
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.rememberScrollState
@@ -43,8 +47,8 @@ fun DelayContent(
     appLabel: String? = null,
     dailyTimeRemainingMs: Long? = null,
     dailyLimitMinutes: Int? = null,
-    titlePool: List<String> = NudgeMessages.delayTitles,
-    subtitlePool: List<String> = NudgeMessages.delaySubtitles,
+    titlePool: List<String> = NudgeMessages.delayTitles(),
+    subtitlePool: List<String> = NudgeMessages.delaySubtitles(),
     canUseEmergencyPass: Boolean = false,
     emergencyLocked: Boolean = false,
     nextPassMs: Long = 0L,
@@ -116,7 +120,7 @@ fun DelayContent(
                 )
                 if (dailyTimeRemainingMs != null && dailyLimitMinutes != null && dailyLimitMinutes > 0) {
                     Text(
-                        text = "${formatDuration(dailyTimeRemainingMs)} left today",
+                        text = stringResource(R.string.overlay_left_today, formatDuration(dailyTimeRemainingMs)),
                         style = MaterialTheme.typography.bodyMedium,
                         color = timeRemainingColor(dailyTimeRemainingMs, dailyLimitMinutes)
                     )
@@ -186,16 +190,20 @@ fun DelayContent(
     }
 }
 
-internal fun formatDuration(ms: Long): String {
-    if (ms <= 0) return "0m"
+/** "0m", "5m", "1h 30m": the time left in a budget, as text the user's language decides. */
+internal fun durationText(ms: Long): UiText {
+    if (ms <= 0) return UiText.of(R.string.components_duration_short_minutes, 0)
     val totalMinutes = ms / 60_000
     val hours = totalMinutes / 60
     val minutes = totalMinutes % 60
     return when {
-        hours > 0 -> "${hours}h ${minutes}m"
-        else -> "${minutes}m"
+        hours > 0 -> UiText.of(R.string.components_duration_short_hours_minutes, hours.toInt(), minutes.toInt())
+        else -> UiText.of(R.string.components_duration_short_minutes, minutes.toInt())
     }
 }
+
+@Composable
+internal fun formatDuration(ms: Long): String = durationText(ms).asString()
 
 @Composable
 internal fun timeRemainingColor(remainingMs: Long, limitMinutes: Int): androidx.compose.ui.graphics.Color {

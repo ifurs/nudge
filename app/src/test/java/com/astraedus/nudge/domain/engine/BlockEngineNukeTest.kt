@@ -1,5 +1,6 @@
 package com.astraedus.nudge.domain.engine
 
+import com.astraedus.nudge.domain.model.RuleLabel
 import com.astraedus.nudge.domain.engine.FirstUnlockState
 import com.astraedus.nudge.domain.model.ActiveRule
 import com.astraedus.nudge.domain.model.BlockDecision
@@ -29,7 +30,7 @@ class BlockEngineNukeTest {
      * A user rule carrying everything a Nuke block must NOT inherit: a delay, grayscale, a name and
      * the tab cover. Each set is explicit on purpose, whatever the shipped defaults are.
      */
-    private val userRule = anActiveRule(delaySeconds = 30, grayscale = true, ruleName = "User rule", tabVanish = true)
+    private val userRule = anActiveRule(delaySeconds = 30, grayscale = true, ruleName = RuleLabel.named("User rule"), tabVanish = true)
 
     /** Every rule shape the engine can see, including none at all. */
     private fun ruleSets(): List<List<ActiveRule>> {
@@ -79,7 +80,7 @@ class BlockEngineNukeTest {
         assertFalse(decision.tabVanish)
         assertEquals(null, decision.dailyLimitMinutes)
         assertEquals(null, decision.dailyTimeRemainingMs)
-        assertEquals(BlockEngine.NUKE_RULE_NAME, decision.ruleName)
+        assertEquals(BlockEngine.NUKE_RULE_LABEL, decision.ruleName)
     }
 
     @Test

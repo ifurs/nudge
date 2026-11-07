@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="groups_new_group">Нова група</string>
+    <string name="groups_name_label">Назва</string>
+    <string name="groups_apps">Застосунки</string>
+    <string name="groups_apps_count">Застосунки · %1$d</string>
+    <string name="groups_discard_title">Скасувати зміни?</string>
+    <string name="groups_discard">Скасувати</string>
+    <string name="groups_keep_editing">Продовжити редагування</string>
+    <string name="groups_delete_title">Видалити цю групу?</string>
+    <string name="groups_delete_body">Її застосунки більше не блокуватимуться цією групою.</string>
+    <string name="groups_delete_group">Видалити групу</string>
+    <string name="groups_prompt_delete_group">Видалити цю групу</string>
+    <string name="groups_chip_new_apps_join">Нові застосунки з цих категорій додаються автоматично.</string>
+    <plurals name="groups_chip_description">
+        <item quantity="one">%1$s, %2$d застосунок</item>
+        <item quantity="few">%1$s, %2$d застосунки</item>
+        <item quantity="many">%1$s, %2$d застосунків</item>
+        <item quantity="other">%1$s, %2$d застосунку</item>
+    </plurals>
+    <string name="groups_remove_member">Прибрати %1$s</string>
+    <string name="groups_removed_by_you">Прибрано вами · %1$d</string>
+    <string name="groups_hide">Сховати</string>
+    <string name="groups_show">Показати</string>
+    <string name="groups_add_back">Повернути</string>
+    <string name="groups_how">Як</string>
+    <string name="groups_when">Коли</string>
+    <string name="groups_custom_wait">Власний час очікування</string>
+    <string name="groups_daily_limit_each">Денний ліміт для кожного застосунку</string>
+    <string name="groups_custom_daily_limit">Власний денний ліміт</string>
+    <string name="groups_allowed_during">Дозволено під час</string>
+    <string name="groups_block_these_apps">Блокувати ці застосунки</string>
+
+    <string name="components_prompt_day_start">Змінити час початку дня</string>
+    <string name="components_prompt_save_weakening">Зберегти зміни, що послаблюють блокування</string>
+
+    <string name="allapps_title">Усі застосунки, крім кількох</string>
+    <string name="allapps_enabled">Увімкнено</string>
+    <string name="allapps_except_these">Крім цих</string>
+    <string name="allapps_delete_title">Видалити це правило?</string>
+    <string name="allapps_delete_body">Застосунки більше не блокуватимуться цим правилом.</string>
+    <string name="allapps_delete_rule">Видалити правило</string>
+    <string name="allapps_prompt_delete_rule">Видалити це правило</string>
+    <string name="allapps_remove_item">Прибрати %1$s</string>
+    <string name="allapps_always_title">Завжди дозволено</string>
+    <string name="allapps_always_body">Ці застосунки ніколи не блокуються групою чи правилом «Усі застосунки».</string>
+    <string name="allapps_confirm_block">Заблокувати</string>
+    <string name="allapps_confirm_body">Відкриватимуться лише вказані вами застосунки й важливі системні.</string>
+    <string name="allapps_own_rule">власне правило</string>
+    <string name="allapps_also_blocked_one">Також заблоковано: %1$s</string>
+    <string name="allapps_also_blocked_two">Також заблоковано: %1$s і %2$s</string>
+    <string name="allapps_also_blocked_many">Також заблоковано правилами: %1$d</string>
+    <plurals name="allapps_still_blocked">
+        <item quantity="one">%1$d ще заблоковано іншим правилом</item>
+        <item quantity="few">%1$d ще заблоковано іншими правилами</item>
+        <item quantity="many">%1$d ще заблоковано іншими правилами</item>
+        <item quantity="other">%1$d ще заблоковано іншими правилами</item>
+    </plurals>
+    <plurals name="allapps_blocks">
+        <item quantity="one">Блокує %1$d застосунок</item>
+        <item quantity="few">Блокує %1$d застосунки</item>
+        <item quantity="many">Блокує %1$d застосунків</item>
+        <item quantity="other">Блокує %1$d застосунку</item>
+    </plurals>
+    <plurals name="allapps_would_block">
+        <item quantity="one">Блокувало б %1$d застосунок</item>
+        <item quantity="few">Блокувало б %1$d застосунки</item>
+        <item quantity="many">Блокувало б %1$d застосунків</item>
+        <item quantity="other">Блокувало б %1$d застосунку</item>
+    </plurals>
+    <plurals name="allapps_confirm_title">
+        <item quantity="one">Заблокувати %1$d застосунок постійно?</item>
+        <item quantity="few">Заблокувати %1$d застосунки постійно?</item>
+        <item quantity="many">Заблокувати %1$d застосунків постійно?</item>
+        <item quantity="other">Заблокувати %1$d застосунку постійно?</item>
+    </plurals>
+    <string name="allapps_always_none">Завжди дозволено: ваші важливі застосунки</string>
+    <string name="allapps_always_one">Завжди дозволено: %1$s</string>
+    <string name="allapps_always_list">Завжди дозволено: %1$s і %2$s</string>
+    <string name="allapps_always_more">Завжди дозволено: %1$s і ще %2$d</string>
+</resources>

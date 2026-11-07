@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="service_autokick_cooldown_rule">Пауза після автовиходу</string>
+    <string name="service_autokick_cooldown_rule_site">Пауза після автовиходу — %1$s</string>
+
+    <string name="service_health_disabled_title">Nudge вимкнено</string>
+    <string name="service_health_disabled_body">Блокування вимкнено</string>
+    <string name="service_health_not_blocking_title">Nudge не блокує</string>
+    <string name="service_health_permission_body">Доступ до спеціальних можливостей вимкнено. Торкніться, щоб увімкнути.</string>
+    <string name="service_health_stopped_body">Телефон зупинив Nudge. Торкніться, щоб вимкнути й знову ввімкнути спеціальні можливості.</string>
+    <string name="service_health_active_title">Nudge працює</string>
+    <string name="service_health_active_body">Блокування ввімкнено</string>
+
+    <string name="service_bounce_title">Bro. wtf.</string>
+    <string name="service_bounce_body">Ви перемикаєтеся між %1$s за %2$s. Зробимо перерву?</string>
+    <plurals name="service_bounce_apps">
+        <item quantity="one">%1$d застосунком</item>
+        <item quantity="few">%1$d застосунками</item>
+        <item quantity="many">%1$d застосунками</item>
+        <item quantity="other">%1$d застосунка</item>
+    </plurals>
+    <plurals name="service_bounce_sites">
+        <item quantity="one">%1$d сайтом</item>
+        <item quantity="few">%1$d сайтами</item>
+        <item quantity="many">%1$d сайтами</item>
+        <item quantity="other">%1$d сайта</item>
+    </plurals>
+    <plurals name="service_bounce_minutes">
+        <item quantity="one">%1$d хвилину</item>
+        <item quantity="few">%1$d хвилини</item>
+        <item quantity="many">%1$d хвилин</item>
+        <item quantity="other">%1$d хвилини</item>
+    </plurals>
+
+    <string name="service_use_reminder_title">Ви вже %2$s у %1$s</string>
+    <string name="service_use_reminder_body">Просто нагадування. Це досі те, заради чого ви прийшли?</string>
+
+    <string name="service_counter_today">сьогодні: %1$d</string>
+    <string name="service_counter_taps">дотики</string>
+    <string name="service_counter_scrolls">прокрутки</string>
+    <string name="service_counter_videos">відео</string>
+    <string name="service_time_left">залишилось %1$s</string>
+    <string name="service_cover_blocked_by_nudge">Заблоковано Nudge</string>
+    <string name="service_cover_tab_blocked_by_nudge">%1$s: заблоковано Nudge</string>
+    <string name="service_cover_floating_body">Цей застосунок зараз заблоковано, разом із його плаваючим вікном.</string>
+    <string name="service_cover_close_window">Закрити вікно</string>
+    <string name="service_cover_label">%1$s: заблоковано — %2$s</string>
+    <string name="service_cover_this_tab">Ця вкладка</string>
+</resources>

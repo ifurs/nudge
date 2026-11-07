@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.apps
 
+import com.astraedus.nudge.domain.text.UiText
 import com.astraedus.nudge.MainDispatcherRule
 import com.astraedus.nudge.data.repository.InstalledAppsRepository.AppInfo
 import com.astraedus.nudge.data.db.entity.BlockRule
@@ -49,7 +50,7 @@ class AppListViewModelStrictModeTest {
     /** An app row as the sections build it: no rule, or a rule that is on / off. */
     private fun appRow(hasRule: Boolean, on: Boolean = false) = AppRow(
         appInfo = anApp(APP, "Example"),
-        summary = if (hasRule) "Delay 15s" else null,
+        summary = if (hasRule) UiText.Raw("Delay 15s") else null,
         isOn = on
     )
 
@@ -155,8 +156,8 @@ class AppListViewModelStrictModeTest {
 
     private fun groupRow(rule: BlockRule?) = GroupRow(
         groupId = 3L,
-        title = "Social · 2 apps",
-        summary = "Delay 15s",
+        title = UiText.Raw("Social · 2 apps"),
+        summary = UiText.Raw("Delay 15s"),
         blocking = rule?.enabled == true,
         rule = rule
     )
@@ -216,7 +217,7 @@ class AppListViewModelStrictModeTest {
     private val allAppsRule = aBlockRule(id = 8, allApps = true, mode = "HARD_BLOCK", enabled = true)
 
     private fun allAppsRow(rule: BlockRule) =
-        AllAppsRuleItem(rule.id, "All apps", "Hard Block", rule.enabled, rule)
+        AllAppsRuleItem(rule.id, UiText.Raw("All apps"), "All apps", UiText.Raw("Hard Block"), rule.enabled, rule)
 
     @Test
     fun `strict on - switching an All apps rule off waits for the challenge`() = runTest {

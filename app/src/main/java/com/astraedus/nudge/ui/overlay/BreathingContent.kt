@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.overlay
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -48,7 +50,7 @@ fun BreathingContent(
     appLabel: String? = null,
     dailyTimeRemainingMs: Long? = null,
     dailyLimitMinutes: Int? = null,
-    subtitlePool: List<String> = NudgeMessages.delaySubtitles,
+    subtitlePool: List<String> = NudgeMessages.delaySubtitles(),
     canUseEmergencyPass: Boolean = false,
     emergencyLocked: Boolean = false,
     nextPassMs: Long = 0L,
@@ -154,7 +156,7 @@ fun BreathingContent(
                 )
                 if (dailyTimeRemainingMs != null && dailyLimitMinutes != null && dailyLimitMinutes > 0) {
                     Text(
-                        text = "${formatDuration(dailyTimeRemainingMs)} left today",
+                        text = stringResource(R.string.overlay_left_today, formatDuration(dailyTimeRemainingMs)),
                         style = MaterialTheme.typography.bodyMedium,
                         color = timeRemainingColor(dailyTimeRemainingMs, dailyLimitMinutes)
                     )
@@ -163,7 +165,7 @@ fun BreathingContent(
             }
 
             Text(
-                text = if (isInhaling) "Breathe in..." else "Breathe out...",
+                text = stringResource(if (isInhaling) R.string.overlay_breathe_in else R.string.overlay_breathe_out),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center
@@ -221,7 +223,7 @@ fun BreathingContent(
 
             val remainingSeconds = ((1f - overallProgress) * delaySeconds).toInt()
             Text(
-                text = "${remainingSeconds}s remaining",
+                text = stringResource(R.string.overlay_seconds_remaining, remainingSeconds),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.outline
             )

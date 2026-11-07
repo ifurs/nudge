@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.overlay
 
+import com.astraedus.nudge.testing.en
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -61,20 +62,20 @@ class OverlayBlockInfoTest {
     fun `an All apps block shows the all apps title built from the except names`() {
         assertEquals(
             "All apps except Spotify, Maps",
-            OverlayBlockInfo.visibleRuleName("All apps", true, listOf("Spotify", "Maps"))
+            OverlayBlockInfo.visibleRuleName("All apps", true, listOf("Spotify", "Maps"))?.en()
         )
-        assertEquals("All apps", OverlayBlockInfo.visibleRuleName("All apps", true, emptyList()))
+        assertEquals("All apps", OverlayBlockInfo.visibleRuleName("All apps", true, emptyList())?.en())
     }
 
     @Test
     fun `a normal block keeps the name the service sent`() {
-        assertEquals("Social", OverlayBlockInfo.visibleRuleName("Social", false, listOf("ignored")))
+        assertEquals("Social", OverlayBlockInfo.visibleRuleName("Social", false, listOf("ignored"))?.en())
         assertNull(OverlayBlockInfo.visibleRuleName(null, false, emptyList()))
     }
 
     @Test
     fun `until line is present only when the block carries an end time`() {
-        assertEquals("Until 8:42 AM", OverlayBlockInfo.untilLine(123L) { "8:42 AM" })
+        assertEquals("Until 8:42 AM", OverlayBlockInfo.untilLine(123L) { "8:42 AM" }?.en())
         assertNull(OverlayBlockInfo.untilLine(null) { error("must not format without an end time") })
     }
 

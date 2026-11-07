@@ -1,5 +1,8 @@
 package com.astraedus.nudge.ui.nuke
 
+import com.astraedus.nudge.ui.text.asString
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -50,17 +53,18 @@ fun NukeUnlockHost(
     val context = LocalContext.current
     val hasCamera = remember { hasAnyCamera(context) }
     val active = state ?: return
+    val promptText = active.prompt.asString()
+    val scanTitle = stringResource(R.string.nuke_unlock_scan_title)
 
     val target = active.emergencyTarget
     if (target != null) {
         ChallengeDialog(
             target = target,
-            title = "Emergency: end Nuke",
-            prompt = "${active.prompt}. No code on you? Type all ${NukeEmergencyCode.LENGTH} " +
-                "characters below, exactly. Every attempt gets a new one.",
+            title = stringResource(R.string.nuke_unlock_emergency_title),
+            prompt = stringResource(R.string.nuke_unlock_emergency_prompt, promptText, NukeEmergencyCode.LENGTH),
             onUnlock = onVerifyEmergency,
             onCancel = onBackToChoice,
-            confirmLabel = "End it"
+            confirmLabel = stringResource(R.string.nuke_unlock_emergency_confirm)
         )
         return
     }
@@ -68,25 +72,24 @@ fun NukeUnlockHost(
     AlertDialog(
         onDismissRequest = onCancel,
         icon = { Icon(Icons.Outlined.QrCodeScanner, contentDescription = null) },
-        title = { Text("Nuke is on") },
+        title = { Text(stringResource(R.string.nuke_unlock_title)) },
         text = {
             Column {
                 Text(
                     if (hasCamera) {
-                        "${active.prompt}? That needs your Nuke code. Go and get it, and scan it here."
+                        stringResource(R.string.nuke_unlock_needs_code, promptText)
                     } else {
-                        "${active.prompt}? That needs your Nuke code, and this phone has no camera " +
-                            "to scan it with. The emergency code is the way out."
+                        stringResource(R.string.nuke_unlock_needs_code_no_camera, promptText)
                     },
                     style = MaterialTheme.typography.bodyMedium
                 )
                 active.error?.let {
                     Spacer(Modifier.height(12.dp))
-                    Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium)
+                    Text(it.asString(), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium)
                 }
                 Spacer(Modifier.height(12.dp))
                 TextButton(onClick = onUseEmergencyCode) {
-                    Text("No code on you? Type the emergency code")
+                    Text(stringResource(R.string.nuke_unlock_use_emergency))
                 }
             }
         },
@@ -94,14 +97,14 @@ fun NukeUnlockHost(
             TextButton(
                 enabled = hasCamera,
                 onClick = {
-                    scanner.launch(ScanQrContract.Request(title = "Scan your Nuke code", subtitle = active.prompt))
+                    scanner.launch(ScanQrContract.Request(title = scanTitle, subtitle = promptText))
                 }
             ) {
-                Text("Scan code")
+                Text(stringResource(R.string.nuke_unlock_scan))
             }
         },
         dismissButton = {
-            TextButton(onClick = onCancel) { Text("Never mind") }
+            TextButton(onClick = onCancel) { Text(stringResource(R.string.nuke_unlock_never_mind)) }
         }
     )
 }

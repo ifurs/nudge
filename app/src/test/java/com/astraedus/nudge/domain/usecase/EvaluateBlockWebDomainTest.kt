@@ -1,5 +1,6 @@
 package com.astraedus.nudge.domain.usecase
 
+import com.astraedus.nudge.testing.en
 import com.astraedus.nudge.domain.engine.FirstUnlockState
 import com.astraedus.nudge.data.repository.ContentFilter
 import com.astraedus.nudge.domain.engine.BlockEngine
@@ -121,7 +122,7 @@ class EvaluateBlockWebDomainTest {
         val result = useCase.evaluateWebDomain("https://www.instagram.com/reels")
 
         assertTrue(result.decision is BlockDecision.Block)
-        assertEquals("Restricted content", (result.decision as BlockDecision.Block).ruleName)
+        assertEquals("Restricted content", (result.decision as BlockDecision.Block).ruleName.en())
     }
 
     @Test
@@ -143,7 +144,7 @@ class EvaluateBlockWebDomainTest {
         val result = useCase.evaluateWebDomain("https://example.com")
 
         assertTrue(result.decision is BlockDecision.Block)
-        assertEquals("Restricted content", (result.decision as BlockDecision.Block).ruleName)
+        assertEquals("Restricted content", (result.decision as BlockDecision.Block).ruleName.en())
     }
 
     @Test
@@ -171,7 +172,7 @@ class EvaluateBlockWebDomainTest {
         val result = useCase.evaluateWebDomain("https://www.instagram.com/reels")
 
         assertTrue(result.decision is BlockDecision.Block)
-        assertEquals("Web - Hard Block", (result.decision as BlockDecision.Block).ruleName)
+        assertEquals("Web - Hard Block", (result.decision as BlockDecision.Block).ruleName.en())
     }
 
     @Test

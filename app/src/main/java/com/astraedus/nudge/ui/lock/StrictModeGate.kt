@@ -1,6 +1,8 @@
 package com.astraedus.nudge.ui.lock
 
+import androidx.annotation.StringRes
 import com.astraedus.nudge.data.preferences.NudgePreferences
+import com.astraedus.nudge.domain.text.UiText
 import com.astraedus.nudge.domain.lock.ChallengeState
 import com.astraedus.nudge.domain.lock.StrictModeChallenge
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +38,7 @@ class StrictModeGate(
      *
      * @param prompt short description of what is being unlocked, shown in the dialog.
      */
-    suspend fun run(prompt: String, action: suspend () -> Unit) {
+    suspend fun run(prompt: UiText, action: suspend () -> Unit) {
         if (!preferences.isStrictModeEnabled.first()) {
             action()
             return
@@ -48,6 +50,12 @@ class StrictModeGate(
             prompt = prompt
         )
     }
+
+    /** [run] with a prompt that is a string resource, resolved in the dialog's language. */
+    suspend fun run(@StringRes prompt: Int, action: suspend () -> Unit) = run(UiText.of(prompt), action)
+
+    /** [run] with a prompt that is already text (not translated). */
+    suspend fun run(prompt: String, action: suspend () -> Unit) = run(UiText.Raw(prompt), action)
 
     /**
      * Verify [input] against the active challenge. On exact match, runs and clears the pending

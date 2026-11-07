@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.home
 
+import com.astraedus.nudge.ui.text.asString
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -127,7 +128,7 @@ private fun TopBlockedRow(
             .fillMaxWidth()
             .clickable(
                 onClick = onClick,
-                onClickLabel = stringResource(R.string.home_top_blocked_row_open, app.label)
+                onClickLabel = stringResource(R.string.home_top_blocked_row_open, app.label.asString())
             )
             .defaultMinSize(minHeight = ROW_MIN_HEIGHT)
             .padding(vertical = 6.dp),
@@ -155,7 +156,7 @@ private fun TopBlockedRow(
         }
 
         Text(
-            app.label,
+            app.label.asString(),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Medium,
             maxLines = 1,

@@ -1,5 +1,8 @@
 package com.astraedus.nudge.service
 
+import com.astraedus.nudge.ui.text.resolve
+import com.astraedus.nudge.ui.text.DurationText
+import com.astraedus.nudge.R
 import android.content.Context
 import android.graphics.Color
 import android.graphics.PixelFormat
@@ -80,7 +83,10 @@ class TimeRemainingOverlayManager @Inject constructor(
         if (!isShowing) show()
 
         val tv = timeText ?: return
-        tv.text = "${CounterOverlayManager.formatCompactDuration(remainingMs)} left"
+        tv.text = appContext.getString(
+            R.string.service_time_left,
+            DurationText.compact(remainingMs).resolve(appContext)
+        )
 
         val limitMs = limitMinutes.toLong() * 60L * 1000L
         val pct = if (limitMs > 0) remainingMs.toFloat() / limitMs else 1f

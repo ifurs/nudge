@@ -1,5 +1,8 @@
 package com.astraedus.nudge.ui.screens.allapps
 
+import com.astraedus.nudge.domain.text.UiText
+import com.astraedus.nudge.testing.en
+import com.astraedus.nudge.testing.RuleSummaryEn as RuleSummary
 import com.astraedus.nudge.testing.aGroupMember
 import com.astraedus.nudge.testing.aGroupRule
 import com.astraedus.nudge.testing.anApp
@@ -30,6 +33,31 @@ import org.junit.Test
  * apps that cannot be opened.
  */
 class AllAppsCoverageTest {
+
+    // The production functions return typed text; these members shadow them with the English reading,
+    // so every assertion below still pins the sentence a user reads (and the copy in strings_groups.xml).
+    private fun alsoBlockedBy(
+        packageName: String,
+        otherRules: List<com.astraedus.nudge.domain.model.BlockRuleData>,
+        tables: RuleTables,
+        device: DeviceApps
+    ): List<String> =
+        com.astraedus.nudge.ui.screens.allapps.alsoBlockedBy(packageName, otherRules, tables, device).map { it.en() }
+
+    private fun alsoBlockedByText(names: List<String>): String? =
+        com.astraedus.nudge.ui.screens.allapps.alsoBlockedByText(names.map { UiText.Raw(it) })?.en()
+
+    private fun stillBlockedText(count: Int): String? =
+        com.astraedus.nudge.ui.screens.allapps.stillBlockedText(count)?.en()
+
+    private fun blocksText(count: Int, enabled: Boolean): String =
+        com.astraedus.nudge.ui.screens.allapps.blocksText(count, enabled).en()
+
+    private fun confirmTitle(count: Int): String = com.astraedus.nudge.ui.screens.allapps.confirmTitle(count).en()
+
+    private fun alwaysAllowedText(labels: List<String>): String =
+        com.astraedus.nudge.ui.screens.allapps.alwaysAllowedText(labels).en()
+
 
     private fun count(rule: com.astraedus.nudge.data.db.entity.BlockRule) = blockedCount(rule, tables(), device)
 
@@ -100,7 +128,7 @@ class AllAppsCoverageTest {
     fun `an All apps rule is named with the same title every other screen uses`() {
         val other = allAppsRule(id = 12, allowedPackages = listOf(GAME, GONE), allowedGroupIds = listOf(WORK, DELETED))
         val t = tables(listOf(other))
-        val title = com.astraedus.nudge.ui.components.rule.RuleSummary.allAppsTitle(
+        val title = RuleSummary.allAppsTitle(
             other, t.groupNames, device.labels
         )
         assertEquals(listOf(title), alsoBlockedBy(CHAT, t.otherRules(null), t, device))

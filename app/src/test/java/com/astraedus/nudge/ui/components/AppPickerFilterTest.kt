@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.components
 
+import com.astraedus.nudge.testing.en
 import com.astraedus.nudge.data.repository.InstalledAppsRepository.AppInfo
 import com.astraedus.nudge.testing.anApp
 import org.junit.Assert.assertEquals
@@ -48,8 +49,8 @@ class AppPickerFilterTest {
 
     @Test
     fun titleReflectsCount() {
-        assertEquals("Add apps", pickerTitle(0))
-        assertEquals("1 selected", pickerTitle(1))
-        assertEquals("3 selected", pickerTitle(3))
+        assertEquals("Add apps", pickerTitle(0).en())
+        assertEquals("1 selected", pickerTitle(1).en())
+        assertEquals("3 selected", pickerTitle(3).en())
     }
 }

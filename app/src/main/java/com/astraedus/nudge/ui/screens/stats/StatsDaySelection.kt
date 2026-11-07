@@ -1,10 +1,10 @@
 package com.astraedus.nudge.ui.screens.stats
 
 import androidx.compose.runtime.Immutable
+import com.astraedus.nudge.R
+import com.astraedus.nudge.domain.text.UiText
 import java.time.LocalDate
-import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
-import java.util.Locale
 
 /**
  * The ONE answer to "which day is the user looking at" on the day-scoped stats screens
@@ -97,29 +97,24 @@ data class StatsDaySelection(
 object StatsDateLabels {
 
     /** "Today" / "Yesterday" / "Thu, Aug 21". */
-    fun day(date: LocalDate, today: LocalDate): String = when (date) {
-        today -> "Today"
-        today.minusDays(1) -> "Yesterday"
+    fun day(date: LocalDate, today: LocalDate): UiText = when (date) {
+        today -> UiText.of(R.string.stats_today)
+        today.minusDays(1) -> UiText.of(R.string.stats_yesterday)
         else -> full(date)
     }
 
-    /** Always the explicit date: "Thu, Aug 21". */
-    fun full(date: LocalDate): String {
-        val dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-        val month = date.month.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-        return "$dayOfWeek, $month ${date.dayOfMonth}"
-    }
+    /** Always the explicit date: "Thu, Aug 21", worded by the locale when the text is resolved. */
+    fun full(date: LocalDate): UiText = UiText.Date(date, weekday = true)
 
     /**
      * Label for the 7-day window a chart is drawing. The current window gets the plain-English
      * "Last 7 days"; a scrolled-back window gets explicit dates, because that is exactly when
      * the user needs to know they are not looking at now.
      */
-    fun range(start: LocalDate, end: LocalDate, today: LocalDate): String =
-        if (end == today) "Last 7 days" else "${shortDate(start)} – ${shortDate(end)}"
-
-    private fun shortDate(date: LocalDate): String {
-        val month = date.month.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-        return "$month ${date.dayOfMonth}"
-    }
+    fun range(start: LocalDate, end: LocalDate, today: LocalDate): UiText =
+        if (end == today) {
+            UiText.of(R.string.stats_last_7_days)
+        } else {
+            UiText.of(R.string.stats_date_range, UiText.Date(start), UiText.Date(end))
+        }
 }

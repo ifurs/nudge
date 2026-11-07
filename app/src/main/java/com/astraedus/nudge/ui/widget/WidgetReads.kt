@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.widget
 
+import com.astraedus.nudge.ui.text.resolve
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.core.graphics.drawable.toBitmap
@@ -50,7 +51,8 @@ object WidgetReads {
             // `formatDayTotal`, not `formatDuration`: it is the one function that decides how a
             // day's screen time is worded, including the "< 1m" case. A second formatting rule is
             // how the same quantity came to read "< 1m" on one screen and "0s" on another.
-            screenTimeFormatted = StatsViewModel.formatDayTotal(weekly.totalOn(dayStart), timeTracker),
+            screenTimeFormatted = StatsViewModel.formatDayTotal(weekly.totalOn(dayStart), timeTracker)
+                .resolve(deps.appContext()),
             // The SAME query the dashboard's Blocked tile observes, so the widget and the tile it
             // mirrors cannot report one number two ways — and it counts SHOWN confrontations, so
             // neither of them counts a walk-away twice.
@@ -92,7 +94,7 @@ object WidgetReads {
             stat.packageName to insights.appDisplayLabel(
                 packageName = stat.packageName,
                 resolvedName = apps.resolveAppName(stat.packageName)
-            )
+            ).resolve(deps.appContext())
         }
         val icons = stats.mapNotNull { stat ->
             // An icon is decoration; a missing or undecodable one must cost the row nothing. The

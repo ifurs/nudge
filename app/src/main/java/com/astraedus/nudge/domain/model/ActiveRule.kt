@@ -10,7 +10,7 @@ data class ActiveRule(
     val scheduleEndMinute: Int? = null,
     val inAppFeatures: List<String>? = null,
     val grayscale: Boolean = false,
-    val ruleName: String? = null,
+    val ruleName: RuleLabel? = null,
     /** See [com.astraedus.nudge.data.db.entity.BlockRule.tabVanish]. */
     val tabVanish: Boolean = true,
     /** See [com.astraedus.nudge.data.db.entity.BlockRule.followingSteer]. */

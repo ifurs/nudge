@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.home
 
+import com.astraedus.nudge.domain.text.UiText
 import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.compose.runtime.Immutable
@@ -64,7 +65,7 @@ import kotlinx.coroutines.launch
 @Immutable
 data class TopBlockedApp(
     val packageName: String,
-    val label: String,
+    val label: UiText,
     val icon: ImageBitmap?,
     val count: Int
 )
@@ -72,7 +73,7 @@ data class TopBlockedApp(
 @Immutable
 data class HomeUiState(
     val isGlobalEnabled: Boolean = true,
-    val todayTotalUsageFormatted: String = "0s",
+    val todayTotalUsageFormatted: UiText = com.astraedus.nudge.ui.text.DurationText.of(0L),
     val activeAppCount: Int = 0,
     /**
      * The "Blocked" tiles: confrontations the user was SHOWN, each counted once. A walk-away is a

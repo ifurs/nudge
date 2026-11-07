@@ -1,5 +1,8 @@
 package com.astraedus.nudge.ui.components
 
+import com.astraedus.nudge.ui.text.asString
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -79,8 +82,8 @@ fun ChallengeDialog(
     onUnlock: (String) -> Unit,
     onCancel: () -> Unit,
     /** Nuke Mode reuses this dialog for its 64-character emergency code under its own title. */
-    title: String = "Strict Mode locked",
-    confirmLabel: String = "Unlock"
+    title: String = stringResource(R.string.components_challenge_title_strict),
+    confirmLabel: String = stringResource(R.string.components_challenge_unlock)
 ) {
     val focusManager = LocalFocusManager.current
     var input by remember(target) { mutableStateOf("") }
@@ -108,7 +111,7 @@ fun ChallengeDialog(
                 Text(
                     // Dashes are display-only grouping; input is dash-insensitive (typing
                     // with OR without the dashes both pass), so we must NOT claim "exactly".
-                    "Type the code to continue:",
+                    stringResource(R.string.components_challenge_type_code),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -132,7 +135,7 @@ fun ChallengeDialog(
                         value = input,
                         onValueChange = { input = it },
                         modifier = Modifier.fillMaxWidth(),
-                        label = { Text("Unlock code") },
+                        label = { Text(stringResource(R.string.components_challenge_code_label)) },
                         singleLine = false,
                         isError = input.isNotEmpty() && !matches && typedLength >= rawLength,
                         textStyle = TextStyle(fontFamily = FontFamily.Monospace),
@@ -158,7 +161,7 @@ fun ChallengeDialog(
                     )
                     if (input.isNotEmpty() && !matches && typedLength >= rawLength) {
                         Text(
-                            "Doesn't match",
+                            stringResource(R.string.components_challenge_no_match),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.error
                         )
@@ -176,7 +179,7 @@ fun ChallengeDialog(
         },
         dismissButton = {
             TextButton(onClick = onCancel) {
-                Text("I changed my mind")
+                Text(stringResource(R.string.components_challenge_changed_mind))
             }
         }
     )
@@ -196,7 +199,7 @@ fun StrictModeChallengeHost(
     challenge?.let {
         ChallengeDialog(
             target = it.target,
-            prompt = it.prompt,
+            prompt = it.prompt.asString(),
             onUnlock = { input -> onVerify(input) },
             onCancel = onCancel
         )

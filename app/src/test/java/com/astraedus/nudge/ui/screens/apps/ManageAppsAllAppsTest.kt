@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.apps
 
+import com.astraedus.nudge.testing.en
 import com.astraedus.nudge.data.db.entity.AppGroup
 import com.astraedus.nudge.data.db.entity.AppGroupMember
 import com.astraedus.nudge.data.db.entity.BlockRule
@@ -51,8 +52,8 @@ class ManageAppsAllAppsTest {
         val s = sections(rules = listOf(allApps, allAppsOff), groups = listOf(work))
 
         assertEquals(listOf(10L, 11L), s.allApps.map { it.ruleId })
-        assertEquals(listOf("All apps except Spotify", "All apps except Work"), s.allApps.map { it.title })
-        assertEquals(listOf("Hard Block", "Delay 15s"), s.allApps.map { it.summary })
+        assertEquals(listOf("All apps except Spotify", "All apps except Work"), s.allApps.map { it.title?.en() })
+        assertEquals(listOf("Hard Block", "Delay 15s"), s.allApps.map { it.summary?.en() })
         assertEquals(listOf(true, false), s.allApps.map { it.enabled })
     }
 
@@ -61,7 +62,7 @@ class ManageAppsAllAppsTest {
         val s = sections(rules = listOf(allApps), groups = listOf(work))
 
         assertTrue(s.appsWithRules.isEmpty())
-        assertTrue(s.groups.all { it.summary != "Hard Block" })
+        assertTrue(s.groups.all { it.summary.en() != "Hard Block" })
         assertEquals(installed.map { it.appName }, s.otherApps.map { it.appInfo.appName })
     }
 

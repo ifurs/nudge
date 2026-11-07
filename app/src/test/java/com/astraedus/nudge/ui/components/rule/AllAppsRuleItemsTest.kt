@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.components.rule
 
+import com.astraedus.nudge.testing.en
+import com.astraedus.nudge.testing.RuleSummaryEn as RuleSummary
 import com.astraedus.nudge.domain.model.BlockMode
 import com.astraedus.nudge.testing.aBlockRule
 import com.astraedus.nudge.testing.aBlockRuleData
@@ -28,7 +30,7 @@ class AllAppsRuleItemsTest {
     @Test
     fun `no exceptions - All apps`() {
         assertEquals("All apps", RuleSummary.allAppsTitle(listOf<String>()))
-        assertEquals("All apps", allAppsRuleItems(listOf(allAppsRule.copy(id = 1)), groups, labels).single().title)
+        assertEquals("All apps", allAppsRuleItems(listOf(allAppsRule.copy(id = 1)), groups, labels).single().title.en())
     }
 
     @Test
@@ -49,7 +51,7 @@ class AllAppsRuleItemsTest {
             labels
         ).single()
 
-        assertEquals("All apps except Family, Spotify", item.title)
+        assertEquals("All apps except Family, Spotify", item.title.en())
     }
 
     @Test
@@ -61,7 +63,7 @@ class AllAppsRuleItemsTest {
         )
 
         assertEquals(
-            allAppsRuleItems(listOf(row), groups, labels).single().title,
+            allAppsRuleItems(listOf(row), groups, labels).single().title.en(),
             RuleSummary.allAppsTitle(domain, labels)
         )
     }
@@ -108,7 +110,7 @@ class AllAppsRuleItemsTest {
 
         assertEquals(listOf(1L, 3L), allowed.map { it.ruleId })
         assertEquals(listOf(true, false), allowed.map { it.enabled })
-        assertEquals("All apps except Work", allowed.first().title)
+        assertEquals("All apps except Work", allowed.first().title.en())
     }
 
     @Test

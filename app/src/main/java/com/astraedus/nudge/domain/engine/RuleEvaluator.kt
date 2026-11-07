@@ -4,6 +4,7 @@ import com.astraedus.nudge.domain.model.ActiveRule
 import com.astraedus.nudge.domain.model.AllAppsBlock
 import com.astraedus.nudge.domain.model.BlockMode
 import com.astraedus.nudge.domain.model.BlockRuleData
+import com.astraedus.nudge.domain.model.RuleLabel
 import com.astraedus.nudge.domain.groups.GroupMembershipResolver
 import com.astraedus.nudge.domain.model.RuleTarget
 import javax.inject.Inject
@@ -78,69 +79,34 @@ class RuleEvaluator @Inject constructor() {
     }
 
     /**
-     * Build a human-readable label describing what a rule does. The block overlay shows it as
-     * "Rule: <name>".
-     * Examples: "Reels - Delay", "Hard Block (30 min/day)", "Shorts - Breathing (scheduled)",
-     * "Daily limit (30 min/day)" for a NONE rule that only caps usage.
+     * What a rule is called on the block screen's "Rule: <name>" line, as a [RuleLabel] (the UI
+     * layer words it). English readings: "Reels - Delay", "Hard Block (30 min/day)",
+     * "Shorts - Breathing (scheduled)", "Daily limit (30 min/day)" for a NONE rule that only caps
+     * usage.
      *
-     * An All apps rule is [ALL_APPS_NAME] ("All apps (scheduled)"); the block screen replaces it
-     * with "All apps except Spotify, Maps" from [AllAppsBlock].
+     * An All apps rule is [RuleLabel.Subject.AllApps] ("All apps (scheduled)"); the block screen
+     * replaces it with "All apps except Spotify, Maps" from [AllAppsBlock].
      *
      * A GROUP rule is named after its group instead of its mode: "Social", "Social (scheduled)",
      * "Social (30 min/day)". The user made "Social"; an overlay over Instagram that says "Delay"
      * reads as a rule on Instagram itself, which they never wrote. A group rule whose group name did
-     * not reach it (no group row) is [GROUP_FALLBACK_NAME], never a mode name, for the same reason.
+     * not reach it (no group row) is a [RuleLabel.Subject.Group] with a null name (the generic
+     * "Group"), never a mode name, for the same reason.
      */
-    internal fun buildRuleName(rule: BlockRuleData): String {
-        val parts = mutableListOf<String>()
-
-        // Feature prefix (e.g. "Reels", "Reels, Shorts")
-        val features = rule.inAppFeatures
-        if (!features.isNullOrEmpty()) {
-            parts += features.joinToString(", ") { feature ->
-                feature.replaceFirstChar { it.uppercaseChar() }
-            }
+    internal fun buildRuleName(rule: BlockRuleData): RuleLabel {
+        // A NONE rule blocks nothing itself, so the only way its label ever reaches an overlay is
+        // the daily-limit path (the subject says so, and the UI calls it "Daily limit").
+        val subject = when (RuleTarget.of(rule)) {
+            is RuleTarget.Group -> RuleLabel.Subject.Group(rule.groupName?.takeIf { it.isNotBlank() })
+            // The block screen spells out the allowed apps by label (it has the PackageManager).
+            is RuleTarget.AllApps -> RuleLabel.Subject.AllApps
+            is RuleTarget.App, null -> RuleLabel.Subject.Mode(rule.mode, capsUsage = rule.dailyLimitMinutes != null)
         }
-
-        // Mode name. A NONE rule blocks nothing itself, so the only way its label ever reaches an
-        // overlay is the daily-limit path — call it what the user will actually be seeing.
-        val modeName = when (rule.mode) {
-            BlockMode.NONE -> if (rule.dailyLimitMinutes != null) "Daily limit" else "No block"
-            BlockMode.HARD_BLOCK -> "Hard Block"
-            BlockMode.DELAY -> "Delay"
-            BlockMode.HOLD -> "Hold"
-            BlockMode.BREATHING -> "Breathing"
-        }
-        parts += when (RuleTarget.of(rule)) {
-            is RuleTarget.Group -> rule.groupName?.takeIf { it.isNotBlank() } ?: GROUP_FALLBACK_NAME
-            // The block screen spells out the allowed apps by label (it has the PackageManager);
-            // this is the name logs and every other reader see.
-            is RuleTarget.AllApps -> ALL_APPS_NAME
-            is RuleTarget.App, null -> modeName
-        }
-
-        // Qualifiers
-        val qualifiers = mutableListOf<String>()
-        if (rule.scheduleDays != null) {
-            qualifiers += "scheduled"
-        }
-        if (rule.dailyLimitMinutes != null) {
-            qualifiers += "${rule.dailyLimitMinutes} min/day"
-        }
-
-        val label = parts.joinToString(" - ")
-        return if (qualifiers.isNotEmpty()) {
-            "$label (${qualifiers.joinToString(", ")})"
-        } else {
-            label
-        }
-    }
-
-    companion object {
-        /** The label of a group rule whose group name is unknown. */
-        const val GROUP_FALLBACK_NAME = "Group"
-
-        /** The label of an All apps rule in the engine (the block screen adds the allowed names). */
-        const val ALL_APPS_NAME = "All apps"
+        return RuleLabel(
+            subject = subject,
+            features = rule.inAppFeatures.orEmpty(),
+            scheduled = rule.scheduleDays != null,
+            dailyLimitMinutes = rule.dailyLimitMinutes
+        )
     }
 }

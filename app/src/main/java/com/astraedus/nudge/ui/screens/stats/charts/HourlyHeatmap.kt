@@ -1,5 +1,10 @@
 package com.astraedus.nudge.ui.screens.stats.charts
 
+import com.astraedus.nudge.ui.text.rememberTextResolver
+import com.astraedus.nudge.ui.text.HourText
+import com.astraedus.nudge.domain.text.UiText
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -32,17 +37,18 @@ import androidx.compose.ui.unit.sp
 fun HourlyHeatmap(
     hourlyMs: List<Long>,
     modifier: Modifier = Modifier,
-    formatDuration: (Long) -> String = { ms ->
+    formatDuration: (Long) -> UiText = { ms ->
         val h = ms / 3_600_000
         val m = (ms % 3_600_000) / 60_000
         when {
-            h > 0L -> "${h}h ${m}m"
-            m > 0L -> "${m}m"
-            ms > 0L -> "< 1m"
-            else -> "0m"
+            h > 0L -> UiText.of(R.string.components_duration_short_hours_minutes, h, m)
+            m > 0L -> UiText.of(R.string.components_duration_short_minutes, m)
+            ms > 0L -> UiText.of(R.string.components_duration_under_minute)
+            else -> UiText.of(R.string.components_duration_short_minutes, 0)
         }
     }
 ) {
+    val resolver = rememberTextResolver()
     val primaryColor = MaterialTheme.colorScheme.primary
     val surfaceVariantColor = MaterialTheme.colorScheme.surfaceVariant
     val onSurfaceVariant = MaterialTheme.colorScheme.onSurfaceVariant
@@ -64,7 +70,7 @@ fun HourlyHeatmap(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    "No usage recorded today",
+                    stringResource(R.string.stats_hourly_empty),
                     style = MaterialTheme.typography.bodySmall,
                     color = onSurfaceVariant
                 )
@@ -72,9 +78,9 @@ fun HourlyHeatmap(
         } else {
             if (selectedIndex != null) {
                 val ms = hourlyMs.getOrElse(selectedIndex!!) { 0L }
-                val hourLabel = formatHourLabel(selectedIndex!!)
+                val hourLabel = HourText.of(selectedIndex!!).resolve(resolver)
                 Text(
-                    "$hourLabel: ${formatDuration(ms)}",
+                    "$hourLabel: ${formatDuration(ms).resolve(resolver)}",
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary,
@@ -144,19 +150,16 @@ fun HourlyHeatmap(
                     .padding(top = 2.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("12am", style = MaterialTheme.typography.labelSmall, color = onSurfaceVariant, fontSize = 9.sp)
-                Text("6am", style = MaterialTheme.typography.labelSmall, color = onSurfaceVariant, fontSize = 9.sp)
-                Text("12pm", style = MaterialTheme.typography.labelSmall, color = onSurfaceVariant, fontSize = 9.sp)
-                Text("6pm", style = MaterialTheme.typography.labelSmall, color = onSurfaceVariant, fontSize = 9.sp)
-                Text("12am", style = MaterialTheme.typography.labelSmall, color = onSurfaceVariant, fontSize = 9.sp)
+                listOf(0, 6, 12, 18, 0).forEach { hour ->
+                    Text(
+                        HourText.of(hour).resolve(resolver),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = onSurfaceVariant,
+                        fontSize = 9.sp
+                    )
+                }
             }
         }
     }
 }
 
-private fun formatHourLabel(hour: Int): String = when (hour) {
-    0 -> "12am"
-    in 1..11 -> "${hour}am"
-    12 -> "12pm"
-    else -> "${hour - 12}pm"
-}

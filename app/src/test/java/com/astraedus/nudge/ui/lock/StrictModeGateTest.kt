@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.lock
 
+import com.astraedus.nudge.domain.text.UiText
 import com.astraedus.nudge.domain.lock.ChallengeState
 import com.astraedus.nudge.domain.lock.LockedToggle
 import com.astraedus.nudge.domain.lock.SettingsWeakening
@@ -54,7 +55,7 @@ class StrictModeGateTest {
         assertFalse("action must NOT run until the challenge passes", ran)
         val challenge = gate.challenge.value
         assertNotNull("a challenge should be pending", challenge)
-        assertEquals("Turn off blocking", challenge!!.prompt)
+        assertEquals(UiText.Raw("Turn off blocking"), challenge!!.prompt)
         assertEquals(StrictModeChallenge.DEFAULT_LENGTH, challenge.target.length)
     }
 

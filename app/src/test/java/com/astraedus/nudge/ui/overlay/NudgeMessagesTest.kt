@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.overlay
 
+import com.astraedus.nudge.testing.XmlTextResolver
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -11,18 +12,24 @@ class NudgeMessagesTest {
 
     @Test
     fun `message lists are non-empty`() {
-        assertFalse(NudgeMessages.delayTitles.isEmpty())
-        assertFalse(NudgeMessages.delaySubtitles.isEmpty())
-        assertFalse(NudgeMessages.hardBlockMessages.isEmpty())
+        for (resolver in listOf(XmlTextResolver.english, XmlTextResolver.ukrainian)) {
+            assertFalse(resolver.stringArray(NudgeMessages.DELAY_TITLES).isEmpty())
+            assertFalse(resolver.stringArray(NudgeMessages.DELAY_SUBTITLES).isEmpty())
+            assertFalse(resolver.stringArray(NudgeMessages.HARD_BLOCK_MESSAGES).isEmpty())
+        }
     }
 
     @Test
-    fun `getRandom returns a valid message`() {
-        repeat(20) {
-            val message = NudgeMessages.getRandom()
-
-            assertTrue(message.isNotBlank())
-            assertTrue(message in NudgeMessages.allMessages)
+    fun `both languages ship the same number of built-in messages`() {
+        for (array in listOf(
+            NudgeMessages.DELAY_TITLES,
+            NudgeMessages.DELAY_SUBTITLES,
+            NudgeMessages.HARD_BLOCK_MESSAGES
+        )) {
+            assertEquals(
+                XmlTextResolver.english.stringArray(array).size,
+                XmlTextResolver.ukrainian.stringArray(array).size
+            )
         }
     }
 

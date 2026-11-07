@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.components.rule
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -37,7 +39,7 @@ fun WaitTimeChips(
                 FilterChip(
                     selected = seconds == preset,
                     onClick = { onSelect(preset) },
-                    label = { Text("${preset}s") }
+                    label = { Text(stringResource(R.string.components_duration_short_seconds, preset)) }
                 )
             }
         }
@@ -55,20 +57,28 @@ fun WaitTimeChips(
             FilterChip(
                 selected = seconds == preset,
                 onClick = { onSelect(preset) },
-                label = { Text("${preset}s") }
+                label = { Text(stringResource(R.string.components_duration_short_seconds, preset)) }
             )
         }
         FilterChip(
             selected = isCustom,
             onClick = { showDialog = true },
-            label = { Text(if (isCustom) "${seconds}s" else "Custom") }
+            label = {
+                Text(
+                    if (isCustom) {
+                        stringResource(R.string.components_duration_short_seconds, seconds)
+                    } else {
+                        stringResource(R.string.components_chip_custom)
+                    }
+                )
+            }
         )
     }
 
     if (showDialog) {
         CustomTimeDialog(
             title = customDialogTitle,
-            unit = "seconds",
+            unit = stringResource(R.string.components_unit_seconds),
             currentValue = seconds,
             min = 1,
             max = 300,

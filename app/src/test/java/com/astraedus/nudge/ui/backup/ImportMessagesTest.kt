@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.backup
 
+import com.astraedus.nudge.testing.en
 import com.astraedus.nudge.data.export.ExportedGroup
 import com.astraedus.nudge.data.export.ExportedHistoryEvent
 import com.astraedus.nudge.data.export.ExportedSettings
@@ -23,6 +24,13 @@ import org.junit.Test
 class ImportMessagesTest {
 
     private val app1Rule = anExportedRule(aBlockRule(packageName = "com.app1"))
+
+    // The production builders return resource ids; these members shadow them with the English reading.
+    private fun buildImportPreviewMessage(preview: ImportPreview): String =
+        com.astraedus.nudge.ui.backup.buildImportPreviewMessage(preview).en()
+
+    private fun buildImportOutcomeMessage(outcome: ImportOutcome): String =
+        com.astraedus.nudge.ui.backup.buildImportOutcomeMessage(outcome).en()
 
     private fun historyEvent(ts: Long) = ExportedHistoryEvent(
         packageName = "com.app1",

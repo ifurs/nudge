@@ -1,5 +1,6 @@
 package com.astraedus.nudge.domain.usecase
 
+import com.astraedus.nudge.testing.en
 import com.astraedus.nudge.domain.engine.FirstUnlockState
 import com.astraedus.nudge.data.db.entity.AppGroupMember
 import com.astraedus.nudge.data.repository.ContentFilter
@@ -85,6 +86,6 @@ class EvaluateBlockCategoryBrowserTest {
         val decision = useCase.invoke(chrome, excludeDirectRules = true)
         assertTrue("expected a block, got $decision", decision is BlockDecision.Block)
         assertEquals(BlockMode.HARD_BLOCK, (decision as BlockDecision.Block).mode)
-        assertEquals("Social", decision.ruleName)
+        assertEquals("Social", decision.ruleName.en())
     }
 }

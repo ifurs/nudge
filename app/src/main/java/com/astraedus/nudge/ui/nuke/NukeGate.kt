@@ -1,6 +1,9 @@
 package com.astraedus.nudge.ui.nuke
 
+import androidx.annotation.StringRes
+import com.astraedus.nudge.R
 import com.astraedus.nudge.domain.nuke.NukeEmergencyCode
+import com.astraedus.nudge.domain.text.UiText
 import com.astraedus.nudge.domain.nuke.NukeKey
 import com.astraedus.nudge.domain.nuke.NukeState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,9 +20,9 @@ import kotlinx.coroutines.flow.asStateFlow
  * @property error the last thing that went wrong ("That's not your Nuke code"), or null.
  */
 data class NukeUnlockState(
-    val prompt: String,
+    val prompt: UiText,
     val emergencyTarget: String? = null,
-    val error: String? = null
+    val error: UiText? = null
 )
 
 /**
@@ -48,7 +51,7 @@ class NukeGate(
     /**
      * Run [action] now if it does not [weaken] Nuke, or stash it behind the unlock dialog if it does.
      */
-    suspend fun run(prompt: String, weaken: Boolean, action: suspend () -> Unit) {
+    suspend fun run(prompt: UiText, weaken: Boolean, action: suspend () -> Unit) {
         if (!weaken) {
             action()
             return
@@ -57,14 +60,30 @@ class NukeGate(
         _unlock.value = NukeUnlockState(prompt = prompt)
     }
 
+    /** [run] with a prompt that is a string resource. */
+    suspend fun run(@StringRes prompt: Int, weaken: Boolean, action: suspend () -> Unit) =
+        run(UiText.of(prompt), weaken, action)
+
+    /** [run] with a prompt that is already text (not translated). */
+    suspend fun run(prompt: String, weaken: Boolean, action: suspend () -> Unit) =
+        run(UiText.Raw(prompt), weaken, action)
+
     /**
      * Stash [action] behind the emergency code directly, skipping the scan-or-type choice. For the
      * "End without your code" button, whose whole meaning is "I do not have the key".
      */
-    fun requireEmergencyCode(prompt: String, action: suspend () -> Unit) {
+    fun requireEmergencyCode(prompt: UiText, action: suspend () -> Unit) {
         pendingAction = action
         _unlock.value = NukeUnlockState(prompt = prompt, emergencyTarget = newEmergencyCode())
     }
+
+    /** [requireEmergencyCode] with a prompt that is a string resource. */
+    fun requireEmergencyCode(@StringRes prompt: Int, action: suspend () -> Unit) =
+        requireEmergencyCode(UiText.of(prompt), action)
+
+    /** [requireEmergencyCode] with a prompt that is already text (not translated). */
+    fun requireEmergencyCode(prompt: String, action: suspend () -> Unit) =
+        requireEmergencyCode(UiText.Raw(prompt), action)
 
     /**
      * The user scanned something from the unlock dialog. The paired key runs the stashed action; any
@@ -121,6 +140,7 @@ class NukeGate(
     }
 
     companion object {
-        const val WRONG_KEY_MESSAGE = "That's not your Nuke code."
+        /** "That's not your Nuke code." (resource id; the dialog resolves it). */
+        val WRONG_KEY_MESSAGE: UiText = UiText.of(R.string.nuke_gate_wrong_key)
     }
 }

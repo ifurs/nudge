@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.screens.allapps
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -94,12 +96,12 @@ fun AllAppsEditorScreen(
     if (state.showDiscardConfirmation) {
         AlertDialog(
             onDismissRequest = viewModel::keepEditing,
-            title = { Text("Discard changes?") },
+            title = { Text(stringResource(R.string.groups_discard_title)) },
             confirmButton = {
-                TextButton(onClick = viewModel::discardChanges) { Text("Discard") }
+                TextButton(onClick = viewModel::discardChanges) { Text(stringResource(R.string.groups_discard)) }
             },
             dismissButton = {
-                TextButton(onClick = viewModel::keepEditing) { Text("Keep editing") }
+                TextButton(onClick = viewModel::keepEditing) { Text(stringResource(R.string.groups_keep_editing)) }
             }
         )
     }
@@ -115,16 +117,16 @@ fun AllAppsEditorScreen(
     if (state.showDeleteConfirmation) {
         AlertDialog(
             onDismissRequest = viewModel::dismissDelete,
-            title = { Text("Delete this rule?") },
-            text = { Text("Apps will no longer be blocked by this rule.") },
+            title = { Text(stringResource(R.string.allapps_delete_title)) },
+            text = { Text(stringResource(R.string.allapps_delete_body)) },
             confirmButton = {
                 TextButton(
                     onClick = viewModel::confirmDelete,
                     colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
-                ) { Text("Delete") }
+                ) { Text(stringResource(R.string.components_action_delete)) }
             },
             dismissButton = {
-                TextButton(onClick = viewModel::dismissDelete) { Text("Cancel") }
+                TextButton(onClick = viewModel::dismissDelete) { Text(stringResource(R.string.components_action_cancel)) }
             }
         )
     }
@@ -132,15 +134,15 @@ fun AllAppsEditorScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("All apps except a few") },
+                title = { Text(stringResource(R.string.allapps_title)) },
                 navigationIcon = {
                     IconButton(onClick = viewModel::requestLeave) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.components_action_back))
                     }
                 },
                 actions = {
                     TextButton(onClick = viewModel::save, enabled = state.canSave) {
-                        Text("Save")
+                        Text(stringResource(R.string.components_action_save))
                     }
                 }
             )
@@ -166,7 +168,7 @@ fun AllAppsEditorScreen(
             )
 
             Spacer(Modifier.height(16.dp))
-            EditorSectionTitle("Except these")
+            EditorSectionTitle(stringResource(R.string.allapps_except_these))
             rows.groups.forEach { row ->
                 AllowedGroupItem(
                     row = row,
@@ -177,7 +179,10 @@ fun AllAppsEditorScreen(
             rows.apps.forEach { row ->
                 AllowedAppItem(row = row, onRemove = { viewModel.removeApp(row.packageName) })
             }
-            EditorAddRow(text = "Add apps or groups", onClick = viewModel::openPicker)
+            EditorAddRow(
+                text = stringResource(R.string.components_picker_title_add_apps_groups),
+                onClick = viewModel::openPicker
+            )
             AlwaysAllowedItem(text = alwaysAllowed, onClick = viewModel::openAlwaysAllowed)
 
             HowAndWhen(
@@ -196,7 +201,7 @@ fun AllAppsEditorScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
-                ) { Text("Delete rule") }
+                ) { Text(stringResource(R.string.allapps_delete_rule)) }
             }
             Spacer(Modifier.height(24.dp))
         }
@@ -219,7 +224,7 @@ private fun HowAndWhen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Spacer(Modifier.height(0.dp))
-        EditorSubsectionTitle("How")
+        EditorSubsectionTitle(stringResource(R.string.groups_how))
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             BlockModeSegmentedRow(
                 selected = form.mode,
@@ -236,12 +241,12 @@ private fun HowAndWhen(
             WaitTimeChips(
                 seconds = form.waitSeconds,
                 onSelect = { seconds -> onFormChange { it.copy(waitSeconds = seconds) } },
-                customDialogTitle = "Custom wait"
+                customDialogTitle = stringResource(R.string.groups_custom_wait)
             )
         }
 
         Spacer(Modifier.height(0.dp))
-        EditorSubsectionTitle("When")
+        EditorSubsectionTitle(stringResource(R.string.groups_when))
         WhenSection(
             kind = when {
                 form.firstUnlock -> ScheduleKind.FIRST_UNLOCK

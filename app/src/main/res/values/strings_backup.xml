@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_ok">OK</string>
+    <string name="backup_import_title">Import backup</string>
+    <string name="backup_import_confirm">Import</string>
+    <string name="backup_complete_title">Import Complete</string>
+    <string name="backup_failed_title">Import Failed</string>
+    <string name="backup_save_title">Save backup</string>
+    <string name="backup_share_chooser">Share backup</string>
+    <string name="backup_read_failed">Could not read that file.</string>
+    <string name="backup_prompt_import_weakens">Import a backup that reduces protection</string>
+    <string name="backup_save_success">Backup saved. It holds your rules, your history and your app settings.</string>
+    <string name="backup_save_failure">Could not write the backup there. Try again, or pick a different folder.</string>
+
+    <!-- Import preview. "(s)" is the English wording; Ukrainian lists the counts after a colon, which
+         needs no plural agreement. -->
+    <string name="backup_preview_rules">Import %1$d rule(s)?</string>
+    <string name="backup_preview_rules_groups">Import %1$d rule(s) and %2$d group(s)?</string>
+    <string name="backup_preview_duplicates">Duplicate rules will be skipped.</string>
+    <string name="backup_preview_history">Includes %1$d history event(s) (%2$d new).</string>
+    <string name="backup_preview_settings">Also restores app settings, replacing this device\'s.</string>
+    <plurals name="backup_entries_unreadable">
+        <item quantity="one">%1$d entry could not be read and will be left out:</item>
+        <item quantity="other">%1$d entries could not be read and will be left out:</item>
+    </plurals>
+    <plurals name="backup_history_unreadable">
+        <item quantity="one">%1$d history event could not be read and will be left out:</item>
+        <item quantity="other">%1$d history events could not be read and will be left out:</item>
+    </plurals>
+    <plurals name="backup_settings_unreadable">
+        <item quantity="one">%1$d setting could not be read and will be left out:</item>
+        <item quantity="other">%1$d settings could not be read and will be left out:</item>
+    </plurals>
+    <string name="backup_reasons_more">...and %1$d more</string>
+
+    <!-- Import result -->
+    <string name="backup_outcome_imported">Imported: %1$d rule(s)</string>
+    <string name="backup_outcome_groups">Groups created: %1$d</string>
+    <string name="backup_outcome_duplicates">Skipped (duplicates): %1$d</string>
+    <string name="backup_outcome_history_restored">History events restored: %1$d</string>
+    <string name="backup_outcome_history_present">History already present: %1$d</string>
+    <string name="backup_outcome_history_unreadable">History could not be read: %1$d</string>
+    <string name="backup_outcome_settings_restored">App settings restored</string>
+    <string name="backup_outcome_settings_unreadable">Settings that could not be read: %1$d</string>
+    <string name="backup_outcome_skipped_unreadable">Skipped (could not be read): %1$d</string>
+</resources>

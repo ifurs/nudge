@@ -1,5 +1,9 @@
 package com.astraedus.nudge.ui.screens.config
 
+import com.astraedus.nudge.data.db.entity.BlockRule
+import com.astraedus.nudge.data.db.entity.AppGroupMember
+import com.astraedus.nudge.data.db.entity.AppGroup
+import com.astraedus.nudge.testing.en
 import com.astraedus.nudge.domain.engine.CoverageFacts
 import com.astraedus.nudge.domain.packages.AppCategory
 import com.astraedus.nudge.testing.aBlockRule
@@ -11,6 +15,18 @@ import org.junit.Test
 
 /** "Also covered by" on App config (spec 3.7): listed only when a group actually blocks the app. */
 class CoveringGroupsTest {
+
+    /** A covering group with its label read in English. */
+    private data class G(val groupId: Long, val label: String)
+
+    private fun coveringGroups(
+        packageName: String,
+        facts: CoverageFacts,
+        groups: List<AppGroup>,
+        members: List<AppGroupMember>,
+        rules: List<BlockRule>
+    ): List<G> = com.astraedus.nudge.ui.screens.config.coveringGroups(packageName, facts, groups, members, rules)
+        .map { G(it.groupId, it.label.en()) }
 
     private val app = "com.instagram.android"
     private val social = anAppGroup("Social", id = 1)
@@ -36,7 +52,7 @@ class CoveringGroupsTest {
         val covering = coveringGroups(app, facts, listOf(social, evening, work), members, rules)
 
         assertEquals(
-            listOf(CoveringGroup(2, "Evening · Hard Block"), CoveringGroup(1, "Social · Delay 15s")),
+            listOf(G(2, "Evening · Hard Block"), G(1, "Social · Delay 15s")),
             covering
         )
     }
@@ -68,7 +84,7 @@ class CoveringGroupsTest {
         val youtube = facts.copy(category = AppCategory.VIDEO)
 
         assertEquals(
-            listOf(CoveringGroup(4, "Videos · Hard Block")),
+            listOf(G(4, "Videos · Hard Block")),
             coveringGroups("com.youtube", youtube, listOf(videos), emptyList(), listOf(videoRule))
         )
     }
@@ -101,7 +117,7 @@ class CoveringGroupsTest {
 
         assertTrue(coveringGroups("com.other", facts, listOf(videos), emptyList(), listOf(videoRule)).isEmpty())
         assertEquals(
-            listOf(CoveringGroup(4, "Videos · Hard Block")),
+            listOf(G(4, "Videos · Hard Block")),
             coveringGroups("com.other", facts, listOf(videos), added, listOf(videoRule))
         )
     }

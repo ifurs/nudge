@@ -92,6 +92,13 @@ android {
         includeInBundle = true
     }
 
+    // Android 13+ per-app language (Settings -> System -> Languages -> App languages): the OS reads
+    // the locale list from the generated locale config, which is built from the res/values-*
+    // folders. res/resources.properties pins the unqualified (default) strings to English.
+    androidResources {
+        generateLocaleConfig = true
+    }
+
     buildFeatures {
         compose = true
         buildConfig = true

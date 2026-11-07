@@ -1,5 +1,9 @@
 package com.astraedus.nudge.ui.components
 
+import com.astraedus.nudge.ui.text.asString
+import com.astraedus.nudge.domain.text.UiText
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -114,15 +118,15 @@ fun AppPicker(
             Scaffold(
                 topBar = {
                     TopAppBar(
-                        title = { Text(pickerTitle(selection.size + groupSelection.size, offersGroups)) },
+                        title = { Text(pickerTitle(selection.size + groupSelection.size, offersGroups).asString()) },
                         navigationIcon = {
                             IconButton(onClick = onDismiss) {
-                                Icon(Icons.Default.Close, contentDescription = "Cancel")
+                                Icon(Icons.Default.Close, contentDescription = stringResource(R.string.components_action_cancel))
                             }
                         },
                         actions = {
                             TextButton(onClick = { onDone(PickerSelection(selection, groupSelection)) }) {
-                                Text("Done")
+                                Text(stringResource(R.string.components_action_done))
                             }
                         }
                     )
@@ -139,12 +143,18 @@ fun AppPicker(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 8.dp),
-                        placeholder = { Text(if (offersGroups) "Search apps and groups" else "Search apps") },
+                        placeholder = {
+                            Text(
+                                stringResource(
+                                    if (offersGroups) R.string.components_picker_search_apps_groups else R.string.components_picker_search_apps
+                                )
+                            )
+                        },
                         leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                         trailingIcon = {
                             if (query.isNotEmpty()) {
                                 IconButton(onClick = { query = "" }) {
-                                    Icon(Icons.Default.Clear, contentDescription = "Clear search")
+                                    Icon(Icons.Default.Clear, contentDescription = stringResource(R.string.components_picker_clear_search))
                                 }
                             }
                         },
@@ -159,7 +169,7 @@ fun AppPicker(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = noMatchText(query, offersGroups),
+                                text = noMatchText(query, offersGroups).asString(),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -167,13 +177,13 @@ fun AppPicker(
                     } else {
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
                             if (visibleGroups.isNotEmpty()) {
-                                item(key = "groups_header") { PickerSubheader("Groups") }
+                                item(key = "groups_header") { PickerSubheader(stringResource(R.string.components_picker_groups)) }
                                 items(visibleGroups, key = { "group_${it.id}" }) { group ->
                                     val checked = group.id in groupSelection
                                     ListItem(
                                         headlineContent = {
                                             Text(
-                                                RuleSummary.groupTitle(group.name, group.memberCount),
+                                                RuleSummary.groupTitle(group.name, group.memberCount).asString(),
                                                 maxLines = 1,
                                                 overflow = TextOverflow.Ellipsis
                                             )
@@ -192,7 +202,7 @@ fun AppPicker(
                             }
                             // The Apps heading only earns its place under a Groups section.
                             if (offersGroups && visible.isNotEmpty()) {
-                                item(key = "apps_header") { PickerSubheader("Apps") }
+                                item(key = "apps_header") { PickerSubheader(stringResource(R.string.components_picker_apps)) }
                             }
                             items(visible, key = { it.packageName }) { app ->
                                 val checked = app.packageName in selection
@@ -249,11 +259,14 @@ internal fun <T> toggled(selection: Set<T>, item: T): Set<T> =
  * The top bar: "N selected", counting apps and groups together, or what the picker adds when
  * nothing is picked yet ("Add apps", or "Add apps or groups" when it offers groups).
  */
-internal fun pickerTitle(count: Int, offersGroups: Boolean = false): String = when {
-    count > 0 -> "$count selected"
-    offersGroups -> "Add apps or groups"
-    else -> "Add apps"
+internal fun pickerTitle(count: Int, offersGroups: Boolean = false): UiText = when {
+    count > 0 -> UiText.of(R.string.components_picker_selected, count)
+    offersGroups -> UiText.of(R.string.components_picker_title_add_apps_groups)
+    else -> UiText.of(R.string.components_picker_title_add_apps)
 }
 
-internal fun noMatchText(query: String, offersGroups: Boolean): String =
-    if (offersGroups) "No apps or groups match \"${query.trim()}\"" else "No apps match \"${query.trim()}\""
+internal fun noMatchText(query: String, offersGroups: Boolean): UiText =
+    UiText.of(
+        if (offersGroups) R.string.components_picker_no_match_apps_groups else R.string.components_picker_no_match_apps,
+        query.trim()
+    )

@@ -2,7 +2,9 @@ package com.astraedus.nudge.ui.screens.stats
 
 import com.astraedus.nudge.data.db.entity.UsageEvent
 import com.astraedus.nudge.data.db.entity.isShownConfrontation
+import com.astraedus.nudge.R
 import com.astraedus.nudge.domain.engine.TimeTracker
+import com.astraedus.nudge.domain.text.UiText
 import com.astraedus.nudge.ui.screens.stats.charts.DayData
 import com.astraedus.nudge.ui.screens.stats.charts.TrendDay
 import java.util.Calendar
@@ -121,18 +123,18 @@ class StatsCalculator @Inject constructor(
      * The day a bar is labelled with — and, everywhere a bar also carries a count, the bucket
      * that count was gathered into.
      */
-    private fun getDayLabel(dayStartMs: Long): String {
+    private fun getDayLabel(dayStartMs: Long): UiText {
         val cal = Calendar.getInstance(TimeZone.getDefault())
         cal.timeInMillis = dayStartMs
         return when (cal.get(Calendar.DAY_OF_WEEK)) {
-            Calendar.MONDAY -> "Mon"
-            Calendar.TUESDAY -> "Tue"
-            Calendar.WEDNESDAY -> "Wed"
-            Calendar.THURSDAY -> "Thu"
-            Calendar.FRIDAY -> "Fri"
-            Calendar.SATURDAY -> "Sat"
-            Calendar.SUNDAY -> "Sun"
-            else -> ""
+            Calendar.MONDAY -> UiText.of(R.string.components_day_short_mon)
+            Calendar.TUESDAY -> UiText.of(R.string.components_day_short_tue)
+            Calendar.WEDNESDAY -> UiText.of(R.string.components_day_short_wed)
+            Calendar.THURSDAY -> UiText.of(R.string.components_day_short_thu)
+            Calendar.FRIDAY -> UiText.of(R.string.components_day_short_fri)
+            Calendar.SATURDAY -> UiText.of(R.string.components_day_short_sat)
+            Calendar.SUNDAY -> UiText.of(R.string.components_day_short_sun)
+            else -> UiText.Raw("")
         }
     }
 

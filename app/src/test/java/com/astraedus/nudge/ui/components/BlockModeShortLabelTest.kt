@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.components
 
+import com.astraedus.nudge.testing.ukString
+import com.astraedus.nudge.testing.enString
 import com.astraedus.nudge.ui.components.rule.BLOCKING_MODES
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -16,15 +18,19 @@ class BlockModeShortLabelTest {
     @Test
     fun `every mode in the picker has a one-word short label`() {
         for (mode in BLOCKING_MODES) {
-            val label = blockModeShortLabel(mode)
-            assertFalse("$mode -> \"$label\" has a space", label.contains(' '))
+            for (label in listOf(enString(blockModeShortLabelRes(mode)), ukString(blockModeShortLabelRes(mode)))) {
+                assertFalse("$mode -> \"$label\" has a space", label.contains(' '))
+            }
         }
     }
 
     @Test
     fun `short labels keep the full label's first word, so the two never disagree`() {
         for (mode in BLOCKING_MODES) {
-            assertEquals(blockModeLabel(mode).substringBefore(' '), blockModeShortLabel(mode))
+            assertEquals(
+                enString(blockModeLabelRes(mode)).substringBefore(' '),
+                enString(blockModeShortLabelRes(mode))
+            )
         }
     }
 }

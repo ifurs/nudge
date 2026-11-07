@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.components
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -29,44 +31,39 @@ fun AccessibilityDisclosureDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text("How Nudge Works")
+            Text(stringResource(R.string.components_disclosure_title))
         },
         text = {
             Column {
                 Text(
-                    "Nudge uses Android's Accessibility Service to detect which app " +
-                        "is currently open on your screen.",
+                    stringResource(R.string.components_disclosure_what),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(Modifier.height(12.dp))
                 Text(
-                    "This lets Nudge show breathing exercises, delays, or blocks " +
-                        "when you open apps you've chosen to limit.",
+                    stringResource(R.string.components_disclosure_why),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(Modifier.height(12.dp))
                 Text(
-                    "Nudge only reads the name of the app in the foreground. " +
-                        "It does not read your messages, keystrokes, passwords, " +
-                        "or screen content.",
+                    stringResource(R.string.components_disclosure_reads),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(Modifier.height(12.dp))
                 Text(
-                    "All data stays on your device. Nudge has no internet " +
-                        "permission and cannot send data anywhere.",
+                    stringResource(R.string.components_disclosure_local),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
         },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text("I Understand")
+                Text(stringResource(R.string.components_disclosure_confirm))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Not Now")
+                Text(stringResource(R.string.components_disclosure_dismiss))
             }
         }
     )

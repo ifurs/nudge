@@ -1,5 +1,8 @@
 package com.astraedus.nudge.ui.overlay
 
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -150,14 +153,14 @@ private fun PhoneNudgeContent(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "$minutes minutes.",
+                text = pluralStringResource(R.plurals.overlay_phone_nudge_minutes, minutes, minutes),
                 style = MaterialTheme.typography.displayMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
             Spacer(Modifier.height(16.dp))
             Text(
-                text = "What were you going to do?",
+                text = stringResource(R.string.overlay_phone_nudge_question),
                 style = MaterialTheme.typography.headlineSmall,
                 textAlign = TextAlign.Center
             )
@@ -172,7 +175,7 @@ private fun PhoneNudgeContent(
                 onClick = onDone,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("I'm done, go Home")
+                Text(stringResource(R.string.overlay_phone_nudge_done))
             }
             Spacer(Modifier.height(12.dp))
             OutlinedButton(
@@ -180,7 +183,13 @@ private fun PhoneNudgeContent(
                 enabled = remaining <= 0,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(if (remaining > 0) "Keep going in $remaining" else "Keep going")
+                Text(
+                    if (remaining > 0) {
+                        stringResource(R.string.overlay_phone_nudge_keep_going_in, remaining)
+                    } else {
+                        stringResource(R.string.overlay_phone_nudge_keep_going)
+                    }
+                )
             }
         }
     }

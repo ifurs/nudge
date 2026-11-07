@@ -1,5 +1,9 @@
 package com.astraedus.nudge.ui.components
 
+import com.astraedus.nudge.ui.text.asString
+import com.astraedus.nudge.domain.text.UiText
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -51,7 +55,7 @@ fun CustomTimeDialog(
                             text = newValue
                         }
                     },
-                    label = { Text("Value ($unit)") },
+                    label = { Text(stringResource(R.string.components_custom_time_value_label, unit)) },
                     placeholder = { Text("$min-$max") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     singleLine = true,
@@ -61,7 +65,7 @@ fun CustomTimeDialog(
                 if (showError) {
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        "Enter a number between $min and $max",
+                        stringResource(R.string.components_custom_time_range_error, min, max),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error
                     )
@@ -77,12 +81,12 @@ fun CustomTimeDialog(
                 },
                 enabled = isValid
             ) {
-                Text("Set")
+                Text(stringResource(R.string.components_action_set))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.components_action_cancel))
             }
         }
     )
@@ -94,12 +98,15 @@ fun CustomTimeDialog(
  * Exactly 60 min multiples: "Xh" (e.g. "2h")
  * Mixed: "Xh Ym" (e.g. "1h 30m")
  */
-fun formatMinutesDisplay(minutes: Int): String {
+fun minutesDisplayText(minutes: Int): UiText {
     val hours = minutes / 60
     val remainingMinutes = minutes % 60
     return when {
-        hours == 0 -> "${remainingMinutes}m"
-        remainingMinutes == 0 -> "${hours}h"
-        else -> "${hours}h ${remainingMinutes}m"
+        hours == 0 -> UiText.of(R.string.components_duration_short_minutes, remainingMinutes)
+        remainingMinutes == 0 -> UiText.of(R.string.components_duration_short_hours, hours)
+        else -> UiText.of(R.string.components_duration_short_hours_minutes, hours, remainingMinutes)
     }
 }
+
+@Composable
+fun formatMinutesDisplay(minutes: Int): String = minutesDisplayText(minutes).asString()

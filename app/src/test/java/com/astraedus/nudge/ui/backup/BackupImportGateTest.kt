@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.backup
 
+import com.astraedus.nudge.testing.en
+import com.astraedus.nudge.domain.text.UiText
 import com.astraedus.nudge.MainDispatcherRule
 import com.astraedus.nudge.data.export.ExportedSettings
 import com.astraedus.nudge.data.export.ImportResult
@@ -105,7 +107,8 @@ class BackupImportGateTest {
         assertNull("no outcome dialog while the import is pending", vm.uiState.value.importOutcome)
         val challenge = vm.challenge.value
         assertNotNull("a challenge must be raised", challenge)
-        assertEquals("Import a backup that reduces protection", challenge!!.prompt)
+        assertEquals(UiText.of(com.astraedus.nudge.R.string.backup_prompt_import_weakens), challenge!!.prompt)
+        assertEquals("Import a backup that reduces protection", challenge.prompt.en())
         // The confirmation dialog steps aside so the challenge does not stack on top of it.
         assertNull(vm.uiState.value.importPreview)
     }

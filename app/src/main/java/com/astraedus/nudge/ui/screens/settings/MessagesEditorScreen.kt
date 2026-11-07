@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.screens.settings
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -55,6 +57,7 @@ fun MessagesEditorScreen(
     val context = LocalContext.current
     val preferences = remember { NudgePreferences(context.applicationContext) }
     val scope = rememberCoroutineScope()
+    val savedText = stringResource(R.string.settings_messages_saved)
 
     // Seed the fields once from the stored prefs. We collect the first emission rather
     // than observing continuously so user keystrokes aren't clobbered by the DataStore flow.
@@ -75,10 +78,10 @@ fun MessagesEditorScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Block Messages") },
+                title = { Text(stringResource(R.string.settings_messages_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.components_action_back))
                     }
                 }
             )
@@ -94,8 +97,7 @@ fun MessagesEditorScreen(
             Spacer(Modifier.height(8.dp))
 
             Text(
-                "Customize the messages shown when an app is blocked or delayed. " +
-                    "One message per line — a random one is picked each time.",
+                stringResource(R.string.settings_messages_intro),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -103,7 +105,7 @@ fun MessagesEditorScreen(
             Spacer(Modifier.height(16.dp))
 
             MessageField(
-                label = "Delay title",
+                label = stringResource(R.string.settings_messages_delay_title),
                 value = titles ?: "",
                 onValueChange = { titles = it },
                 onReset = {
@@ -113,7 +115,7 @@ fun MessagesEditorScreen(
             )
 
             MessageField(
-                label = "Delay subtitle",
+                label = stringResource(R.string.settings_messages_delay_subtitle),
                 value = subtitles ?: "",
                 onValueChange = { subtitles = it },
                 onReset = {
@@ -123,7 +125,7 @@ fun MessagesEditorScreen(
             )
 
             MessageField(
-                label = "Hard-block message",
+                label = stringResource(R.string.settings_messages_hard_block),
                 value = hardBlock ?: "",
                 onValueChange = { hardBlock = it },
                 onReset = {
@@ -140,12 +142,12 @@ fun MessagesEditorScreen(
                         preferences.setCustomDelayTitles(titles ?: "")
                         preferences.setCustomDelaySubtitles(subtitles ?: "")
                         preferences.setCustomHardBlockMessages(hardBlock ?: "")
-                        Toast.makeText(context, "Messages saved", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, savedText, Toast.LENGTH_SHORT).show()
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Save")
+                Text(stringResource(R.string.components_action_save))
             }
 
             Spacer(Modifier.height(24.dp))
@@ -172,7 +174,7 @@ private fun MessageField(
             color = MaterialTheme.colorScheme.primary
         )
         TextButton(onClick = onReset) {
-            Text("Reset to defaults")
+            Text(stringResource(R.string.settings_messages_reset))
         }
     }
 
@@ -182,7 +184,7 @@ private fun MessageField(
         modifier = Modifier.fillMaxWidth(),
         minLines = 3,
         supportingText = {
-            Text("One message per line. Leave empty to use the defaults.")
+            Text(stringResource(R.string.settings_messages_field_help))
         }
     )
 

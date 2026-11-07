@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.screens.stats.charts
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -51,7 +53,7 @@ fun RateBarChart(
     bars: List<RateBar>,
     modifier: Modifier = Modifier,
     barHeight: Dp = 96.dp,
-    emptyMessage: String = "No data in this period"
+    emptyMessage: String = stringResource(R.string.stats_trend_empty)
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary
     val onSurfaceVariant = MaterialTheme.colorScheme.onSurfaceVariant

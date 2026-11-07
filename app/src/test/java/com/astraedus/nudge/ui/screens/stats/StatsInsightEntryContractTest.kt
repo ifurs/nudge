@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.screens.stats
 
+import com.astraedus.nudge.testing.ukString
+import com.astraedus.nudge.testing.enString
 import com.astraedus.nudge.testing.SourceScan
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -52,14 +54,14 @@ class StatsInsightEntryContractTest {
     private fun insightEntryRegion(): String {
         val text = source(statsScreen)
         val start = text.indexOf("StreakCounter(")
-        val end = text.indexOf("\"Screen time\"")
+        val end = text.indexOf("R.string.stats_section_screen_time")
 
         assertTrue(
             "$statsScreen must still render the StreakCounter — this test navigates by it",
             start >= 0
         )
         assertTrue(
-            "$statsScreen must still render the \"Screen time\" section — this test navigates by it",
+            "$statsScreen must still render the Screen time section — this test navigates by it",
             end >= 0
         )
         assertTrue(
@@ -129,7 +131,14 @@ class StatsInsightEntryContractTest {
             )
         }
 
-        val supportingLines = Regex("\"[^\"\\\\\\n]{20,}\"").findAll(region).count()
+        // The copy lives in strings_stats.xml now: each card names a supporting string, and that
+        // string (in English AND Ukrainian) is a sentence, not a word.
+        val supportingRefs = Regex("""supporting\s*=\s*stringResource\(R\.string\.(\w+)\)""")
+            .findAll(region).map { it.groupValues[1] }.toList()
+        val supportingLines = supportingRefs.count { name ->
+            val id = com.astraedus.nudge.R.string::class.java.getField(name).getInt(null)
+            enString(id).length >= 20 && ukString(id).length >= 20
+        }
         assertTrue(
             "Each of the two insight entry cards owes a supporting line saying what is behind " +
                 "it — found $supportingLines strings long enough to be one, expected at least 2. " +

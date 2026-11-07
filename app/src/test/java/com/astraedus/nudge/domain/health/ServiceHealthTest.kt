@@ -1,5 +1,7 @@
 package com.astraedus.nudge.domain.health
 
+import com.astraedus.nudge.testing.en
+import com.astraedus.nudge.service.notificationCopy
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -94,12 +96,12 @@ class ServiceHealthTest {
             val copy = health.notificationCopy()
             if (health != ServiceHealth.ACTIVE) {
                 assertFalse(
-                    "$health must not claim Nudge is active: ${copy.title} / ${copy.body}",
-                    copy.title.contains("is active", ignoreCase = true)
+                    "$health must not claim Nudge is active: ${copy.title.en()} / ${copy.body.en()}",
+                    copy.title.en().contains("is active", ignoreCase = true)
                 )
             }
         }
-        assertEquals("Nudge is active", ServiceHealth.ACTIVE.notificationCopy().title)
+        assertEquals("Nudge is active", ServiceHealth.ACTIVE.notificationCopy().title.en())
     }
 
     /**
@@ -111,13 +113,13 @@ class ServiceHealthTest {
     fun `every state has distinct, non-blank copy`() {
         val copies = ServiceHealth.entries.map { it.notificationCopy() }
         copies.forEach {
-            assertTrue("title must not be blank", it.title.isNotBlank())
-            assertTrue("body must not be blank", it.body.isNotBlank())
+            assertTrue("title must not be blank", it.title.en().isNotBlank())
+            assertTrue("body must not be blank", it.body.en().isNotBlank())
         }
         assertEquals(
             "each state needs its own body — a shared string cannot tell the user what to do",
             ServiceHealth.entries.size,
-            copies.map { it.body }.distinct().size
+            copies.map { it.body.en() }.distinct().size
         )
     }
 
@@ -128,7 +130,7 @@ class ServiceHealthTest {
     @Test
     fun `degraded copy names the recovery action`() {
         ServiceHealth.entries.filter { it.isDegraded }.forEach { health ->
-            val body = health.notificationCopy().body.lowercase()
+            val body = health.notificationCopy().body.en().lowercase()
             assertTrue(
                 "$health must tell the user to tap: $body",
                 body.contains("tap")

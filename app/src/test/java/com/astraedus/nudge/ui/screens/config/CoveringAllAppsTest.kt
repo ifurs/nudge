@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.screens.config
 
+import com.astraedus.nudge.data.db.entity.AppGroup
+import com.astraedus.nudge.testing.en
 import com.astraedus.nudge.data.db.entity.AppGroupMember
 import com.astraedus.nudge.data.db.entity.BlockRule
 import com.astraedus.nudge.domain.engine.CoverageFacts
@@ -18,6 +20,20 @@ import org.junit.Test
  * group and an app with no launcher entry are never listed.
  */
 class CoveringAllAppsTest {
+
+    /** A covering All apps rule with its label read in English. */
+    private data class A(val ruleId: Long, val label: String)
+
+    private fun coveringAllApps(
+        packageName: String,
+        groups: List<AppGroup>,
+        members: List<AppGroupMember>,
+        rules: List<BlockRule>,
+        appLabels: Map<String, String>,
+        facts: CoverageFacts
+    ): List<A> = com.astraedus.nudge.ui.screens.config.coveringAllApps(
+        packageName, groups, members, rules, appLabels, facts
+    ).map { A(it.ruleId, it.label.en()) }
 
     private val app = "com.instagram.android"
     private val normal = CoverageFacts(essential = false, launchable = true, category = AppCategory.UNDEFINED, browser = false)
@@ -47,7 +63,7 @@ class CoveringAllAppsTest {
         val covering = cover(listOf(allApps(7, mode = "DELAY", exceptPackages = "com.spotify").copy(delaySeconds = 15)))
 
         assertEquals(
-            listOf(CoveringAllApps(7, "All apps except Spotify · Delay 15s")),
+            listOf(A(7, "All apps except Spotify · Delay 15s")),
             covering
         )
     }

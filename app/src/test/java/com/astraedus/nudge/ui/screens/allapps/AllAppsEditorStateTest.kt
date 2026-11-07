@@ -1,9 +1,10 @@
 package com.astraedus.nudge.ui.screens.allapps
 
+import com.astraedus.nudge.testing.en
+import com.astraedus.nudge.testing.RuleSummaryEn as RuleSummary
 import com.astraedus.nudge.domain.model.BlockMode
 import com.astraedus.nudge.testing.aGroupRule
 import com.astraedus.nudge.ui.components.PickerGroup
-import com.astraedus.nudge.ui.components.rule.RuleSummary
 import com.astraedus.nudge.ui.screens.allapps.AllAppsFixtures.CHAT
 import com.astraedus.nudge.ui.screens.allapps.AllAppsFixtures.DELETED
 import com.astraedus.nudge.ui.screens.allapps.AllAppsFixtures.DIALER
@@ -120,10 +121,10 @@ class AllAppsEditorStateTest {
         val rows = exceptRows(s)
         assertEquals(listOf(SOCIAL, WORK), rows.groups.map { it.groupId })
         assertEquals(listOf(GAME, CHAT, DIALER), rows.apps.map { it.packageName })
-        assertEquals(RuleSummary.groupTitle("Work", 3), rows.groups[1].title)
-        assertEquals("1 still blocked by another rule", rows.groups[0].stillBlocked)
+        assertEquals(RuleSummary.groupTitle("Work", 3), rows.groups[1].title.en())
+        assertEquals("1 still blocked by another rule", rows.groups[0].stillBlocked?.en())
         assertNull(rows.groups[1].stillBlocked)
-        assertEquals("Also blocked by its own rule", rows.apps[0].alsoBlocked)
+        assertEquals("Also blocked by its own rule", rows.apps[0].alsoBlocked?.en())
         assertNull(rows.apps[1].alsoBlocked)
     }
 

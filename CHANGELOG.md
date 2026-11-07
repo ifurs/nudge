@@ -4,6 +4,9 @@ All notable changes to Nudge are documented here. Format follows [Keep a Changel
 
 ## [Unreleased]
 
+### Added
+- **Ukrainian translation** of the whole app (screens, block screens, notifications, widgets), plus per-app language on Android 13+ (Settings -> System -> Languages -> App languages). Strict Mode's Settings guard also recognises the Ukrainian Settings screens.
+
 ## [1.28.0] - 2026-11-07
 
 ### Added

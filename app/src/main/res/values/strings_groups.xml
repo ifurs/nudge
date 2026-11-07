@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="groups_new_group">New group</string>
+    <string name="groups_name_label">Name</string>
+    <string name="groups_apps">Apps</string>
+    <string name="groups_apps_count">Apps · %1$d</string>
+    <string name="groups_discard_title">Discard changes?</string>
+    <string name="groups_discard">Discard</string>
+    <string name="groups_keep_editing">Keep editing</string>
+    <string name="groups_delete_title">Delete this group?</string>
+    <string name="groups_delete_body">Its apps will no longer be blocked by this group.</string>
+    <string name="groups_delete_group">Delete group</string>
+    <string name="groups_prompt_delete_group">Delete this group</string>
+    <string name="groups_chip_new_apps_join">New apps in these categories join automatically.</string>
+    <plurals name="groups_chip_description">
+        <item quantity="one">%1$s, %2$d app</item>
+        <item quantity="other">%1$s, %2$d apps</item>
+    </plurals>
+    <string name="groups_remove_member">Remove %1$s</string>
+    <string name="groups_removed_by_you">Removed by you · %1$d</string>
+    <string name="groups_hide">Hide</string>
+    <string name="groups_show">Show</string>
+    <string name="groups_add_back">Add back</string>
+    <string name="groups_how">How</string>
+    <string name="groups_when">When</string>
+    <string name="groups_custom_wait">Custom wait</string>
+    <string name="groups_daily_limit_each">Daily limit for each app</string>
+    <string name="groups_custom_daily_limit">Custom daily limit</string>
+    <string name="groups_allowed_during">Allowed during</string>
+    <string name="groups_block_these_apps">Block these apps</string>
+
+    <!-- Shared by every editor that gates a weakening save behind Strict Mode -->
+    <string name="components_prompt_day_start">Change when your day starts</string>
+    <string name="components_prompt_save_weakening">Save changes that reduce blocking</string>
+
+    <!-- All apps editor -->
+    <string name="allapps_title">All apps except a few</string>
+    <string name="allapps_enabled">Enabled</string>
+    <string name="allapps_except_these">Except these</string>
+    <string name="allapps_delete_title">Delete this rule?</string>
+    <string name="allapps_delete_body">Apps will no longer be blocked by this rule.</string>
+    <string name="allapps_delete_rule">Delete rule</string>
+    <string name="allapps_prompt_delete_rule">Delete this rule</string>
+    <string name="allapps_remove_item">Remove %1$s</string>
+    <string name="allapps_always_title">Always allowed</string>
+    <string name="allapps_always_body">These apps are never blocked by a group or an All apps rule.</string>
+    <string name="allapps_confirm_block">Block them</string>
+    <string name="allapps_confirm_body">Only the apps you listed and your essentials will open.</string>
+    <string name="allapps_own_rule">its own rule</string>
+    <string name="allapps_also_blocked_one">Also blocked by %1$s</string>
+    <string name="allapps_also_blocked_two">Also blocked by %1$s and %2$s</string>
+    <string name="allapps_also_blocked_many">Also blocked by %1$d rules</string>
+    <plurals name="allapps_still_blocked">
+        <item quantity="one">%1$d still blocked by another rule</item>
+        <item quantity="other">%1$d still blocked by other rules</item>
+    </plurals>
+    <plurals name="allapps_blocks">
+        <item quantity="one">Blocks %1$d app</item>
+        <item quantity="other">Blocks %1$d apps</item>
+    </plurals>
+    <plurals name="allapps_would_block">
+        <item quantity="one">Would block %1$d app</item>
+        <item quantity="other">Would block %1$d apps</item>
+    </plurals>
+    <plurals name="allapps_confirm_title">
+        <item quantity="one">Block %1$d app all the time?</item>
+        <item quantity="other">Block %1$d apps all the time?</item>
+    </plurals>
+    <string name="allapps_always_none">Always allowed: your essential apps</string>
+    <string name="allapps_always_one">Always allowed: %1$s</string>
+    <string name="allapps_always_list">Always allowed: %1$s and %2$s</string>
+    <string name="allapps_always_more">Always allowed: %1$s and %2$d more</string>
+</resources>

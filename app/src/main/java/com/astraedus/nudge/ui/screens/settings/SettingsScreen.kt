@@ -12,6 +12,7 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -124,6 +125,7 @@ fun SettingsScreen(
     )
     val emergencyPassEnabled by preferences.emergencyPassEnabled.collectAsStateWithLifecycle(initialValue = true)
     val coroutineScope = rememberCoroutineScope()
+    val developerEnabledText = stringResource(R.string.settings_developer_enabled)
     var versionTapCount by rememberSaveable { mutableIntStateOf(0) }
     var developerOptionsVisible by rememberSaveable { mutableStateOf(false) }
     var showAccessibilityDisclosure by remember { mutableStateOf(false) }
@@ -141,7 +143,7 @@ fun SettingsScreen(
     pendingUnlock?.let { pending ->
         ChallengeDialog(
             target = pending.target,
-            prompt = pending.prompt,
+            prompt = stringResource(pending.prompt),
             onUnlock = {
                 pendingUnlock = null
                 pending.onUnlock()
@@ -151,7 +153,7 @@ fun SettingsScreen(
     }
 
     // Surface a fresh challenge; [apply] runs only once the user types it.
-    fun requestUnlock(prompt: String, apply: () -> Unit) {
+    fun requestUnlock(@StringRes prompt: Int, apply: () -> Unit) {
         pendingUnlock = PendingSettingsUnlock(
             target = StrictModeChallenge.generate(strictModeLength),
             prompt = prompt,
@@ -184,10 +186,10 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Settings") },
+                title = { Text(stringResource(R.string.settings_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.components_action_back))
                     }
                 }
             )
@@ -200,7 +202,7 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             Text(
-                "Permissions",
+                stringResource(R.string.settings_section_permissions),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -208,15 +210,15 @@ fun SettingsScreen(
             )
 
             PermissionItem(
-                title = "Accessibility Service",
+                title = stringResource(R.string.settings_perm_accessibility_title),
                 // "Granted but not connected" (see ProtectionStatus) means the switch reads on but
                 // the process is dead — turning the permission on again is not the fix, because it
                 // is already on; only toggling the service off/on (or a reboot) drops it out of
                 // AOSP's crashed-services set and lets it rebind.
                 description = if (permissionStates.accessibilityCrashed) {
-                    "Enabled, but your phone stopped it — turn it off and back on to restart blocking."
+                    stringResource(R.string.settings_perm_accessibility_crashed)
                 } else {
-                    "Required to detect foreground apps"
+                    stringResource(R.string.settings_perm_accessibility_desc)
                 },
                 granted = accessibilityEnabled,
                 icon = { Icon(Icons.Outlined.Accessibility, contentDescription = null) },
@@ -235,11 +237,11 @@ fun SettingsScreen(
             // permission alone is the only fix. The granted branch stays a short neutral line to
             // match the sibling Accessibility row above.
             PermissionItem(
-                title = "Overlay Permission",
+                title = stringResource(R.string.settings_perm_overlay_title),
                 description = if (overlayEnabled) {
-                    "Shows block screens and helps Nudge restart protection if Android stops it in the background"
+                    stringResource(R.string.settings_perm_overlay_granted)
                 } else {
-                    "Off — Nudge can't show block screens, and Android is more likely to stop protection until you reopen the app"
+                    stringResource(R.string.settings_perm_overlay_off)
                 },
                 granted = overlayEnabled,
                 icon = { Icon(Icons.Outlined.Layers, contentDescription = null) },
@@ -254,8 +256,8 @@ fun SettingsScreen(
             )
 
             PermissionItem(
-                title = "Usage Stats Access",
-                description = "Required to track app usage",
+                title = stringResource(R.string.settings_perm_usage_title),
+                description = stringResource(R.string.settings_perm_usage_desc),
                 granted = usageStatsEnabled,
                 icon = { Icon(Icons.Outlined.QueryStats, contentDescription = null) },
                 onClick = {
@@ -264,8 +266,14 @@ fun SettingsScreen(
             )
 
             PermissionItem(
-                title = "Grayscale Permission",
-                description = if (hasGrayscalePermission(context)) "Granted" else "Tap to see setup guide",
+                title = stringResource(R.string.settings_perm_grayscale_title),
+                description = stringResource(
+                    if (hasGrayscalePermission(context)) {
+                        R.string.settings_perm_grayscale_granted
+                    } else {
+                        R.string.settings_perm_grayscale_guide
+                    }
+                ),
                 granted = hasGrayscalePermission(context),
                 icon = { Icon(Icons.Outlined.InvertColors, contentDescription = null) },
                 onClick = onNavigateToGrayscaleGuide
@@ -274,7 +282,7 @@ fun SettingsScreen(
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             Text(
-                "Content Filter",
+                stringResource(R.string.settings_section_content_filter),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -295,9 +303,9 @@ fun SettingsScreen(
             }
 
             ListItem(
-                headlineContent = { Text("Block restricted websites") },
+                headlineContent = { Text(stringResource(R.string.settings_cf_block_title)) },
                 supportingContent = {
-                    Text("Blocks adult and explicit sites and searches. Works in supported browsers.")
+                    Text(stringResource(R.string.settings_cf_block_desc))
                 },
                 leadingContent = { Icon(Icons.Outlined.Shield, contentDescription = null) },
                 trailingContent = {
@@ -310,9 +318,9 @@ fun SettingsScreen(
             )
 
             ListItem(
-                headlineContent = { Text("Strict keyword matching") },
+                headlineContent = { Text(stringResource(R.string.settings_cf_strict_title)) },
                 supportingContent = {
-                    Text("Also blocks searches with ambiguous words. May catch innocent searches; you can add exceptions.")
+                    Text(stringResource(R.string.settings_cf_strict_desc))
                 },
                 leadingContent = { Icon(Icons.AutoMirrored.Outlined.ManageSearch, contentDescription = null) },
                 trailingContent = {
@@ -372,7 +380,7 @@ fun SettingsScreen(
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             Text(
-                "Commitment Lock",
+                stringResource(R.string.settings_section_lock),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -387,9 +395,9 @@ fun SettingsScreen(
             }
 
             ListItem(
-                headlineContent = { Text("Lock my settings (Strict Mode)") },
+                headlineContent = { Text(stringResource(R.string.settings_lock_title)) },
                 supportingContent = {
-                    Text("While on, undoing any protection — or turning this off — requires typing the unlock challenge.")
+                    Text(stringResource(R.string.settings_lock_desc))
                 },
                 leadingContent = { Icon(Icons.Outlined.Lock, contentDescription = null) },
                 trailingContent = {
@@ -405,19 +413,19 @@ fun SettingsScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 StrictModeDifficultyChip(
-                    label = "Easy",
+                    label = stringResource(R.string.settings_difficulty_easy),
                     length = StrictModeChallenge.LENGTH_EASY,
                     selected = strictModeLength == StrictModeChallenge.LENGTH_EASY,
                     onSelect = { coroutineScope.launch { preferences.setStrictModeChallengeLength(it) } }
                 )
                 StrictModeDifficultyChip(
-                    label = "Medium",
+                    label = stringResource(R.string.settings_difficulty_medium),
                     length = StrictModeChallenge.LENGTH_MEDIUM,
                     selected = strictModeLength == StrictModeChallenge.LENGTH_MEDIUM,
                     onSelect = { coroutineScope.launch { preferences.setStrictModeChallengeLength(it) } }
                 )
                 StrictModeDifficultyChip(
-                    label = "Hard",
+                    label = stringResource(R.string.settings_difficulty_hard),
                     length = StrictModeChallenge.LENGTH_HARD,
                     selected = strictModeLength == StrictModeChallenge.LENGTH_HARD,
                     onSelect = { coroutineScope.launch { preferences.setStrictModeChallengeLength(it) } }
@@ -427,7 +435,7 @@ fun SettingsScreen(
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             Text(
-                "Escape Hatch",
+                stringResource(R.string.settings_section_escape),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -445,11 +453,12 @@ fun SettingsScreen(
             }
 
             ListItem(
-                headlineContent = { Text("Daily 2-minute pass") },
+                headlineContent = { Text(stringResource(R.string.settings_pass_title)) },
                 supportingContent = {
                     Text(
-                        "Allow one 2-minute escape a day, shared across all blocked apps." +
-                            if (strictModeEnabled) " Turning it on requires the unlock challenge." else ""
+                        stringResource(
+                            if (strictModeEnabled) R.string.settings_pass_desc_strict else R.string.settings_pass_desc
+                        )
                     )
                 },
                 leadingContent = { Icon(Icons.Outlined.Timer, contentDescription = null) },
@@ -462,7 +471,7 @@ fun SettingsScreen(
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             Text(
-                "Check-ins",
+                stringResource(R.string.settings_section_checkins),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -479,7 +488,7 @@ fun SettingsScreen(
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             Text(
-                "Personalize",
+                stringResource(R.string.settings_section_personalize),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -487,9 +496,9 @@ fun SettingsScreen(
             )
 
             ListItem(
-                headlineContent = { Text("Edit block messages") },
+                headlineContent = { Text(stringResource(R.string.settings_edit_messages_title)) },
                 supportingContent = {
-                    Text("Customize the motivational text shown on block and delay screens.")
+                    Text(stringResource(R.string.settings_edit_messages_desc))
                 },
                 leadingContent = { Icon(Icons.Outlined.Edit, contentDescription = null) },
                 modifier = Modifier.clickable(onClick = onNavigateToMessagesEditor)
@@ -501,7 +510,7 @@ fun SettingsScreen(
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             Text(
-                "Backup",
+                stringResource(R.string.settings_section_backup),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -509,25 +518,25 @@ fun SettingsScreen(
             )
 
             ListItem(
-                headlineContent = { Text("Save backup") },
+                headlineContent = { Text(stringResource(R.string.settings_backup_save_title)) },
                 supportingContent = {
-                    Text("Write your rules, history and settings to a file on this device.")
+                    Text(stringResource(R.string.settings_backup_save_desc))
                 },
                 leadingContent = { Icon(Icons.Outlined.Save, contentDescription = null) },
                 modifier = Modifier.clickable { backup.saveBackup() }
             )
 
             ListItem(
-                headlineContent = { Text("Share backup") },
-                supportingContent = { Text("Send the same file to another app or device.") },
+                headlineContent = { Text(stringResource(R.string.settings_backup_share_title)) },
+                supportingContent = { Text(stringResource(R.string.settings_backup_share_desc)) },
                 leadingContent = { Icon(Icons.Outlined.Share, contentDescription = null) },
                 modifier = Modifier.clickable { backup.shareBackup() }
             )
 
             ListItem(
-                headlineContent = { Text("Import backup") },
+                headlineContent = { Text(stringResource(R.string.settings_backup_import_title)) },
                 supportingContent = {
-                    Text("Restore from a backup file. Rules you already have are left alone.")
+                    Text(stringResource(R.string.settings_backup_import_desc))
                 },
                 leadingContent = { Icon(Icons.Outlined.Restore, contentDescription = null) },
                 modifier = Modifier.clickable { backup.importBackup() }
@@ -536,7 +545,7 @@ fun SettingsScreen(
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             Text(
-                "About",
+                stringResource(R.string.settings_section_about),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -544,9 +553,9 @@ fun SettingsScreen(
             )
 
             ListItem(
-                headlineContent = { Text("Version") },
+                headlineContent = { Text(stringResource(R.string.settings_version_title)) },
                 supportingContent = {
-                    Text("Nudge v${BuildConfig.VERSION_NAME} (build ${BuildConfig.VERSION_CODE})")
+                    Text(stringResource(R.string.settings_version_desc, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE))
                 },
                 leadingContent = { Icon(Icons.Outlined.Info, contentDescription = null) },
                 modifier = Modifier.clickable {
@@ -554,15 +563,15 @@ fun SettingsScreen(
                         versionTapCount += 1
                         if (versionTapCount >= 7) {
                             developerOptionsVisible = true
-                            Toast.makeText(context, "Developer options enabled", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, developerEnabledText, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
             )
 
             ListItem(
-                headlineContent = { Text("Source Code & Feedback") },
-                supportingContent = { Text("Open source on GitHub. Report bugs or suggest features.") },
+                headlineContent = { Text(stringResource(R.string.settings_source_title)) },
+                supportingContent = { Text(stringResource(R.string.settings_source_desc)) },
                 leadingContent = { Icon(Icons.Outlined.Code, contentDescription = null) },
                 modifier = Modifier.clickable {
                     context.startActivity(
@@ -572,7 +581,7 @@ fun SettingsScreen(
             )
 
             ListItem(
-                headlineContent = { Text("License") },
+                headlineContent = { Text(stringResource(R.string.settings_license_title)) },
                 supportingContent = { Text("GPL-3.0") },
                 leadingContent = { Icon(Icons.Outlined.Code, contentDescription = null) }
             )
@@ -581,7 +590,7 @@ fun SettingsScreen(
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
                 Text(
-                    "Developer Options",
+                    stringResource(R.string.settings_section_developer),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -589,8 +598,8 @@ fun SettingsScreen(
                 )
 
                 ListItem(
-                    headlineContent = { Text("Debug Logging") },
-                    supportingContent = { Text("Write diagnostic logs to Logcat") },
+                    headlineContent = { Text(stringResource(R.string.settings_debug_logging_title)) },
+                    supportingContent = { Text(stringResource(R.string.settings_debug_logging_desc)) },
                     leadingContent = { Icon(Icons.Outlined.Terminal, contentDescription = null) },
                     trailingContent = {
                         Switch(
@@ -679,7 +688,7 @@ private val PIN_TARGETS = listOf(
 private fun requestPinNudgeWidget(context: Context, receiver: Class<*>) {
     val manager = context.getSystemService(AppWidgetManager::class.java) ?: return
     if (!manager.isRequestPinAppWidgetSupported) {
-        Toast.makeText(context, "Launcher does not support pinning", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.settings_pin_unsupported), Toast.LENGTH_SHORT).show()
         return
     }
     manager.requestPinAppWidget(ComponentName(context, receiver), null, null)
@@ -688,7 +697,7 @@ private fun requestPinNudgeWidget(context: Context, receiver: Class<*>) {
 /** A Strict-Mode-gated settings flip waiting on its typed unlock. */
 private data class PendingSettingsUnlock(
     val target: String,
-    val prompt: String,
+    @StringRes val prompt: Int,
     val onUnlock: () -> Unit
 )
 
@@ -696,11 +705,12 @@ private data class PendingSettingsUnlock(
  * Dialog copy per lockable toggle. Only the WEAKENING direction is ever gated
  * ([SettingsWeakening]), so each toggle needs exactly one prompt.
  */
-private fun unlockPrompt(toggle: LockedToggle): String = when (toggle) {
-    LockedToggle.STRICT_MODE -> "Turn off Strict Mode"
-    LockedToggle.EMERGENCY_PASS -> "Turn on the daily 2-minute pass"
-    LockedToggle.CONTENT_FILTER -> "Turn off website blocking"
-    LockedToggle.CONTENT_FILTER_STRICT_KEYWORDS -> "Turn off strict keyword matching"
+@StringRes
+private fun unlockPrompt(toggle: LockedToggle): Int = when (toggle) {
+    LockedToggle.STRICT_MODE -> R.string.settings_unlock_strict_mode
+    LockedToggle.EMERGENCY_PASS -> R.string.settings_unlock_pass
+    LockedToggle.CONTENT_FILTER -> R.string.settings_unlock_content_filter
+    LockedToggle.CONTENT_FILTER_STRICT_KEYWORDS -> R.string.settings_unlock_strict_keywords
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -714,7 +724,7 @@ private fun StrictModeDifficultyChip(
     FilterChip(
         selected = selected,
         onClick = { onSelect(length) },
-        label = { Text("$label ($length)") }
+        label = { Text(stringResource(R.string.settings_difficulty_chip, label, length)) }
     )
 }
 

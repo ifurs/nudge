@@ -53,18 +53,48 @@ object StrictModeEscapeGuard {
     )
 
     /**
-     * Keyword that, alongside the app label, marks the Accessibility detail page for our service:
+     * Keywords that, alongside the app label, mark the Accessibility detail page for our service:
      * the toggle row is "<label> shortcut" / "Use <label>". We deliberately avoid the bare word
      * "accessibility" because it appears as a header on the Accessibility LIST page (which also
      * lists our label) and would cause a false positive there. Lowercased; matched case-insensitively.
+     *
+     * ## Languages
+     * The guard has to bite whatever language the PHONE is set to, because Settings draws these
+     * words in the system language, not Nudge's. So every sentence lives here once per language
+     * we know, and the matcher accepts ANY of them (no locale is consulted: a phone's language is
+     * not a trustworthy read of what the Settings window shows, e.g. per-app language).
+     *
+     * - **English**: AOSP/Pixel `accessibility_shortcut_title` "...shortcut"; master switch
+     *   `accessibility_service_master_switch_title` "Use %1$s".
+     * - **Ukrainian**: the same two AOSP strings in `values-uk`: "Ярлик ..." and
+     *   "Використовувати %1$s". Taken from the AOSP resource names and the common Pixel/Samsung
+     *   wording, NOT from a captured Ukrainian device dump: it needs a check on a uk phone.
      */
-    private const val ACCESSIBILITY_DETAIL_SIGNAL = "shortcut"
+    private val ACCESSIBILITY_DETAIL_SIGNALS = listOf(
+        "shortcut",            // en
+        "ярлик"                // uk: "Ярлик служби", "Ярлик Nudge"
+    )
+
+    /** The "<prefix> <label>" master-switch row of the accessibility detail page, per language. */
+    private val ACCESSIBILITY_SWITCH_PREFIXES = listOf(
+        "use ",                // en: "Use Nudge - App Blocker"
+        "використовувати "     // uk: "Використовувати Nudge - App Blocker"
+    )
 
     /**
      * Keywords that, when present ALONGSIDE the app label, indicate the App Info / App details page
-     * (Force stop / Uninstall). Lowercased; matched case-insensitively.
+     * (Force stop / Uninstall). Lowercased; matched case-insensitively. Same rule as above: any
+     * known language matches.
+     *
+     * - en: "Force stop", "Uninstall" (AOSP `force_stop`, `uninstall_text`).
+     * - uk: "Примусово зупинити" (AOSP/Pixel), "Примусова зупинка" (Samsung One UI), "Видалити"
+     *   (AOSP `uninstall_text`; also Samsung). "Видалити" is a common word, which is safe here only
+     *   because the app label AND a Settings package are required alongside it.
      */
-    private val APP_INFO_SIGNALS = listOf("force stop", "uninstall")
+    private val APP_INFO_SIGNALS = listOf(
+        "force stop", "uninstall",
+        "примусово зупинити", "примусова зупинка", "видалити"
+    )
 
     /**
      * Decide whether to launch the unlock challenge over the current foreground screen.
@@ -99,8 +129,8 @@ object StrictModeEscapeGuard {
 
         // Accessibility detail: "<label> shortcut" or the "Use <label>" toggle row — both present
         // only on the detail page, not the list of all services.
-        val isAccessibilityDetail = haystack.contains(ACCESSIBILITY_DETAIL_SIGNAL) ||
-            haystack.contains("use $needleLabel")
+        val isAccessibilityDetail = ACCESSIBILITY_DETAIL_SIGNALS.any { haystack.contains(it) } ||
+            ACCESSIBILITY_SWITCH_PREFIXES.any { haystack.contains(it + needleLabel) }
         val isAppInfo = APP_INFO_SIGNALS.any { haystack.contains(it) }
         return isAccessibilityDetail || isAppInfo
     }

@@ -1,5 +1,9 @@
 package com.astraedus.nudge.ui.components
 
+import androidx.annotation.StringRes
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import com.astraedus.nudge.domain.model.BlockMode
 
 /**
@@ -11,37 +15,52 @@ import com.astraedus.nudge.domain.model.BlockMode
  * out twice before it was fully visible, and the compiler only told you about the copy you
  * remembered to look at.
  *
- * Both functions are exhaustive `when`s with no `else`, so adding a mode to [BlockMode] does not
- * compile until it has been given a name and a sentence.
+ * Each function is an exhaustive `when` with no `else`, so adding a mode to [BlockMode] does not
+ * compile until it has been given a name and a sentence. The `...Res` form returns the resource id
+ * (pure, so a JVM test can resolve it); the composable form of the same name reads it.
  */
-internal fun blockModeLabel(mode: BlockMode): String = when (mode) {
-    BlockMode.NONE -> "Off"
-    BlockMode.HARD_BLOCK -> "Hard Block"
-    BlockMode.DELAY -> "Delay"
-    BlockMode.HOLD -> "Hold"
-    BlockMode.BREATHING -> "Breathing"
+@StringRes
+internal fun blockModeLabelRes(mode: BlockMode): Int = when (mode) {
+    BlockMode.NONE -> R.string.components_block_mode_none
+    BlockMode.HARD_BLOCK -> R.string.components_block_mode_hard_block
+    BlockMode.DELAY -> R.string.components_block_mode_delay
+    BlockMode.HOLD -> R.string.components_block_mode_hold
+    BlockMode.BREATHING -> R.string.components_block_mode_breathing
 }
+
+@Composable
+internal fun blockModeLabel(mode: BlockMode): String = stringResource(blockModeLabelRes(mode))
 
 /**
  * The label inside a four-segment picker row, where each segment is about a quarter of the screen.
  * One word each: "Hard Block" in a quarter-width segment with `maxLines = 1` was clipped to "Hard"
  * and, overflowing, drawn off-centre (device QA, groups PR 2).
  */
-internal fun blockModeShortLabel(mode: BlockMode): String = when (mode) {
-    BlockMode.HARD_BLOCK -> "Hard"
-    BlockMode.NONE, BlockMode.DELAY, BlockMode.HOLD, BlockMode.BREATHING -> blockModeLabel(mode)
+@StringRes
+internal fun blockModeShortLabelRes(mode: BlockMode): Int = when (mode) {
+    BlockMode.HARD_BLOCK -> R.string.components_block_mode_short_hard_block
+    BlockMode.BREATHING -> R.string.components_block_mode_short_breathing
+    BlockMode.NONE, BlockMode.DELAY, BlockMode.HOLD -> blockModeLabelRes(mode)
 }
+
+@Composable
+internal fun blockModeShortLabel(mode: BlockMode): String = stringResource(blockModeShortLabelRes(mode))
 
 /**
  * One line under the picker saying what the selected mode actually does. [manyApps] is true where
  * the rule covers several apps (a group, an All apps rule): Hard Block then reads "these apps", not
  * "the app". Required, so every picker states which it is (device QA screenshot review, PR 4).
  */
-internal fun blockModeDescription(mode: BlockMode, manyApps: Boolean): String = when (mode) {
-    BlockMode.NONE -> "Not blocked."
+@StringRes
+internal fun blockModeDescriptionRes(mode: BlockMode, manyApps: Boolean): Int = when (mode) {
+    BlockMode.NONE -> R.string.components_block_mode_desc_none
     BlockMode.HARD_BLOCK ->
-        "Completely blocks ${if (manyApps) "these apps" else "the app"}. You can only go back to the home screen."
-    BlockMode.DELAY -> "Shows a countdown timer before letting you in. Gives you time to reconsider."
-    BlockMode.HOLD -> "You hold a button for the whole wait. Let go and it starts over."
-    BlockMode.BREATHING -> "Guides you through a breathing exercise before opening. Calms the impulse."
+        if (manyApps) R.string.components_block_mode_desc_hard_block_many else R.string.components_block_mode_desc_hard_block_one
+    BlockMode.DELAY -> R.string.components_block_mode_desc_delay
+    BlockMode.HOLD -> R.string.components_block_mode_desc_hold
+    BlockMode.BREATHING -> R.string.components_block_mode_desc_breathing
 }
+
+@Composable
+internal fun blockModeDescription(mode: BlockMode, manyApps: Boolean): String =
+    stringResource(blockModeDescriptionRes(mode, manyApps))

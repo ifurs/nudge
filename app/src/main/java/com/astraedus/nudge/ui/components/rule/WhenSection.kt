@@ -1,5 +1,9 @@
 package com.astraedus.nudge.ui.components.rule
 
+import com.astraedus.nudge.ui.text.asString
+import com.astraedus.nudge.domain.text.UiText
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -49,9 +53,16 @@ enum class ScheduleKind {
     FIRST_UNLOCK
 }
 
-/** Preset durations for "after first unlock", in minutes, with their chip labels. */
-private val FIRST_UNLOCK_PRESETS: List<Pair<Int, String>> =
-    listOf(15 to "15 min", 30 to "30 min", 60 to "1 h")
+/** Preset durations for "after first unlock", in minutes. */
+private val FIRST_UNLOCK_PRESETS: List<Int> = listOf(15, 30, 60)
+
+/** "15 min", "30 min", "1 h": the chip label of a first-unlock preset. */
+private fun presetLabel(minutes: Int): UiText =
+    if (minutes % 60 == 0) {
+        UiText.of(R.string.components_duration_spaced_hours, minutes / 60)
+    } else {
+        UiText.of(R.string.components_duration_spaced_minutes, minutes)
+    }
 
 /**
  * The shared "When" section for the group editor and the All apps editor (spec 3.5).
@@ -84,12 +95,12 @@ fun WhenSection(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         EditorWhenOption(
-            label = "All the time",
+            label = stringResource(R.string.components_when_all_time),
             selected = kind == ScheduleKind.ALL_TIME,
             onSelect = { onKindChange(ScheduleKind.ALL_TIME) }
         )
         EditorWhenOption(
-            label = "Days and times",
+            label = stringResource(R.string.components_when_days_times),
             selected = kind == ScheduleKind.DAYS_TIMES,
             onSelect = { onKindChange(ScheduleKind.DAYS_TIMES) }
         )
@@ -106,7 +117,7 @@ fun WhenSection(
             )
         }
         EditorWhenOption(
-            label = "After first unlock",
+            label = stringResource(R.string.components_when_first_unlock),
             selected = kind == ScheduleKind.FIRST_UNLOCK,
             onSelect = { onKindChange(ScheduleKind.FIRST_UNLOCK) }
         )
@@ -137,14 +148,14 @@ internal fun FirstUnlockFields(
     startsAtNextUnlock: Boolean
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        LabeledChipsRow(label = "For") {
+        LabeledChipsRow(label = stringResource(R.string.components_when_for)) {
             FirstUnlockMinuteChips(
                 minutes = firstUnlockMinutes,
                 onSelect = onFirstUnlockMinutesChange
             )
         }
 
-        LabeledChipsRow(label = "Days") {
+        LabeledChipsRow(label = stringResource(R.string.components_when_days)) {
             DayOfWeekChips(days = days, onDaysChange = onDaysChange)
         }
 
@@ -152,7 +163,7 @@ internal fun FirstUnlockFields(
 
         if (startsAtNextUnlock) {
             Text(
-                "Starts at your next first unlock.",
+                stringResource(R.string.components_when_starts_next_unlock),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -196,33 +207,35 @@ private fun LabeledChipsRow(
 fun FirstUnlockMinuteChips(
     minutes: Int,
     onSelect: (Int) -> Unit,
-    customDialogTitle: String = "Custom duration"
+    customDialogTitle: String = stringResource(R.string.components_when_custom_duration)
 ) {
     var showDialog by remember { mutableStateOf(false) }
-    val isCustom = FIRST_UNLOCK_PRESETS.none { it.first == minutes }
+    val isCustom = FIRST_UNLOCK_PRESETS.none { it == minutes }
 
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        FIRST_UNLOCK_PRESETS.forEach { (preset, label) ->
+        FIRST_UNLOCK_PRESETS.forEach { preset ->
             CompactFilterChip(
                 selected = minutes == preset,
                 onClick = { onSelect(preset) },
-                label = { Text(label) }
+                label = { Text(presetLabel(preset).asString()) }
             )
         }
         CompactFilterChip(
             selected = isCustom,
             onClick = { showDialog = true },
-            label = { Text(if (isCustom) formatMinutesDisplay(minutes) else "Custom") }
+            label = {
+                Text(if (isCustom) formatMinutesDisplay(minutes) else stringResource(R.string.components_chip_custom))
+            }
         )
     }
 
     if (showDialog) {
         CustomTimeDialog(
             title = customDialogTitle,
-            unit = "minutes",
+            unit = stringResource(R.string.components_unit_minutes),
             currentValue = minutes,
             min = 5,
             max = 240,
@@ -316,7 +329,7 @@ fun DayStartRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            "New day starts at $timeText",
+            stringResource(R.string.components_when_new_day_starts_at, timeText),
             style = MaterialTheme.typography.bodyLarge
         )
         Icon(
@@ -340,7 +353,7 @@ fun DayStartDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("New day starts at") },
+        title = { Text(stringResource(R.string.components_when_new_day_starts)) },
         text = {
             TimeSelector(
                 hour = selected / 60,
@@ -350,12 +363,12 @@ fun DayStartDialog(
         },
         confirmButton = {
             TextButton(onClick = { onPick(selected); onDismiss() }) {
-                Text("Set")
+                Text(stringResource(R.string.components_action_set))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.components_action_cancel))
             }
         }
     )

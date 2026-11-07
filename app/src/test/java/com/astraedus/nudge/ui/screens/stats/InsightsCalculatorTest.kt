@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.stats
 
+import com.astraedus.nudge.testing.en
 import com.astraedus.nudge.testing.aUsageEvent
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -272,7 +273,7 @@ class InsightsCalculatorTest {
         val result = calculator.willpower(emptyList(), now, brisbane, InsightsRange.THIRTY_DAYS)
 
         assertEquals(4, result.weeks.size)
-        assertEquals(listOf("3w ago", "2w ago", "1w ago", "This wk"), result.weeks.map { it.label })
+        assertEquals(listOf("3w ago", "2w ago", "1w ago", "This wk"), result.weeks.map { it.label.en() })
         assertTrue("buckets must ascend in time", result.weeks.zipWithNext().all { (a, b) -> a.startMs < b.startMs })
         assertEquals(
             "the oldest bucket starts where the range starts",
@@ -292,7 +293,7 @@ class InsightsCalculatorTest {
         )
 
         assertEquals(1, result.weeks.size)
-        assertEquals("This wk", result.weeks.single().label)
+        assertEquals("This wk", result.weeks.single().label.en())
         assertEquals(1, result.weeks.single().attempts)
     }
 
@@ -463,8 +464,8 @@ class InsightsCalculatorTest {
         assertEquals(2, result.weekday[1])  // Tue
         assertEquals(1, result.weekday[6])  // Sun
         assertEquals(1, result.peakWeekday)
-        assertEquals("Mon", calculator.weekdayLabel(0))
-        assertEquals("Sun", calculator.weekdayLabel(6))
+        assertEquals("Mon", calculator.weekdayLabel(0).en())
+        assertEquals("Sun", calculator.weekdayLabel(6).en())
     }
 
     @Test
@@ -587,37 +588,37 @@ class InsightsCalculatorTest {
         // resolveAppName returns the package name itself when PackageManager has no entry.
         assertEquals(
             "Musically",
-            calculator.appDisplayLabel("com.zhiliaoapp.musically", "com.zhiliaoapp.musically")
+            calculator.appDisplayLabel("com.zhiliaoapp.musically", "com.zhiliaoapp.musically").en()
         )
-        assertEquals("Youtube", calculator.appDisplayLabel("com.google.android.youtube", null))
-        assertEquals("Some App", calculator.appDisplayLabel("com.vendor.some_app", null))
-        assertEquals("Single", calculator.appDisplayLabel("single", null))
+        assertEquals("Youtube", calculator.appDisplayLabel("com.google.android.youtube", null).en())
+        assertEquals("Some App", calculator.appDisplayLabel("com.vendor.some_app", null).en())
+        assertEquals("Single", calculator.appDisplayLabel("single", null).en())
     }
 
     @Test
     fun `a resolved app name always wins over the fallback`() {
-        assertEquals("YouTube", calculator.appDisplayLabel("com.google.android.youtube", "YouTube"))
+        assertEquals("YouTube", calculator.appDisplayLabel("com.google.android.youtube", "YouTube").en())
         assertEquals(
             "a blank resolution is not a name",
             "Youtube",
-            calculator.appDisplayLabel("com.google.android.youtube", "  ")
+            calculator.appDisplayLabel("com.google.android.youtube", "  ").en()
         )
     }
 
     @Test
     fun `the web pseudo-package reads as Websites, never as a package id`() {
-        assertEquals("Websites", calculator.appDisplayLabel(InsightsCalculator.WEB_PSEUDO_PACKAGE, null))
-        assertEquals("Websites", calculator.appDisplayLabel("web", "web"))
+        assertEquals("Websites", calculator.appDisplayLabel(InsightsCalculator.WEB_PSEUDO_PACKAGE, null).en())
+        assertEquals("Websites", calculator.appDisplayLabel("web", "web").en())
     }
 
     @Test
     fun `hour labels are 12-hour and out-of-range hours degrade instead of crashing`() {
-        assertEquals("12am", calculator.hourLabel(0))
-        assertEquals("9am", calculator.hourLabel(9))
-        assertEquals("12pm", calculator.hourLabel(12))
-        assertEquals("11pm", calculator.hourLabel(23))
-        assertEquals("24", calculator.hourLabel(24))
-        assertEquals("-1", calculator.hourLabel(-1))
+        assertEquals("12am", calculator.hourLabel(0).en())
+        assertEquals("9am", calculator.hourLabel(9).en())
+        assertEquals("12pm", calculator.hourLabel(12).en())
+        assertEquals("11pm", calculator.hourLabel(23).en())
+        assertEquals("24", calculator.hourLabel(24).en())
+        assertEquals("-1", calculator.hourLabel(-1).en())
     }
 
     @Test
@@ -632,11 +633,11 @@ class InsightsCalculatorTest {
 
     @Test
     fun `mode labels cover every stored mode plus the catch-all`() {
-        assertEquals("Hard block", calculator.modeLabel("HARD_BLOCK"))
-        assertEquals("Delay", calculator.modeLabel("DELAY"))
-        assertEquals("Breathing", calculator.modeLabel("BREATHING"))
-        assertEquals("Other", calculator.modeLabel(InsightsCalculator.OTHER_MODE))
-        assertEquals("Other", calculator.modeLabel("WHATEVER"))
+        assertEquals("Hard block", calculator.modeLabel("HARD_BLOCK").en())
+        assertEquals("Delay", calculator.modeLabel("DELAY").en())
+        assertEquals("Breathing", calculator.modeLabel("BREATHING").en())
+        assertEquals("Other", calculator.modeLabel(InsightsCalculator.OTHER_MODE).en())
+        assertEquals("Other", calculator.modeLabel("WHATEVER").en())
     }
 
     // ------------------------------------------------------------ invariants

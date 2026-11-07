@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.home
 
+import com.astraedus.nudge.ui.text.asString
 import android.content.Intent
 import android.provider.Settings
 import androidx.compose.foundation.clickable
@@ -168,7 +169,7 @@ fun HomeContent(
                 StatCard(
                     icon = Icons.Outlined.Schedule,
                     label = "Screen Time",
-                    value = if (state.hasUsagePermission) state.todayTotalUsageFormatted else "--",
+                    value = if (state.hasUsagePermission) state.todayTotalUsageFormatted.asString() else "--",
                     modifier = Modifier.weight(1f),
                     // Granted, this card used to be inert - the one tile showing a number the
                     // stats screen exists to explain, and tapping it did nothing. Ungranted, the

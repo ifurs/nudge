@@ -1,5 +1,6 @@
 package com.astraedus.nudge.service
 
+import com.astraedus.nudge.ui.text.resolve
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -16,7 +17,6 @@ import com.astraedus.nudge.data.preferences.NudgePreferences
 import com.astraedus.nudge.domain.health.ServiceHealth
 import com.astraedus.nudge.domain.health.ServiceHealthCopy
 import com.astraedus.nudge.domain.health.StatusNotificationGate
-import com.astraedus.nudge.domain.health.notificationCopy
 import com.astraedus.nudge.domain.logging.NudgeLog
 import com.astraedus.nudge.util.NudgeLogger
 import dagger.hilt.EntryPoint
@@ -439,8 +439,8 @@ class NudgeMonitorService : Service() {
         )
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle(copy.title)
-            .setContentText(copy.body)
+            .setContentTitle(copy.title.resolve(this))
+            .setContentText(copy.body.resolve(this))
             .setSmallIcon(android.R.drawable.ic_lock_idle_lock)
             .setOngoing(true)
             .setContentIntent(pendingIntent)

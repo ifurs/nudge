@@ -1,5 +1,6 @@
 package com.astraedus.nudge.service
 
+import com.astraedus.nudge.ui.text.resolve
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -34,11 +35,12 @@ object UseReminderNotifier {
 
     fun notify(context: Context, reminder: UseReminder) {
         createChannel(context)
+        val body = reminder.bodyText().resolve(context)
 
         val notification = NotificationCompat.Builder(context, USE_REMINDER_CHANNEL_ID)
-            .setContentTitle(reminder.title)
-            .setContentText(reminder.body)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(reminder.body))
+            .setContentTitle(reminder.titleText().resolve(context))
+            .setContentText(body)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setSmallIcon(android.R.drawable.ic_popup_reminder)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)

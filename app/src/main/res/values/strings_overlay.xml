@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The built-in message pools of the block screens. A user's own lines (Settings -> Messages)
+         replace them and are not translated. -->
+    <string-array name="overlay_delay_titles">
+        <item>Take a moment to think...</item>
+        <item>Pause and reflect</item>
+        <item>Is this intentional?</item>
+        <item>Before you scroll...</item>
+        <item>A moment of awareness</item>
+    </string-array>
+    <string-array name="overlay_delay_subtitles">
+        <item>Do you really need to open this app right now?</item>
+        <item>What were you about to do instead?</item>
+        <item>Will this bring you closer to your goals?</item>
+        <item>You chose to add friction here for a reason.</item>
+        <item>This is your future self thanking you.</item>
+    </string-array>
+    <string-array name="overlay_hard_block_messages">
+        <item>You\'ve blocked access to this app</item>
+        <item>This app is off-limits right now</item>
+        <item>Your future self will thank you</item>
+        <item>Time to do something else</item>
+        <item>You set this boundary for a reason</item>
+    </string-array>
+
+    <!-- Common to every block screen -->
+    <string name="overlay_changed_my_mind">I changed my mind</string>
+    <string name="overlay_go_back">Go Back</string>
+    <string name="overlay_go_home">Go home</string>
+    <string name="overlay_blocked_icon">Blocked</string>
+    <string name="overlay_app_blocked">App Blocked</string>
+    <string name="overlay_daily_limit_reached">Daily limit reached</string>
+    <string name="overlay_left_today">%1$s left today</string>
+    <string name="overlay_rule_footer">Rule: %1$s</string>
+    <string name="overlay_open_allowed_app">Open an allowed app</string>
+    <string name="overlay_open_app">Open %1$s</string>
+
+    <!-- The daily pass -->
+    <string name="overlay_pass_use">Use for 2 minutes · once a day</string>
+    <string name="overlay_pass_used">Daily pass used · next in %1$s</string>
+
+    <!-- Breathing, Hold -->
+    <string name="overlay_breathe_in">Breathe in...</string>
+    <string name="overlay_breathe_out">Breathe out...</string>
+    <string name="overlay_seconds_remaining">%1$ds remaining</string>
+    <string name="overlay_hold_label">HOLD</string>
+    <string name="overlay_hold_keep_holding">KEEP HOLDING</string>
+    <string name="overlay_hold_hint">Hold to open. Let go and it starts over.</string>
+    <string name="overlay_hold_description">Hold to open. Press and hold for %1$d seconds. Let go and it starts over.</string>
+    <string name="overlay_hold_open_label">Open after %1$d seconds</string>
+
+    <!-- Phone nudge -->
+    <plurals name="overlay_phone_nudge_minutes">
+        <item quantity="one">%1$d minute.</item>
+        <item quantity="other">%1$d minutes.</item>
+    </plurals>
+    <string name="overlay_phone_nudge_question">What were you going to do?</string>
+    <string name="overlay_phone_nudge_done">I\'m done, go Home</string>
+    <string name="overlay_phone_nudge_keep_going">Keep going</string>
+    <string name="overlay_phone_nudge_keep_going_in">Keep going in %1$d</string>
+
+    <!-- Picture-in-picture escape -->
+    <string name="overlay_pip_heading">Picture-in-picture</string>
+    <string name="overlay_pip_this_app">This app</string>
+    <string name="overlay_pip_this_app_object">This app</string>
+    <string name="overlay_pip_explain">%1$s kept playing in a floating picture-in-picture window, so Nudge\'s block could not cover it. Android does not let an app switch that off for you.</string>
+    <string name="overlay_pip_turn_off">Turn off picture-in-picture for %1$s and Nudge can block it properly.</string>
+    <string name="overlay_pip_open_settings">Open picture-in-picture settings</string>
+    <string name="overlay_pip_settings_path">Settings &gt; Apps &gt; Special app access &gt; Picture-in-picture</string>
+    <string name="overlay_pip_not_now">Not now</string>
+    <string name="overlay_pip_once">Nudge only shows this once for each app.</string>
+
+    <!-- The "Rule: ..." line (see RuleLabelText): "Reels - Delay (scheduled, 30 min/day)" -->
+    <string name="overlay_rule_scheduled">scheduled</string>
+    <string name="overlay_rule_per_day">%1$d min/day</string>
+    <string name="overlay_rule_with_qualifiers">%1$s (%2$s)</string>
+    <string name="overlay_rule_limit_reached">%1$s (limit reached)</string>
+    <string name="overlay_rule_daily_limit">Daily limit</string>
+    <string name="overlay_rule_no_block">No block</string>
+    <string name="overlay_rule_group">Group</string>
+    <string name="overlay_rule_web">Web - %1$s</string>
+    <string name="overlay_rule_content_filter">Restricted content</string>
+    <string name="overlay_rule_nuke">Nuke</string>
+</resources>

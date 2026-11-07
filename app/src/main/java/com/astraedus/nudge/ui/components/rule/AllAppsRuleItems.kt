@@ -9,6 +9,10 @@ import com.astraedus.nudge.data.db.entity.BlockRule
 import com.astraedus.nudge.data.repository.target
 import com.astraedus.nudge.domain.model.ExceptCsv
 import com.astraedus.nudge.domain.model.RuleTarget
+import com.astraedus.nudge.domain.text.UiText
+
+/** "All apps except", as the title says it in English and in Ukrainian, so both find the row. */
+private const val SEARCH_WORDS = "All apps except Усі застосунки крім"
 
 /** The stock icon of an All apps rule, in the same 40dp tonal container a group's folder uses. */
 val AllAppsIcon: ImageVector get() = Icons.Default.Apps
@@ -22,8 +26,14 @@ val AllAppsIcon: ImageVector get() = Icons.Default.Apps
 @Immutable
 data class AllAppsRuleItem(
     val ruleId: Long,
-    val title: String,
-    val summary: String,
+    val title: UiText,
+    /**
+     * What a search box matches this row against: the names inside the title plus the title's own
+     * words in every shipped language (a typed title cannot be searched without a resolver, and the
+     * pure section builder has none). See [SEARCH_WORDS].
+     */
+    val searchKey: String,
+    val summary: UiText,
     val enabled: Boolean,
     val rule: BlockRule
 )
@@ -46,6 +56,11 @@ fun allAppsRuleItems(
             AllAppsRuleItem(
                 ruleId = rule.id,
                 title = RuleSummary.allAppsTitle(rule, groupNames, appLabels),
+                searchKey = (
+                    ExceptCsv.groupIds(rule.exceptGroupIds).mapNotNull { groupNames[it] } +
+                        ExceptCsv.packages(rule.exceptPackages).mapNotNull { appLabels[it] } +
+                        SEARCH_WORDS
+                    ).joinToString(" "),
                 summary = RuleSummary.allAppsSummaryText(rule),
                 enabled = rule.enabled,
                 rule = rule

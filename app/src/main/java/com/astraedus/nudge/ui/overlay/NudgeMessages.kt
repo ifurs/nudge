@@ -1,34 +1,31 @@
 package com.astraedus.nudge.ui.overlay
 
+import android.content.res.Resources
+import androidx.annotation.ArrayRes
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringArrayResource
+import com.astraedus.nudge.R
+
+/**
+ * The built-in message pools, as string arrays in `strings_overlay.xml` in res/values and res/values-uk so each language
+ * ships its own set (`docs/i18n.md`). The user's own lines (Settings -> Messages) are data, not
+ * copy, and stay as typed.
+ */
 object NudgeMessages {
-    val delayTitles = listOf(
-        "Take a moment to think...",
-        "Pause and reflect",
-        "Is this intentional?",
-        "Before you scroll...",
-        "A moment of awareness",
-    )
+    @ArrayRes val DELAY_TITLES: Int = R.array.overlay_delay_titles
+    @ArrayRes val DELAY_SUBTITLES: Int = R.array.overlay_delay_subtitles
+    @ArrayRes val HARD_BLOCK_MESSAGES: Int = R.array.overlay_hard_block_messages
 
-    val delaySubtitles = listOf(
-        "Do you really need to open this app right now?",
-        "What were you about to do instead?",
-        "Will this bring you closer to your goals?",
-        "You chose to add friction here for a reason.",
-        "This is your future self thanking you.",
-    )
+    /** For composables, which re-read on a locale change. */
+    @Composable fun delayTitles(): List<String> = stringArrayResource(DELAY_TITLES).toList()
+    @Composable fun delaySubtitles(): List<String> = stringArrayResource(DELAY_SUBTITLES).toList()
+    @Composable fun hardBlockMessages(): List<String> = stringArrayResource(HARD_BLOCK_MESSAGES).toList()
 
-    val hardBlockMessages = listOf(
-        "You've blocked access to this app",
-        "This app is off-limits right now",
-        "Your future self will thank you",
-        "Time to do something else",
-        "You set this boundary for a reason",
-    )
-
-    val allMessages: List<String>
-        get() = delayTitles + delaySubtitles + hardBlockMessages
-
-    fun getRandom(): String = allMessages.random()
+    /** For the activity, which resolves the pools before it composes. */
+    fun delayTitles(resources: Resources): List<String> = resources.getStringArray(DELAY_TITLES).toList()
+    fun delaySubtitles(resources: Resources): List<String> = resources.getStringArray(DELAY_SUBTITLES).toList()
+    fun hardBlockMessages(resources: Resources): List<String> =
+        resources.getStringArray(HARD_BLOCK_MESSAGES).toList()
 
     /**
      * Resolves the pool of messages to display, given the user's custom multiline text
