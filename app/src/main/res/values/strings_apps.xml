@@ -7,4 +7,14 @@
     <string name="apps_section_all_apps">All apps</string>
     <string name="apps_section_groups">Groups</string>
     <string name="apps_block_several">Block several apps</string>
+    <string name="apps_section_apps">Apps</string>
+    <string name="apps_section_other_apps">Other apps</string>
+    <string name="apps_section_with_rules">Apps with rules</string>
+    <string name="apps_block_several_group">A group of apps</string>
+    <string name="apps_block_several_group_hint">Pick the apps to block together</string>
+    <string name="apps_block_several_all_apps">All apps except a few</string>
+    <string name="apps_block_several_all_apps_hint">Only the apps you choose stay open</string>
+    <string name="apps_prompt_turn_off_app">Turn off blocking for this app</string>
+    <string name="apps_prompt_turn_off_group">Turn off blocking for this group</string>
+    <string name="apps_prompt_turn_off_all_apps">Turn off blocking for these apps</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.apps
 
+import com.astraedus.nudge.R
 import com.astraedus.nudge.testing.en
 import com.astraedus.nudge.data.db.entity.AppGroup
 import com.astraedus.nudge.data.db.entity.AppGroupMember
@@ -81,8 +82,8 @@ class ManageAppsAllAppsTest {
 
     @Test
     fun `an All apps rule leaves the first-run layout - the app list is headed Other apps`() {
-        assertEquals("Apps", sections().otherAppsTitle)
-        assertEquals("Other apps", sections(rules = listOf(allApps)).otherAppsTitle)
+        assertEquals(ManageAppsSections.APPS_TITLE, sections().otherAppsTitle)
+        assertEquals(ManageAppsSections.OTHER_APPS_TITLE, sections(rules = listOf(allApps)).otherAppsTitle)
     }
 
     // -- Search -----------------------------------------------------------------------------------
@@ -115,10 +116,10 @@ class ManageAppsAllAppsTest {
     @Test
     fun `the sheet offers a group, then All apps except a few, in plain words`() {
         assertEquals(listOf(BlockSeveralOption.GROUP, BlockSeveralOption.ALL_APPS), BlockSeveralOption.entries)
-        assertEquals("A group of apps", BlockSeveralOption.GROUP.title)
-        assertEquals("Pick the apps to block together", BlockSeveralOption.GROUP.subtitle)
-        assertEquals("All apps except a few", BlockSeveralOption.ALL_APPS.title)
-        assertEquals("Only the apps you choose stay open", BlockSeveralOption.ALL_APPS.subtitle)
+        assertEquals(R.string.apps_block_several_group, BlockSeveralOption.GROUP.title)
+        assertEquals(R.string.apps_block_several_group_hint, BlockSeveralOption.GROUP.subtitle)
+        assertEquals(R.string.apps_block_several_all_apps, BlockSeveralOption.ALL_APPS.title)
+        assertEquals(R.string.apps_block_several_all_apps_hint, BlockSeveralOption.ALL_APPS.subtitle)
     }
 
     @Test

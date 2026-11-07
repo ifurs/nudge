@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.apps
 
+import com.astraedus.nudge.R
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -208,7 +209,7 @@ class AppListViewModel @Inject constructor(
                         creating.remove(pkg)
                     }
                 }
-                row.isOn -> strictModeGate.run(prompt = "Turn off blocking for this app") {
+                row.isOn -> strictModeGate.run(prompt = R.string.apps_prompt_turn_off_app) {
                     blockRuleRepository.setEnabledForPackage(pkg, false)
                 }
                 else -> blockRuleRepository.setEnabledForPackage(pkg, true)
@@ -228,7 +229,7 @@ class AppListViewModel @Inject constructor(
                 rule == null -> blockRuleRepository.addRule(
                     BlockRule(groupId = row.groupId, mode = BlockMode.DELAY.name, delaySeconds = 15)
                 )
-                row.blocking -> strictModeGate.run(prompt = "Turn off blocking for this group") {
+                row.blocking -> strictModeGate.run(prompt = R.string.apps_prompt_turn_off_group) {
                     blockRuleRepository.updateRule(rule.copy(enabled = false))
                 }
                 else -> blockRuleRepository.updateRule(rule.copy(enabled = true))
@@ -245,7 +246,7 @@ class AppListViewModel @Inject constructor(
         viewModelScope.launch {
             val rule = item.rule
             when {
-                item.enabled -> strictModeGate.run(prompt = "Turn off blocking for these apps") {
+                item.enabled -> strictModeGate.run(prompt = R.string.apps_prompt_turn_off_all_apps) {
                     blockRuleRepository.saveAllAppsRule(rule.copy(enabled = false))
                 }
                 // Hard block, all the time: the editor's question first ("Block N apps all the

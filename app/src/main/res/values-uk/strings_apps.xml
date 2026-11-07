@@ -6,4 +6,14 @@
     <string name="apps_section_all_apps">Усі застосунки</string>
     <string name="apps_section_groups">Групи</string>
     <string name="apps_block_several">Заблокувати кілька застосунків</string>
+    <string name="apps_section_apps">Застосунки</string>
+    <string name="apps_section_other_apps">Інші застосунки</string>
+    <string name="apps_section_with_rules">Застосунки з правилами</string>
+    <string name="apps_block_several_group">Група застосунків</string>
+    <string name="apps_block_several_group_hint">Оберіть застосунки, які блокувати разом</string>
+    <string name="apps_block_several_all_apps">Усі застосунки, крім кількох</string>
+    <string name="apps_block_several_all_apps_hint">Відкритими лишаться лише обрані застосунки</string>
+    <string name="apps_prompt_turn_off_app">Вимкнути блокування для цього застосунку</string>
+    <string name="apps_prompt_turn_off_group">Вимкнути блокування для цієї групи</string>
+    <string name="apps_prompt_turn_off_all_apps">Вимкнути блокування для цих застосунків</string>
 </resources>

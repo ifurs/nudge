@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.apps
 
+import com.astraedus.nudge.R
 import com.astraedus.nudge.domain.text.UiText
 import androidx.compose.runtime.Immutable
 import com.astraedus.nudge.data.db.entity.AppGroup
@@ -66,16 +67,16 @@ data class ManageAppsSections(
     val appsWithRules: List<AppRow> = emptyList(),
     val otherApps: List<AppRow> = emptyList(),
     /** "Apps" for someone with no group and no app rule yet (first run), else "Other apps". */
-    val otherAppsTitle: String = APPS_TITLE
+    val otherAppsTitle: UiText = APPS_TITLE
 ) {
     /** Nothing at all to show: no group and no app (a search that matched nothing). */
     val nothingMatches: Boolean
         get() = allApps.isEmpty() && groups.isEmpty() && appsWithRules.isEmpty() && otherApps.isEmpty()
 
     companion object {
-        const val APPS_TITLE = "Apps"
-        const val OTHER_APPS_TITLE = "Other apps"
-        const val APPS_WITH_RULES_TITLE = "Apps with rules"
+        val APPS_TITLE: UiText = UiText.of(R.string.apps_section_apps)
+        val OTHER_APPS_TITLE: UiText = UiText.of(R.string.apps_section_other_apps)
+        val APPS_WITH_RULES_TITLE: UiText = UiText.of(R.string.apps_section_with_rules)
     }
 }
 

@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.screens.apps
 
+import com.astraedus.nudge.domain.text.UiText
+
 /**
  * The rows of Manage Apps' list, in order, each with the key the LazyColumn keeps it by.
  *
@@ -28,7 +30,7 @@ sealed interface ManageAppsRow {
     }
 
     /** A section heading. Its key has no dot, so it can never equal a package name. */
-    data class Header(override val key: String, val title: String) : ManageAppsRow
+    data class Header(override val key: String, val title: UiText) : ManageAppsRow
 
     data class App(val app: AppRow) : ManageAppsRow {
         // A package name always contains a dot, so it can never equal a fixed key above.

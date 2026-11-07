@@ -60,7 +60,7 @@ class SwitchedOnStaysInPlaceTest {
         assertEquals(listOf("Calculator", "Calendar", "Camera"), after.otherApps.map { it.appInfo.appName })
         assertEquals("Delay 15s", after.otherApps[0].summary?.en())
         assertTrue(after.otherApps[0].isOn)
-        assertEquals("Apps", after.otherAppsTitle)
+        assertEquals(ManageAppsSections.APPS_TITLE, after.otherAppsTitle)
     }
 
     @Test

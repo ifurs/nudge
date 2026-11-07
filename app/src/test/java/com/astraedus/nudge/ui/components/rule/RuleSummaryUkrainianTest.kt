@@ -73,9 +73,9 @@ class RuleSummaryUkrainianTest {
 
     @Test
     fun `durations and dates carry ukrainian unit words`() {
-        assertEquals("2 год 5 хв", DurationText.of((2 * 60 + 5) * 60_000L).uk())
-        assertEquals("1 хв 30 с", DurationText.of(90_000L).uk())
-        assertEquals("< 1 хв", DurationText.dayTotal(5_000L).uk())
+        assertEquals("2\u00A0год 5\u00A0хв", DurationText.of((2 * 60 + 5) * 60_000L).uk())
+        assertEquals("1\u00A0хв 30\u00A0с", DurationText.of(90_000L).uk())
+        assertEquals("<\u00A01\u00A0хв", DurationText.dayTotal(5_000L).uk())
         assertEquals("Сьогодні", StatsDateLabels.day(LocalDate.of(2026, 8, 27), LocalDate.of(2026, 8, 27)).uk())
         assertEquals("Учора", StatsDateLabels.day(LocalDate.of(2026, 8, 26), LocalDate.of(2026, 8, 27)).uk())
     }

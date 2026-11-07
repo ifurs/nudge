@@ -69,9 +69,9 @@ class ManageAppsRowsTest {
     fun `apps with rules come before the other apps, each under its heading`() {
         assertEquals(
             listOf(ManageAppsRow.Top) +
-                ManageAppsRow.Header(ManageAppsRow.WITH_RULES_KEY, "Apps with rules") +
+                ManageAppsRow.Header(ManageAppsRow.WITH_RULES_KEY, ManageAppsSections.APPS_WITH_RULES_TITLE) +
                 withRules.map { ManageAppsRow.App(it) } +
-                ManageAppsRow.Header(ManageAppsRow.OTHER_APPS_KEY, "Other apps") +
+                ManageAppsRow.Header(ManageAppsRow.OTHER_APPS_KEY, ManageAppsSections.OTHER_APPS_TITLE) +
                 others.map { ManageAppsRow.App(it) },
             manageAppsRows(states.last())
         )
@@ -80,12 +80,12 @@ class ManageAppsRowsTest {
     @Test
     fun `a section with no rows has no heading`() {
         assertEquals(
-            listOf(ManageAppsRow.Top, ManageAppsRow.Header(ManageAppsRow.OTHER_APPS_KEY, "Apps")) +
+            listOf(ManageAppsRow.Top, ManageAppsRow.Header(ManageAppsRow.OTHER_APPS_KEY, ManageAppsSections.APPS_TITLE)) +
                 ManageAppsRow.App(others.first()),
             manageAppsRows(states[1])
         )
         assertEquals(
-            listOf(ManageAppsRow.Top, ManageAppsRow.Header(ManageAppsRow.WITH_RULES_KEY, "Apps with rules")) +
+            listOf(ManageAppsRow.Top, ManageAppsRow.Header(ManageAppsRow.WITH_RULES_KEY, ManageAppsSections.APPS_WITH_RULES_TITLE)) +
                 withRules.map { ManageAppsRow.App(it) },
             manageAppsRows(states[3])
         )

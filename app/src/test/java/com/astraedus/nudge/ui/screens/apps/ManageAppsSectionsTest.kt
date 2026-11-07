@@ -50,11 +50,11 @@ class ManageAppsSectionsTest {
         assertTrue(s.groups.isEmpty())
         assertTrue(s.showNewGroup)
         assertTrue(s.appsWithRules.isEmpty())
-        assertEquals("Apps", s.otherAppsTitle)
+        assertEquals(ManageAppsSections.APPS_TITLE, s.otherAppsTitle)
         assertEquals(installed.map { it.appName }, s.names(s.otherApps))
         assertTrue(s.otherApps.none { it.hasRule || it.isOn })
         assertEquals(
-            listOf(ManageAppsRow.Top, ManageAppsRow.Header(ManageAppsRow.OTHER_APPS_KEY, "Apps")) +
+            listOf(ManageAppsRow.Top, ManageAppsRow.Header(ManageAppsRow.OTHER_APPS_KEY, ManageAppsSections.APPS_TITLE)) +
                 s.otherApps.map { ManageAppsRow.App(it) },
             manageAppsRows(s)
         )
@@ -81,7 +81,7 @@ class ManageAppsSectionsTest {
         assertEquals(listOf("Hard Block", "Delay 15s · 30min limit"), s.appsWithRules.map { it.summary?.en() })
         // The switch shows the app's own rule: Instagram's is off.
         assertEquals(listOf(false, true), s.appsWithRules.map { it.isOn })
-        assertEquals("Other apps", s.otherAppsTitle)
+        assertEquals(ManageAppsSections.OTHER_APPS_TITLE, s.otherAppsTitle)
         // A group member with no rule of its own is an "other" app; the group row covers it.
         assertEquals(listOf("Calculator", "Camera", "Reddit", "TikTok"), s.names(s.otherApps))
         assertTrue(s.otherApps.none { it.hasRule })
@@ -156,13 +156,13 @@ class ManageAppsSectionsTest {
 
     @Test
     fun `a group alone already makes the rest Other apps`() {
-        assertEquals("Other apps", sections(groups = listOf(social)).otherAppsTitle)
+        assertEquals(ManageAppsSections.OTHER_APPS_TITLE, sections(groups = listOf(social)).otherAppsTitle)
     }
 
     @Test
     fun `an app rule alone already makes the rest Other apps`() {
         val s = sections(rules = typicalRules.take(1))
-        assertEquals("Other apps", s.otherAppsTitle)
+        assertEquals(ManageAppsSections.OTHER_APPS_TITLE, s.otherAppsTitle)
         assertTrue(s.groups.isEmpty())
     }
 
@@ -222,7 +222,7 @@ class ManageAppsSectionsTest {
         assertEquals("Hard Block", s.appsWithRules.single().summary?.en())
         assertTrue(s.otherApps.isEmpty())
         assertEquals(
-            listOf(ManageAppsRow.Top, ManageAppsRow.Header(ManageAppsRow.WITH_RULES_KEY, "Apps with rules")) +
+            listOf(ManageAppsRow.Top, ManageAppsRow.Header(ManageAppsRow.WITH_RULES_KEY, ManageAppsSections.APPS_WITH_RULES_TITLE)) +
                 ManageAppsRow.App(s.appsWithRules.single()),
             manageAppsRows(s)
         )
@@ -234,7 +234,7 @@ class ManageAppsSectionsTest {
         assertEquals(listOf("Calculator", "Camera"), s.names(s.otherApps))
         assertTrue(s.appsWithRules.isEmpty())
         // The heading does not flip back to "Apps" just because the rules are filtered out.
-        assertEquals("Other apps", s.otherAppsTitle)
+        assertEquals(ManageAppsSections.OTHER_APPS_TITLE, s.otherAppsTitle)
     }
 
     /**
@@ -277,7 +277,7 @@ class ManageAppsSectionsTest {
         val rules = listOf(aBlockRule(id = 1, packageName = "com.android.camera", mode = "DELAY", delaySeconds = 15))
         val s = sections(rules = rules, keepInPlace = setOf("com.android.camera"))
 
-        assertEquals("Apps", s.otherAppsTitle)
+        assertEquals(ManageAppsSections.APPS_TITLE, s.otherAppsTitle)
         assertTrue(s.appsWithRules.isEmpty())
         assertEquals(installed.map { it.appName }, s.names(s.otherApps))
     }

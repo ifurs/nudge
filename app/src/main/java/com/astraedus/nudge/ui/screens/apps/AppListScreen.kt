@@ -175,7 +175,7 @@ fun AppListContent(
                             onOpenGroup = onOpenGroup,
                             onBlockSeveral = onBlockSeveral
                         )
-                        is ManageAppsRow.Header -> ListSubheader(row.title)
+                        is ManageAppsRow.Header -> ListSubheader(row.title.asString())
                         is ManageAppsRow.App -> {
                             val app = row.app
                             AppListItem(

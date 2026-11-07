@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.apps
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -17,7 +18,9 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.astraedus.nudge.R
 import com.astraedus.nudge.ui.components.TonalIcon
 import com.astraedus.nudge.ui.components.rule.AllAppsIcon
 
@@ -27,11 +30,11 @@ import com.astraedus.nudge.ui.components.rule.AllAppsIcon
  * whole point of the sheet.
  */
 enum class BlockSeveralOption(
-    val title: String,
-    val subtitle: String
+    @StringRes val title: Int,
+    @StringRes val subtitle: Int
 ) {
-    GROUP("A group of apps", "Pick the apps to block together"),
-    ALL_APPS("All apps except a few", "Only the apps you choose stay open");
+    GROUP(R.string.apps_block_several_group, R.string.apps_block_several_group_hint),
+    ALL_APPS(R.string.apps_block_several_all_apps, R.string.apps_block_several_all_apps_hint);
 
     /** Where the row goes: the new-group flow (null id), or a new All apps rule (null id). */
     fun open(onOpenGroup: (Long?) -> Unit, onOpenAllAppsRule: (Long?) -> Unit) {
@@ -61,14 +64,14 @@ fun BlockSeveralSheet(
     ) {
         Column(modifier = Modifier.navigationBarsPadding()) {
             Text(
-                "Block several apps",
+                stringResource(R.string.apps_block_several),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
             )
             BlockSeveralOption.entries.forEach { option ->
                 ListItem(
-                    headlineContent = { Text(option.title) },
-                    supportingContent = { Text(option.subtitle) },
+                    headlineContent = { Text(stringResource(option.title)) },
+                    supportingContent = { Text(stringResource(option.subtitle)) },
                     leadingContent = { TonalIcon(option.icon) },
                     trailingContent = {
                         Icon(

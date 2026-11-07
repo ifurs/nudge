@@ -16,14 +16,14 @@
     <string name="components_unit_minutes">хвилини</string>
     <string name="components_unit_seconds">секунди</string>
 
-    <string name="components_duration_short_seconds">%1$d с</string>
-    <string name="components_duration_short_minutes">%1$d хв</string>
-    <string name="components_duration_short_hours">%1$d год</string>
-    <string name="components_duration_short_hours_minutes">%1$d год %2$d хв</string>
+    <string name="components_duration_short_seconds">%1$d с</string>
+    <string name="components_duration_short_minutes">%1$d хв</string>
+    <string name="components_duration_short_hours">%1$d год</string>
+    <string name="components_duration_short_hours_minutes">%1$d год %2$d хв</string>
     <string name="components_duration_spaced_minutes">%1$d хв</string>
     <string name="components_duration_spaced_hours">%1$d год</string>
-    <string name="components_duration_short_minutes_seconds">%1$d хв %2$d с</string>
-    <string name="components_duration_under_minute">&lt; 1 хв</string>
+    <string name="components_duration_short_minutes_seconds">%1$d хв %2$d с</string>
+    <string name="components_duration_under_minute">&lt; 1 хв</string>
     <string name="components_duration_spoken_minutes">%1$d хв</string>
     <string name="components_duration_spoken_hours">%1$d год</string>
     <string name="components_duration_spoken_hours_minutes">%1$d год %2$d хв</string>
