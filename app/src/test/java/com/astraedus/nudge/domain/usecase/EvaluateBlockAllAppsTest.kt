@@ -1,5 +1,6 @@
 package com.astraedus.nudge.domain.usecase
 
+import com.astraedus.nudge.testing.en
 import com.astraedus.nudge.domain.engine.FirstUnlockState
 import com.astraedus.nudge.data.db.entity.AppGroup
 import com.astraedus.nudge.data.db.entity.AppGroupMember
@@ -118,7 +119,7 @@ class EvaluateBlockAllAppsTest {
         )
         val decision = block(useCase.invoke(maps))
         assertEquals(BlockMode.HARD_BLOCK, decision.mode)
-        assertEquals("Social", decision.ruleName)
+        assertEquals("Social", decision.ruleName.en())
         assertEquals("the group decided, so no All apps line", null, decision.allApps)
     }
 

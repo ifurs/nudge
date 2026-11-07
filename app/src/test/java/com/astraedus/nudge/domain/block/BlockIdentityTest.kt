@@ -1,5 +1,6 @@
 package com.astraedus.nudge.domain.block
 
+import com.astraedus.nudge.domain.model.RuleLabel
 import com.astraedus.nudge.domain.engine.FirstUnlockState
 import com.astraedus.nudge.domain.engine.BlockEngine
 import com.astraedus.nudge.domain.engine.ScheduleEvaluator
@@ -36,7 +37,7 @@ class BlockIdentityTest {
         delaySeconds = 15,
         dailyLimitMinutes = dailyLimitMinutes,
         enabled = true,
-        ruleName = "whole app ${mode.name}"
+        ruleName = RuleLabel.named("whole app ${mode.name}")
     )
 
     private fun shortsRule(mode: BlockMode) = anActiveRule(
@@ -45,7 +46,7 @@ class BlockIdentityTest {
         dailyLimitMinutes = null,
         enabled = true,
         inAppFeatures = listOf("shorts"),
-        ruleName = "shorts ${mode.name}"
+        ruleName = RuleLabel.named("shorts ${mode.name}")
     )
 
     /** The foreground path: no feature asked about. */

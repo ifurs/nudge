@@ -1,5 +1,9 @@
 package com.astraedus.nudge.ui.screens.settings
 
+import com.astraedus.nudge.ui.text.asString
+import com.astraedus.nudge.domain.text.UiText
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -29,11 +33,11 @@ import com.astraedus.nudge.data.preferences.NudgePreferences
 import com.astraedus.nudge.domain.nudge.PhoneNudge
 import kotlinx.coroutines.launch
 
-internal const val PHONE_NUDGE_TITLE = "Phone nudge"
-internal fun phoneNudgeSubtitle(thresholdMinutes: Int): String =
-    "After $thresholdMinutes minutes on your phone in one go, show a pause screen. Counts every app."
-internal const val PHONE_NUDGE_THRESHOLD_LABEL = "Pause after"
-internal const val PHONE_NUDGE_PAUSE_LABEL = "First pause length"
+internal val PHONE_NUDGE_TITLE: Int = R.string.settings_phone_nudge_title
+internal fun phoneNudgeSubtitle(thresholdMinutes: Int): UiText =
+    UiText.plural(R.plurals.settings_phone_nudge_subtitle, thresholdMinutes)
+internal val PHONE_NUDGE_THRESHOLD_LABEL: Int = R.string.settings_phone_nudge_threshold_label
+internal val PHONE_NUDGE_PAUSE_LABEL: Int = R.string.settings_phone_nudge_pause_label
 
 /** The thresholds the picker offers, in minutes. Bounds live in [PhoneNudge]. */
 private val THRESHOLD_CHOICES = listOf(10, 15, 20, 30, 40, 45, 60, 90)
@@ -59,8 +63,8 @@ internal fun PhoneNudgeRow(preferences: NudgePreferences) {
         .collectAsStateWithLifecycle(initialValue = PhoneNudge.DEFAULT_FIRST_PAUSE_SECONDS)
 
     ListItem(
-        headlineContent = { Text(PHONE_NUDGE_TITLE) },
-        supportingContent = { Text(phoneNudgeSubtitle(threshold)) },
+        headlineContent = { Text(stringResource(PHONE_NUDGE_TITLE)) },
+        supportingContent = { Text(phoneNudgeSubtitle(threshold).asString()) },
         leadingContent = { Icon(Icons.Outlined.Timer, contentDescription = null) },
         trailingContent = {
             Switch(
@@ -76,19 +80,19 @@ internal fun PhoneNudgeRow(preferences: NudgePreferences) {
     if (!enabled) return
 
     InlineDropdownRow(
-        label = PHONE_NUDGE_THRESHOLD_LABEL,
-        value = "$threshold min",
+        label = stringResource(PHONE_NUDGE_THRESHOLD_LABEL),
+        value = stringResource(R.string.settings_minutes_spaced, threshold),
         choices = THRESHOLD_CHOICES,
-        suffix = " min",
+        choiceText = { stringResource(R.string.settings_minutes_spaced, it) },
         onSelect = { scope.launch { preferences.setPhoneNudgeThresholdMinutes(it) } }
     )
     InlineDropdownRow(
-        label = PHONE_NUDGE_PAUSE_LABEL,
-        value = "$pause s",
+        label = stringResource(PHONE_NUDGE_PAUSE_LABEL),
+        value = stringResource(R.string.settings_seconds_spaced, pause),
         choices = PAUSE_CHOICES,
-        suffix = " s",
+        choiceText = { stringResource(R.string.settings_seconds_spaced, it) },
         onSelect = { scope.launch { preferences.setPhoneNudgePauseSeconds(it) } },
-        footnote = escalationPreview(pause)
+        footnote = escalationPreview(pause).asString()
     )
 }
 
@@ -97,7 +101,7 @@ private fun InlineDropdownRow(
     label: String,
     value: String,
     choices: List<Int>,
-    suffix: String,
+    choiceText: @Composable (Int) -> String,
     onSelect: (Int) -> Unit,
     footnote: String? = null
 ) {
@@ -122,7 +126,9 @@ private fun InlineDropdownRow(
             )
             Icon(
                 imageVector = if (expanded) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore,
-                contentDescription = if (expanded) "Collapse" else "Expand"
+                contentDescription = stringResource(
+                    if (expanded) R.string.settings_collapse else R.string.settings_expand
+                )
             )
         }
         AnimatedVisibility(visible = expanded) {
@@ -137,7 +143,7 @@ private fun InlineDropdownRow(
                             }
                             .padding(vertical = 10.dp, horizontal = 8.dp)
                     ) {
-                        Text("$choice$suffix", style = MaterialTheme.typography.bodyLarge)
+                        Text(choiceText(choice), style = MaterialTheme.typography.bodyLarge)
                     }
                 }
             }
@@ -154,11 +160,15 @@ private fun InlineDropdownRow(
 }
 
 /** "Later pauses: 10 s, 20 s, then 30 s" for a 5 s first pause. Pure, so the copy is tested. */
-internal fun escalationPreview(firstSeconds: Int): String {
+internal fun escalationPreview(firstSeconds: Int): UiText {
     val later = (2..4).map { PhoneNudge.pauseSeconds(it, firstSeconds) }
     val distinct = later.distinct()
-    if (distinct.size == 1) return "Later pauses: ${distinct.single()} s"
-    return "Later pauses: " +
-        later.dropLast(1).joinToString(", ") { "$it s" } +
-        ", then " + later.last() + " s"
+    if (distinct.size == 1) {
+        return UiText.of(R.string.settings_phone_nudge_later_one, UiText.of(R.string.settings_seconds_spaced, distinct.single()))
+    }
+    return UiText.of(
+        R.string.settings_phone_nudge_later_then,
+        UiText.Joined(later.dropLast(1).map { UiText.of(R.string.settings_seconds_spaced, it) }, ", "),
+        UiText.of(R.string.settings_seconds_spaced, later.last())
+    )
 }

@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.stats
 
+import com.astraedus.nudge.testing.en
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -195,13 +196,13 @@ class StatsDaySelectionTest {
 
     @Test
     fun `day label names today and yesterday in words`() {
-        assertEquals("Today", StatsDateLabels.day(today, today))
-        assertEquals("Yesterday", StatsDateLabels.day(today.minusDays(1), today))
+        assertEquals("Today", StatsDateLabels.day(today, today).en())
+        assertEquals("Yesterday", StatsDateLabels.day(today.minusDays(1), today).en())
     }
 
     @Test
     fun `day label falls back to an explicit date further back`() {
-        val label = StatsDateLabels.day(today.minusDays(3), today)
+        val label = StatsDateLabels.day(today.minusDays(3), today).en()
 
         assertTrue("expected a date, got: $label", label.contains("24"))
         assertTrue("expected a month, got: $label", label.contains("Aug"))
@@ -212,11 +213,11 @@ class StatsDaySelectionTest {
         val current = StatsDaySelection.startingAt(today)
         assertEquals(
             "Last 7 days",
-            StatsDateLabels.range(current.weekStart, current.weekEnd, today)
+            StatsDateLabels.range(current.weekStart, current.weekEnd, today).en()
         )
 
         val past = StatsDaySelection(weekEnd = today.minusDays(2), selected = today.minusDays(2))
-        val label = StatsDateLabels.range(past.weekStart, past.weekEnd, today)
+        val label = StatsDateLabels.range(past.weekStart, past.weekEnd, today).en()
         assertTrue("expected explicit dates, got: $label", label.contains("–"))
         assertTrue("expected the window end, got: $label", label.contains("25"))
     }

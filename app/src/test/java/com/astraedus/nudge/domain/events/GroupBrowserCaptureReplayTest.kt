@@ -1,5 +1,6 @@
 package com.astraedus.nudge.domain.events
 
+import com.astraedus.nudge.domain.model.RuleLabel
 import com.astraedus.nudge.domain.engine.FirstUnlockState
 import com.astraedus.nudge.data.repository.ContentFilter
 import com.astraedus.nudge.data.repository.RuleSnapshot
@@ -160,7 +161,7 @@ class GroupBrowserCaptureReplayTest {
 
         assertTrue("non-vacuous: the capture drives browser evaluations", outcome.browserEvaluations >= 10)
         assertEquals("every evaluation blocks", outcome.browserEvaluations, outcome.blocks.size)
-        assertTrue(outcome.blocks.all { it.mode == BlockMode.HARD_BLOCK && it.ruleName == "Social" })
+        assertTrue(outcome.blocks.all { it.mode == BlockMode.HARD_BLOCK && it.ruleName == RuleLabel.of(RuleLabel.Subject.Group("Social")) })
         assertEquals("no website evaluation at all", 0, outcome.webEvaluations)
     }
 

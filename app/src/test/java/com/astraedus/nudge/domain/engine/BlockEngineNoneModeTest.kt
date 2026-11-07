@@ -1,5 +1,6 @@
 package com.astraedus.nudge.domain.engine
 
+import com.astraedus.nudge.domain.model.RuleLabel
 import com.astraedus.nudge.domain.engine.FirstUnlockState
 import com.astraedus.nudge.domain.model.ActiveRule
 import com.astraedus.nudge.domain.model.BlockDecision
@@ -32,7 +33,7 @@ class BlockEngineNoneModeTest {
         enabled = true,
         inAppFeatures = null,
         grayscale = false,
-        ruleName = "No block"
+        ruleName = RuleLabel.named("No block")
     )
 
     private fun shortsRule(mode: BlockMode = BlockMode.DELAY) = ActiveRule(
@@ -42,7 +43,7 @@ class BlockEngineNoneModeTest {
         enabled = true,
         inAppFeatures = listOf("SHORTS"),
         grayscale = false,
-        ruleName = "Shorts - Delay"
+        ruleName = RuleLabel.named("Shorts - Delay")
     )
 
     @Test
@@ -138,7 +139,7 @@ class BlockEngineNoneModeTest {
             enabled = true,
             inAppFeatures = null,
             grayscale = false,
-            ruleName = "Hard Block"
+            ruleName = RuleLabel.named("Hard Block")
         )
 
         val decision = engine.evaluate(

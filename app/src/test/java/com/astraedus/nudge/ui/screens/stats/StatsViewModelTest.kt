@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.stats
 
+import com.astraedus.nudge.testing.en
 import com.astraedus.nudge.domain.engine.TimeTracker
 import com.astraedus.nudge.testing.aUsageEvent
 import com.astraedus.nudge.ui.screens.stats.charts.DayData
@@ -150,7 +151,7 @@ class StatsViewModelTest {
         val weekly = calculator.buildWeeklyDataFromTotals(totals)
         val validLabels = setOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
         weekly.forEach { day ->
-            assertTrue("Label '${day.label}' not in valid set", day.label in validLabels)
+            assertTrue("Label '${day.label}' not in valid set", day.label.en() in validLabels)
         }
     }
 
@@ -248,7 +249,7 @@ class StatsViewModelTest {
         assertEquals(70L, weekly.last().totalMs)
         val validLabels = setOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
         weekly.forEach { day ->
-            assertTrue("Label '${day.label}' not in valid set", day.label in validLabels)
+            assertTrue("Label '${day.label}' not in valid set", day.label.en() in validLabels)
         }
     }
 
@@ -274,7 +275,7 @@ class StatsViewModelTest {
     @Test
     fun `formatDateLabel produces readable output`() {
         val date = java.time.LocalDate.of(2026, 5, 21)
-        val label = StatsViewModel.formatDateLabel(date)
+        val label = StatsViewModel.formatDateLabel(date).en()
         // May 21, 2026 is a Thursday
         assertTrue("Label should contain 'Thu', got: $label", label.contains("Thu"))
         assertTrue("Label should contain 'May', got: $label", label.contains("May"))
@@ -301,24 +302,24 @@ class StatsViewModelTest {
     fun `formatDayTotal calls a genuinely unused day zero, not under a minute`() {
         // The stats screen used to guard with `ms < 60_000` and so printed "< 1m" for a day
         // with NO usage, while App Detail printed "0s" for the same zero.
-        assertEquals("0s", StatsViewModel.formatDayTotal(0L, timeTracker))
+        assertEquals("0s", StatsViewModel.formatDayTotal(0L, timeTracker).en())
     }
 
     @Test
     fun `formatDayTotal collapses any non-zero sub-minute total`() {
-        assertEquals("< 1m", StatsViewModel.formatDayTotal(1L, timeTracker))
-        assertEquals("< 1m", StatsViewModel.formatDayTotal(59_999L, timeTracker))
+        assertEquals("< 1m", StatsViewModel.formatDayTotal(1L, timeTracker).en())
+        assertEquals("< 1m", StatsViewModel.formatDayTotal(59_999L, timeTracker).en())
     }
 
     @Test
     fun `formatDayTotal defers to the shared duration formatter from a minute up`() {
         assertEquals(
             timeTracker.formatDuration(60_000L),
-            StatsViewModel.formatDayTotal(60_000L, timeTracker)
+            StatsViewModel.formatDayTotal(60_000L, timeTracker).en()
         )
         assertEquals(
             timeTracker.formatDuration(3 * 3_600_000L),
-            StatsViewModel.formatDayTotal(3 * 3_600_000L, timeTracker)
+            StatsViewModel.formatDayTotal(3 * 3_600_000L, timeTracker).en()
         )
     }
 

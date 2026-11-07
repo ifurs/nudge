@@ -220,4 +220,111 @@ class StrictModeEscapeGuardTest {
             )
         )
     }
+
+    // ── Ukrainian Settings (the label is the same in every language, see values-uk/strings.xml) ──
+    //
+    // Fixtures are built from the AOSP `values-uk` Settings strings and the common Pixel/Samsung
+    // wording, NOT from a captured Ukrainian device dump: they pin the matcher's vocabulary and need
+    // a device check on a uk phone (reported in the PR).
+
+    /** The accessibility detail page of a Ukrainian phone: "Використовувати ...", "Ярлик ...". */
+    private val ukAccessibilityDetailText = """
+        Використовувати Nudge - App Blocker
+        Ярлик Nudge - App Blocker
+        Nudge відстежує, який застосунок відкрито на передньому плані, щоб застосовувати ваші правила блокування.
+        Параметри
+        Вимкнено
+    """.trimIndent()
+
+    /** A Ukrainian App Info page (Pixel wording). */
+    private val ukAppInfoText = """
+        Nudge - App Blocker
+        Відкрити
+        Видалити
+        Примусово зупинити
+        Сповіщення
+        Дозволи
+        Пам’ять і кеш
+    """.trimIndent()
+
+    /** The Ukrainian accessibility LIST: shows our label, no detail signal, must stay unguarded. */
+    private val ukAccessibilityListText = """
+        Завантажені застосунки
+        Nudge - App Blocker
+        Вимкнено
+        TalkBack
+        Зчитувач екрана
+        Текст і дисплей
+        Додатковий приглушений екран
+    """.trimIndent()
+
+    private fun guards(text: String, pkg: String = settingsPkg) =
+        StrictModeEscapeGuard.shouldGuardSettingsScreen(
+            foregroundPkg = pkg,
+            windowText = text,
+            appLabel = label,
+            strictEnabled = true,
+            withinGrace = false
+        )
+
+    @Test
+    fun `ukrainian accessibility detail page -- guard`() {
+        assertTrue(guards(ukAccessibilityDetailText))
+    }
+
+    @Test
+    fun `ukrainian detail page is guarded by the use-label row alone, without the shortcut word`() {
+        assertTrue(guards("Використовувати Nudge - App Blocker\nВимкнено"))
+    }
+
+    @Test
+    fun `ukrainian app info with Примусово зупинити -- guard`() {
+        assertTrue(guards(ukAppInfoText))
+    }
+
+    @Test
+    fun `ukrainian app info on Samsung wording Примусова зупинка -- guard`() {
+        assertTrue(
+            guards(
+                """
+                Nudge - App Blocker
+                Відкрити
+                Примусова зупинка
+                Сповіщення
+                """.trimIndent(),
+                pkg = "com.samsung.android.settings"
+            )
+        )
+    }
+
+    @Test
+    fun `ukrainian uninstall alone with our label -- guard`() {
+        assertTrue(guards("Nudge - App Blocker\nВидалити"))
+    }
+
+    @Test
+    fun `ukrainian accessibility LIST page is NOT guarded`() {
+        assertFalse(guards(ukAccessibilityListText))
+    }
+
+    @Test
+    fun `ukrainian app info of another app without our label -- no guard`() {
+        assertFalse(guards("Інший застосунок\nВидалити\nПримусово зупинити"))
+    }
+
+    @Test
+    fun `ukrainian matching is case-insensitive`() {
+        assertTrue(guards(ukAppInfoText.uppercase()))
+    }
+
+    @Test
+    fun `ukrainian words on a non-settings package -- no guard`() {
+        assertFalse(guards(ukAppInfoText, pkg = "com.instagram.android"))
+    }
+
+    @Test
+    fun `a ukrainian phone still guards the english pages (any known language matches)`() {
+        assertTrue(guards(accessibilityDetailText))
+        assertTrue(guards(appInfoText))
+    }
 }

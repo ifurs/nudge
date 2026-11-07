@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.qr
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.camera.view.PreviewView
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -108,7 +110,7 @@ internal fun QrScanScreen(
             )
             Viewfinder(side = side, top = windowTop)
             Text(
-                text = "Hold the code inside the frame. It scans by itself.",
+                text = stringResource(R.string.qr_hold_inside_frame),
                 style = MaterialTheme.typography.bodyMedium,
                 color = ON_CAMERA_MUTED,
                 textAlign = TextAlign.Center,
@@ -147,7 +149,7 @@ internal fun QrScanScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             TextButton(onClick = onCancel) {
-                Text("Cancel", color = ON_CAMERA, style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.components_action_cancel), color = ON_CAMERA, style = MaterialTheme.typography.titleMedium)
             }
             if (state == ScanScreenState.SCANNING && torchAvailable) {
                 TorchButton(torchOn = torchOn, onToggle = onToggleTorch)
@@ -180,7 +182,7 @@ private fun Header(title: String, subtitle: String?, modifier: Modifier = Modifi
 
 @Composable
 private fun TorchButton(torchOn: Boolean, onToggle: () -> Unit) {
-    val label = if (torchOn) "Turn flashlight off" else "Turn flashlight on"
+    val label = stringResource(if (torchOn) R.string.qr_torch_off else R.string.qr_torch_on)
     FilledTonalIconButton(
         onClick = onToggle,
         modifier = Modifier
@@ -282,7 +284,7 @@ private fun PermissionPanel(
         PanelIcon(if (blocked) Icons.Outlined.NoPhotography else Icons.Outlined.PhotoCamera)
         Spacer(Modifier.height(20.dp))
         Text(
-            text = if (blocked) "Camera access is off" else "Nudge needs the camera to scan",
+            text = stringResource(if (blocked) R.string.qr_camera_off_title else R.string.qr_camera_needed_title),
             style = MaterialTheme.typography.titleLarge,
             color = ON_CAMERA,
             textAlign = TextAlign.Center
@@ -290,9 +292,9 @@ private fun PermissionPanel(
         Spacer(Modifier.height(8.dp))
         Text(
             text = if (blocked) {
-                "Android won't ask again. Allow Camera for Nudge in Settings, then come back here."
+                stringResource(R.string.qr_camera_off_body)
             } else {
-                "It's used only to read the code. Nothing is photographed, saved or sent anywhere."
+                stringResource(R.string.qr_camera_needed_body)
             },
             style = MaterialTheme.typography.bodyMedium,
             color = ON_CAMERA_MUTED,
@@ -301,11 +303,11 @@ private fun PermissionPanel(
         when (state) {
             ScanScreenState.RATIONALE -> {
                 Spacer(Modifier.height(24.dp))
-                Button(onClick = onAllowCamera) { Text("Allow camera") }
+                Button(onClick = onAllowCamera) { Text(stringResource(R.string.qr_allow_camera)) }
             }
             ScanScreenState.BLOCKED -> {
                 Spacer(Modifier.height(24.dp))
-                Button(onClick = onOpenSettings) { Text("Open settings") }
+                Button(onClick = onOpenSettings) { Text(stringResource(R.string.qr_open_settings)) }
             }
             else -> Unit
         }

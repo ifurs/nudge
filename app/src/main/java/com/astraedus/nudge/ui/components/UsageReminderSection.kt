@@ -1,5 +1,9 @@
 package com.astraedus.nudge.ui.components
 
+import com.astraedus.nudge.ui.text.asString
+import com.astraedus.nudge.domain.text.UiText
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -41,11 +45,10 @@ internal object UsageReminderInput {
     /** What an empty field fills with when the switch goes on, so the switch is never a no-op. */
     const val DEFAULT_MINUTES_TEXT = "20"
 
-    const val TITLE = "Usage reminder"
-    const val FIELD_LABEL = "Remind me after"
-    const val FIELD_SUPPORTING = "Counts time in the app in one sitting. One heads-up, nothing closes."
-    const val BLOCKED_WARNING =
-        "Notifications are off for Nudge, so this reminder can't reach you. Tap to turn them on."
+    val TITLE = R.string.components_usage_reminder_title
+    val FIELD_LABEL = R.string.components_usage_reminder_field_label
+    val FIELD_SUPPORTING = R.string.components_usage_reminder_field_supporting
+    val BLOCKED_WARNING = R.string.components_usage_reminder_blocked_warning
 
     /** The field text after the switch is flipped: an empty field gets a sensible starting value. */
     fun textAfterToggle(enabled: Boolean, currentText: String): String =
@@ -65,22 +68,21 @@ internal object UsageReminderInput {
      *
      * @param kickMinutes the time-based auto-kick this rule will save with, or null if none.
      */
-    fun supersededHint(remindMinutes: Int?, kickMinutes: Int?): String? {
+    fun supersededHint(remindMinutes: Int?, kickMinutes: Int?): UiText? {
         if (remindMinutes == null || remindMinutes <= 0) return null
         if (UseReminderEvaluator.effectiveMinutes(remindMinutes, kickMinutes) != null) return null
         val kick = kickMinutes ?: return null
-        return "Auto-kick at $kick min comes first, so this reminder won't show. " +
-            "Set it below $kick min to get both."
+        return UiText.of(R.string.components_usage_reminder_superseded, kick)
     }
 
     /** The help text. The reminder is app-only, which matters when the rule also blocks websites. */
-    fun info(websitesConfigured: Boolean): String =
-        "Get one gentle notification once you've spent this long in the app in one sitting. " +
-            "It doesn't close anything, it just lets you know.\n\n" +
-            "It resets the same way auto-kick does: a short trip to another app keeps the sitting " +
-            "going, a real break (5 minutes or more) starts a new one. If auto-kick by time is set " +
-            "for the same or a shorter time, auto-kick wins and the reminder is skipped." +
-            if (websitesConfigured) "\n\nApps only: it does not cover the websites below." else ""
+    fun info(websitesConfigured: Boolean): UiText = UiText.Joined(
+        listOfNotNull(
+            UiText.of(R.string.components_usage_reminder_info),
+            if (websitesConfigured) UiText.of(R.string.components_usage_reminder_info_apps_only) else null
+        ),
+        "\n\n"
+    )
 }
 
 /**
@@ -139,11 +141,11 @@ internal fun UsageReminderSection(
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    UsageReminderInput.TITLE,
+                    stringResource(UsageReminderInput.TITLE),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Medium
                 )
-                info(UsageReminderInput.info(websitesConfigured))
+                info(UsageReminderInput.info(websitesConfigured).asString())
             }
             Switch(checked = enabled, onCheckedChange = onToggle)
         }
@@ -156,22 +158,22 @@ internal fun UsageReminderSection(
                 MinutesField(
                     value = minutesText,
                     onValueChange = onMinutesTextChange,
-                    labelText = UsageReminderInput.FIELD_LABEL,
-                    supportingText = UsageReminderInput.FIELD_SUPPORTING
+                    labelText = stringResource(UsageReminderInput.FIELD_LABEL),
+                    supportingText = stringResource(UsageReminderInput.FIELD_SUPPORTING)
                 )
                 UsageReminderInput.supersededHint(
                     remindMinutes = DurationInput.parseMinutes(minutesText),
                     kickMinutes = kickMinutes
                 )?.let { hint ->
                     Text(
-                        hint,
+                        hint.asString(),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error
                     )
                 }
                 if (!canPost) {
                     Text(
-                        UsageReminderInput.BLOCKED_WARNING,
+                        stringResource(UsageReminderInput.BLOCKED_WARNING),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier.clickable { NotificationAccess.openSettings(context) }

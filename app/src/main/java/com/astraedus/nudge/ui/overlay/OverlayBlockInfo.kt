@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.overlay
 
+import com.astraedus.nudge.domain.text.UiText
 import com.astraedus.nudge.ui.components.rule.RuleSummary
 
 /**
@@ -18,11 +19,11 @@ internal object OverlayBlockInfo {
      * ("All apps except Spotify, Maps"); every other block shows the name the service sent.
      * [exceptNames] are group names first, then the installed except-app labels.
      */
-    fun visibleRuleName(ruleName: String?, isAllApps: Boolean, exceptNames: List<String>): String? =
-        if (isAllApps) RuleSummary.allAppsTitle(exceptNames) else ruleName
+    fun visibleRuleName(ruleName: String?, isAllApps: Boolean, exceptNames: List<String>): UiText? =
+        if (isAllApps) RuleSummary.allAppsTitle(exceptNames) else ruleName?.let { UiText.Raw(it) }
 
     /** "Until 8:42 AM" for a block that carries an end time, or null (no line) for one that does not. */
-    fun untilLine(untilMs: Long?, formatClock: (Long) -> String): String? =
+    fun untilLine(untilMs: Long?, formatClock: (Long) -> String): UiText? =
         untilMs?.let { RuleSummary.untilText(formatClock(it)) }
 
     /**

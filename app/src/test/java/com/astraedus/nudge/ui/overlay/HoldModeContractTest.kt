@@ -227,7 +227,7 @@ class HoldModeContractTest {
         assertTrue(
             "and the shared button's default label is still the one this overlay always had",
             read("java/com/astraedus/nudge/ui/overlay/LeaveButton.kt")
-                .contains("""text: String = "I changed my mind"""")
+                .contains("text: String = stringResource(R.string.overlay_changed_my_mind)")
         )
         assertTrue(
             "and route it to the activity's walk-away path, which never grants passthrough",

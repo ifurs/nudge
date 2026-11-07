@@ -3,26 +3,28 @@ package com.astraedus.nudge.ui.screens.settings
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Block
 import androidx.compose.runtime.Composable
+import com.astraedus.nudge.R
 import com.astraedus.nudge.domain.ContentFilterUserList
+import com.astraedus.nudge.domain.text.UiText
 import com.astraedus.nudge.domain.lock.ContentFilterBlocklistWeakening
 
-internal const val BLOCKLIST_TITLE = "Blocked words & sites"
-internal const val BLOCKLIST_SUBTITLE =
-    "Words and phrases block pages and searches containing them. A site blocks pages on that " +
-        "site and its subdomains."
-internal const val BLOCKLIST_STRICT_SUFFIX = " Removing one requires the unlock challenge."
-internal const val BLOCKLIST_UNLOCK_PROMPT = "Remove a blocked word or site"
-internal const val BLOCKLIST_INVALID =
-    "Enter a word or a site, up to ${ContentFilterUserList.MAX_ENTRY_LENGTH} characters."
-internal const val BLOCKLIST_DUPLICATE = "Already on the list."
-internal const val BLOCKLIST_FULL =
-    "The list is full (${ContentFilterUserList.MAX_ENTRIES}). Remove one first."
-internal const val BLOCKLIST_EMPTY = "Nothing blocked yet."
+internal val BLOCKLIST_TITLE: Int = R.string.settings_blocklist_title
+internal val BLOCKLIST_SUBTITLE: Int = R.string.settings_blocklist_subtitle
+
+/** The same sentence with "Removing one requires the unlock challenge." added (Strict Mode on). */
+internal val BLOCKLIST_SUBTITLE_STRICT: Int = R.string.settings_blocklist_subtitle_strict
+internal val BLOCKLIST_UNLOCK_PROMPT: Int = R.string.settings_blocklist_unlock_prompt
+internal val BLOCKLIST_INVALID: UiText =
+    UiText.of(R.string.settings_list_invalid, ContentFilterUserList.MAX_ENTRY_LENGTH)
+internal val BLOCKLIST_DUPLICATE: UiText = UiText.of(R.string.settings_list_duplicate)
+internal val BLOCKLIST_FULL: UiText = UiText.of(R.string.settings_list_full, ContentFilterUserList.MAX_ENTRIES)
+internal val BLOCKLIST_EMPTY: Int = R.string.settings_blocklist_empty
 
 private val BLOCKLIST_COPY = UserListCopy(
     title = BLOCKLIST_TITLE,
     icon = Icons.Outlined.Block,
     subtitle = BLOCKLIST_SUBTITLE,
+    subtitleStrict = BLOCKLIST_SUBTITLE_STRICT,
     empty = BLOCKLIST_EMPTY
 )
 
@@ -69,10 +71,8 @@ internal fun ContentFilterBlocklistEditor(
     onRemove: (String) -> Unit
 ) {
     UserListEditor(
-        copy = BLOCKLIST_COPY.copy(
-            subtitle = BLOCKLIST_SUBTITLE +
-                if (strictModeEnabled) BLOCKLIST_STRICT_SUFFIX else ""
-        ),
+        copy = BLOCKLIST_COPY,
+        strictModeEnabled = strictModeEnabled,
         entries = entries,
         submit = { blocklistSubmit(it, entries) },
         onAdd = onAdd,

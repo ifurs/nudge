@@ -1,5 +1,6 @@
 package com.astraedus.nudge.domain.usecase
 
+import com.astraedus.nudge.domain.model.RuleLabel
 import com.astraedus.nudge.data.preferences.NudgePreferences
 import com.astraedus.nudge.data.repository.BlockRuleRepository
 import com.astraedus.nudge.data.repository.ContentFilter
@@ -329,7 +330,7 @@ class EvaluateBlockUseCase @Inject constructor(
             enabled = true,
             inAppFeatures = null,
             grayscale = false,
-            ruleName = "Restricted content"
+            ruleName = RuleLabel.of(RuleLabel.Subject.ContentFilter)
         )
 
         val decision = blockEngine.evaluate(
@@ -369,16 +370,9 @@ class EvaluateBlockUseCase @Inject constructor(
         return withContext(Dispatchers.IO) { usageRepository.getDailyForegroundTimeMs(packageName) }
     }
 
-    private fun buildWebDomainRuleName(packageName: String?, mode: BlockMode): String {
-        val modeName = when (mode) {
-            BlockMode.HARD_BLOCK -> "Hard Block"
-            BlockMode.DELAY -> "Delay"
-            BlockMode.HOLD -> "Hold"
-            BlockMode.BREATHING -> "Breathing"
-            BlockMode.NONE -> "Off" // unreachable: NONE rules are filtered out before this point
-        }
-        return "Web - $modeName"
-    }
+    /** "Web - <mode>": NONE web rules are filtered out before this point. */
+    private fun buildWebDomainRuleName(packageName: String?, mode: BlockMode): RuleLabel =
+        RuleLabel.of(RuleLabel.Subject.Web(mode))
 
     private companion object {
         // Default delay applied when content filter mode is DELAY (no per-rule

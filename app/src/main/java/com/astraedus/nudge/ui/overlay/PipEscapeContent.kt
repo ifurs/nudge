@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.overlay
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -38,8 +40,9 @@ fun PipEscapeContent(
     // Two different fallbacks on purpose. The heading needs a title when the label is unresolvable;
     // the sentences need a SUBJECT, and reusing the heading's fallback there reads as nonsense
     // ("Picture-in-picture kept playing in a picture-in-picture window").
-    val heading = appLabel ?: "Picture-in-picture"
-    val subject = appLabel ?: "This app"
+    val heading = appLabel ?: stringResource(R.string.overlay_pip_heading)
+    val subject = appLabel ?: stringResource(R.string.overlay_pip_this_app)
+    val subjectObject = appLabel ?: stringResource(R.string.overlay_pip_this_app_object)
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -58,7 +61,7 @@ fun PipEscapeContent(
         ) {
             Icon(
                 imageVector = Icons.Filled.PictureInPicture,
-                contentDescription = "Picture-in-picture",
+                contentDescription = stringResource(R.string.overlay_pip_heading),
                 modifier = Modifier.size(80.dp),
                 tint = MaterialTheme.colorScheme.error
             )
@@ -75,9 +78,7 @@ fun PipEscapeContent(
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "$subject kept playing in a floating picture-in-picture window, so " +
-                    "Nudge's block could not cover it. Android does not let an app switch that " +
-                    "off for you.",
+                text = stringResource(R.string.overlay_pip_explain, subject),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -86,7 +87,7 @@ fun PipEscapeContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Turn off picture-in-picture for $subject and Nudge can block it properly.",
+                text = stringResource(R.string.overlay_pip_turn_off, subjectObject),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -96,11 +97,11 @@ fun PipEscapeContent(
 
             if (canOpenSettings) {
                 Button(onClick = onOpenSettings) {
-                    Text("Open picture-in-picture settings")
+                    Text(stringResource(R.string.overlay_pip_open_settings))
                 }
             } else {
                 Text(
-                    text = "Settings > Apps > Special app access > Picture-in-picture",
+                    text = stringResource(R.string.overlay_pip_settings_path),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
@@ -110,7 +111,7 @@ fun PipEscapeContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             TextButton(onClick = onDismiss) {
-                Text("Not now")
+                Text(stringResource(R.string.overlay_pip_not_now))
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -125,7 +126,7 @@ fun PipEscapeContent(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "Nudge only shows this once for each app.",
+                text = stringResource(R.string.overlay_pip_once),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.7f),
                 textAlign = TextAlign.Center

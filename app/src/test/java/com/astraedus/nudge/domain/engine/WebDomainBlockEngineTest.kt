@@ -1,5 +1,6 @@
 package com.astraedus.nudge.domain.engine
 
+import com.astraedus.nudge.domain.model.RuleLabel
 import com.astraedus.nudge.domain.engine.FirstUnlockState
 import com.astraedus.nudge.domain.model.ActiveRule
 import com.astraedus.nudge.domain.model.BlockDecision
@@ -31,13 +32,13 @@ class WebDomainBlockEngineTest {
                 dailyLimitMinutes = null,
                 enabled = true,
                 inAppFeatures = null,
-                ruleName = "Web - Hard Block"
+                ruleName = RuleLabel.named("Web - Hard Block")
             )
         )
         val decision = engine.evaluate("web", rules, 0L)
         assertTrue(decision is BlockDecision.Block)
         assertEquals(BlockMode.HARD_BLOCK, (decision as BlockDecision.Block).mode)
-        assertEquals("Web - Hard Block", decision.ruleName)
+        assertEquals(RuleLabel.named("Web - Hard Block"), decision.ruleName)
     }
 
     @Test
@@ -49,7 +50,7 @@ class WebDomainBlockEngineTest {
                 dailyLimitMinutes = null,
                 enabled = true,
                 inAppFeatures = null,
-                ruleName = "Web - Delay"
+                ruleName = RuleLabel.named("Web - Delay")
             )
         )
         val decision = engine.evaluate("com.instagram.android", rules, 0L)
@@ -68,7 +69,7 @@ class WebDomainBlockEngineTest {
                 dailyLimitMinutes = null,
                 enabled = true,
                 inAppFeatures = null,
-                ruleName = "Web - Breathing"
+                ruleName = RuleLabel.named("Web - Breathing")
             )
         )
         val decision = engine.evaluate("com.google.android.youtube", rules, 0L)
@@ -87,7 +88,7 @@ class WebDomainBlockEngineTest {
                 dailyLimitMinutes = null,
                 enabled = false,
                 inAppFeatures = null,
-                ruleName = "Web - Hard Block"
+                ruleName = RuleLabel.named("Web - Hard Block")
             )
         )
         val decision = engine.evaluate("web", rules, 0L)
@@ -103,7 +104,7 @@ class WebDomainBlockEngineTest {
                 dailyLimitMinutes = 30,
                 enabled = true,
                 inAppFeatures = null,
-                ruleName = "Web - Delay"
+                ruleName = RuleLabel.named("Web - Delay")
             )
         )
         // 31 minutes of usage exceeds 30-minute limit
@@ -121,7 +122,7 @@ class WebDomainBlockEngineTest {
                 dailyLimitMinutes = 30,
                 enabled = true,
                 inAppFeatures = null,
-                ruleName = "Web - Delay"
+                ruleName = RuleLabel.named("Web - Delay")
             )
         )
         // 10 minutes of usage is under 30-minute limit -- should use DELAY mode
@@ -163,7 +164,7 @@ class WebDomainBlockEngineTest {
                 scheduleDays = listOf(8), // Invalid day -- ScheduleEvaluator won't match
                 scheduleStartMinute = 0,
                 scheduleEndMinute = 1,
-                ruleName = "Web - Hard Block"
+                ruleName = RuleLabel.named("Web - Hard Block")
             )
         )
         val decision = engine.evaluate("web", rules, 0L)

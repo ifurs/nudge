@@ -1,6 +1,7 @@
 package com.astraedus.nudge.ui.screens.config
 
 import androidx.annotation.StringRes
+import com.astraedus.nudge.ui.text.asString
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -1083,10 +1084,10 @@ private fun AlsoCoveredBy(
         )
         groups.forEach { group ->
             // The same 40dp tonal folder a group row has on Manage Apps: one look per group.
-            CoveringRow(Icons.Default.Folder, group.label) { onOpenGroup(group.groupId) }
+            CoveringRow(Icons.Default.Folder, group.label.asString()) { onOpenGroup(group.groupId) }
         }
         allApps.forEach { rule ->
-            CoveringRow(AllAppsIcon, rule.label) { onOpenAllAppsRule(rule.ruleId) }
+            CoveringRow(AllAppsIcon, rule.label.asString()) { onOpenAllAppsRule(rule.ruleId) }
         }
     }
 }

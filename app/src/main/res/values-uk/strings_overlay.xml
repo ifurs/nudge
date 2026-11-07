@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="overlay_delay_titles">
+        <item>Зупиніться й подумайте…</item>
+        <item>Зробіть паузу й поміркуйте</item>
+        <item>Це свідомий вибір?</item>
+        <item>Перш ніж гортати…</item>
+        <item>Мить усвідомленості</item>
+    </string-array>
+    <string-array name="overlay_delay_subtitles">
+        <item>Чи справді вам зараз потрібно відкривати цей застосунок?</item>
+        <item>Що ви збиралися робити натомість?</item>
+        <item>Чи наблизить це вас до ваших цілей?</item>
+        <item>Ви обрали додати тут перешкоду не випадково.</item>
+        <item>Так вам дякує ваше майбутнє «я».</item>
+    </string-array>
+    <string-array name="overlay_hard_block_messages">
+        <item>Ви заблокували доступ до цього застосунку</item>
+        <item>Цей застосунок зараз під забороною</item>
+        <item>Ваше майбутнє «я» буде вдячне</item>
+        <item>Час зайнятися чимось іншим</item>
+        <item>Ви встановили цю межу недарма</item>
+    </string-array>
+
+    <string name="overlay_changed_my_mind">Передумати</string>
+    <string name="overlay_go_back">Назад</string>
+    <string name="overlay_go_home">На головний екран</string>
+    <string name="overlay_blocked_icon">Заблоковано</string>
+    <string name="overlay_app_blocked">Застосунок заблоковано</string>
+    <string name="overlay_daily_limit_reached">Денний ліміт вичерпано</string>
+    <string name="overlay_left_today">Сьогодні залишилось: %1$s</string>
+    <string name="overlay_rule_footer">Правило: %1$s</string>
+    <string name="overlay_open_allowed_app">Відкрити дозволений застосунок</string>
+    <string name="overlay_open_app">Відкрити %1$s</string>
+
+    <string name="overlay_pass_use">Користуватися 2 хвилини · раз на день</string>
+    <string name="overlay_pass_used">Денну перепустку використано · наступна через %1$s</string>
+
+    <string name="overlay_breathe_in">Вдих…</string>
+    <string name="overlay_breathe_out">Видих…</string>
+    <string name="overlay_seconds_remaining">Залишилось %1$d с</string>
+    <string name="overlay_hold_label">УТРИМУЙТЕ</string>
+    <string name="overlay_hold_keep_holding">ТРИМАЙТЕ</string>
+    <string name="overlay_hold_hint">Утримуйте, щоб відкрити. Відпустите — і відлік почнеться знову.</string>
+    <string name="overlay_hold_description">Утримуйте, щоб відкрити. Тримайте натиснутим %1$d с. Відпустите — і відлік почнеться знову.</string>
+    <string name="overlay_hold_open_label">Відкрити через %1$d с</string>
+
+    <plurals name="overlay_phone_nudge_minutes">
+        <item quantity="one">%1$d хвилина.</item>
+        <item quantity="few">%1$d хвилини.</item>
+        <item quantity="many">%1$d хвилин.</item>
+        <item quantity="other">%1$d хвилини.</item>
+    </plurals>
+    <string name="overlay_phone_nudge_question">Що ви збиралися робити?</string>
+    <string name="overlay_phone_nudge_done">Досить, на головний екран</string>
+    <string name="overlay_phone_nudge_keep_going">Продовжити</string>
+    <string name="overlay_phone_nudge_keep_going_in">Продовжити через %1$d</string>
+
+    <string name="overlay_pip_heading">Картинка в картинці</string>
+    <string name="overlay_pip_this_app">Цей застосунок</string>
+    <string name="overlay_pip_this_app_object">цього застосунку</string>
+    <string name="overlay_pip_explain">%1$s: відтворення триває в плаваючому вікні «картинка в картинці», тож блокування Nudge не може його закрити. Android не дозволяє застосунку вимкнути це за вас.</string>
+    <string name="overlay_pip_turn_off">Вимкніть «картинку в картинці» для %1$s, і Nudge зможе заблокувати його належним чином.</string>
+    <string name="overlay_pip_open_settings">Відкрити налаштування «Картинка в картинці»</string>
+    <string name="overlay_pip_settings_path">Налаштування &gt; Застосунки &gt; Спеціальний доступ &gt; Картинка в картинці</string>
+    <string name="overlay_pip_not_now">Не зараз</string>
+    <string name="overlay_pip_once">Nudge показує це лише раз для кожного застосунку.</string>
+
+    <string name="overlay_rule_scheduled">за розкладом</string>
+    <string name="overlay_rule_per_day">%1$d хв/день</string>
+    <string name="overlay_rule_with_qualifiers">%1$s (%2$s)</string>
+    <string name="overlay_rule_limit_reached">%1$s (ліміт вичерпано)</string>
+    <string name="overlay_rule_daily_limit">Денний ліміт</string>
+    <string name="overlay_rule_no_block">Без блокування</string>
+    <string name="overlay_rule_group">Група</string>
+    <string name="overlay_rule_web">Сайти - %1$s</string>
+    <string name="overlay_rule_content_filter">Обмежений вміст</string>
+    <string name="overlay_rule_nuke">Ядерний режим</string>
+</resources>

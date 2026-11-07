@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.allapps
 
+import com.astraedus.nudge.domain.text.UiText
 import android.graphics.drawable.Drawable
 import androidx.compose.runtime.Immutable
 import com.astraedus.nudge.ui.components.PickerGroup
@@ -77,7 +78,7 @@ data class AllAppsEditorState(
 
 /** One allowed group in "Except these": "Work · 6 apps", and "2 still blocked by other rules" when so. */
 @Immutable
-data class AllowedGroupRow(val groupId: Long, val title: String, val stillBlocked: String?)
+data class AllowedGroupRow(val groupId: Long, val title: UiText, val stillBlocked: UiText?)
 
 /** One allowed app in "Except these", and "Also blocked by Social" when another rule still blocks it. */
 @Immutable
@@ -85,7 +86,7 @@ data class AllowedAppRow(
     val packageName: String,
     val appName: String,
     val icon: Drawable?,
-    val alsoBlocked: String?
+    val alsoBlocked: UiText?
 )
 
 /** "Except these", top to bottom: allowed groups first, then allowed apps (spec 3.4). */

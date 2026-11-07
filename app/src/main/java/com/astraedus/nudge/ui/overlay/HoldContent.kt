@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.overlay
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -46,7 +48,7 @@ fun HoldContent(
     appLabel: String? = null,
     dailyTimeRemainingMs: Long? = null,
     dailyLimitMinutes: Int? = null,
-    titlePool: List<String> = NudgeMessages.delayTitles,
+    titlePool: List<String> = NudgeMessages.delayTitles(),
     canUseEmergencyPass: Boolean = false,
     emergencyLocked: Boolean = false,
     nextPassMs: Long = 0L,
@@ -83,7 +85,7 @@ fun HoldContent(
                 )
                 if (dailyTimeRemainingMs != null && dailyLimitMinutes != null && dailyLimitMinutes > 0) {
                     Text(
-                        text = "${formatDuration(dailyTimeRemainingMs)} left today",
+                        text = stringResource(R.string.overlay_left_today, formatDuration(dailyTimeRemainingMs)),
                         style = MaterialTheme.typography.bodyMedium,
                         color = timeRemainingColor(dailyTimeRemainingMs, dailyLimitMinutes)
                     )

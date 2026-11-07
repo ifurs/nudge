@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.qr
 
+import com.astraedus.nudge.R
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.ClipData
@@ -48,9 +49,9 @@ object QrShare {
             if (context !is Activity) chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(chooser)
         } catch (e: IOException) {
-            Toast.makeText(context, "Couldn't save the QR image to share", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.qr_share_save_failed), Toast.LENGTH_SHORT).show()
         } catch (e: ActivityNotFoundException) {
-            Toast.makeText(context, "No app available to share with", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.qr_share_no_app), Toast.LENGTH_SHORT).show()
         }
     }
 

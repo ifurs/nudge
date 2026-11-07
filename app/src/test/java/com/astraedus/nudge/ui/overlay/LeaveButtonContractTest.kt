@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.overlay
 
+import org.junit.Assert.assertEquals
+import com.astraedus.nudge.testing.enString
 import com.astraedus.nudge.testing.SourceScan
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -27,8 +29,8 @@ class LeaveButtonContractTest {
         "DelayContent" to "LeaveButton(onClick = onCancel)",
         "HoldContent" to "LeaveButton(onClick = onCancel)",
         "BreathingContent" to "LeaveButton(onClick = onCancel)",
-        "HardBlockContent" to """LeaveButton(text = "Go Back", onClick = onGoBack)""",
-        "NukeBlockContent" to """LeaveButton(text = "Go home", onClick = onGoHome)"""
+        "HardBlockContent" to "LeaveButton(text = stringResource(R.string.overlay_go_back), onClick = onGoBack)",
+        "NukeBlockContent" to "LeaveButton(text = stringResource(R.string.overlay_go_home), onClick = onGoHome)"
     )
 
     @Test
@@ -78,7 +80,8 @@ class LeaveButtonContractTest {
             "capped at 320dp, cap applied BEFORE fillMaxWidth or it never bites",
             source.indexOf("widthIn(max = 320.dp)") in 0 until source.indexOf("fillMaxWidth()")
         )
-        assertTrue("default label", source.contains("""text: String = "I changed my mind""""))
+        assertTrue("default label", source.contains("text: String = stringResource(R.string.overlay_changed_my_mind)"))
+        assertEquals("I changed my mind", enString(com.astraedus.nudge.R.string.overlay_changed_my_mind))
     }
 
     @Test

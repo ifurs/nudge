@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.allapps
 
+import com.astraedus.nudge.R
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -184,7 +185,7 @@ class AllAppsEditorViewModel @Inject constructor(
                 refreshFirstUnlockHints()
             }
             if (setDayStartMinuteUseCase.requiresUnlock(minute)) {
-                strictModeGate.run(prompt = "Change when your day starts", action = write)
+                strictModeGate.run(prompt = R.string.components_prompt_day_start, action = write)
             } else {
                 write()
             }
@@ -248,7 +249,7 @@ class AllAppsEditorViewModel @Inject constructor(
                 _state.update { it.copy(isFinished = true) }
             }
             if (allAppsSaveWeakens(savedRule, newRule)) {
-                strictModeGate.run(prompt = "Save changes that reduce blocking", action = write)
+                strictModeGate.run(prompt = R.string.components_prompt_save_weakening, action = write)
             } else {
                 write()
             }
@@ -279,7 +280,7 @@ class AllAppsEditorViewModel @Inject constructor(
                 repository.deleteRule(rule.id)
                 _state.update { it.copy(isFinished = true) }
             }
-            if (allAppsDeleteWeakens(rule)) strictModeGate.run(prompt = "Delete this rule", action = delete)
+            if (allAppsDeleteWeakens(rule)) strictModeGate.run(prompt = R.string.allapps_prompt_delete_rule, action = delete)
             else delete()
         }
     }

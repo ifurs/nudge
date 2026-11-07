@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.lock
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -91,16 +93,12 @@ class StrictModeGuardActivity : ComponentActivity() {
                         val challengeTarget = remember { target }
                         ChallengeDialog(
                             target = challengeTarget,
-                            prompt = if (nuke) {
-                                "Nuke is on, and this screen is a way around it. Type the code to " +
-                                    "change Nudge's system settings, or go back."
-                            } else {
-                                "Strict Mode is protecting this screen. " +
-                                    "Unlock to change Nudge's system settings, or go back."
-                            },
+                            prompt = stringResource(
+                                if (nuke) R.string.lock_guard_prompt_nuke else R.string.lock_guard_prompt_strict
+                            ),
                             onUnlock = { onUnlocked() },
                             onCancel = { onChangedMind() },
-                            title = if (nuke) "Nuke is on" else "Strict Mode locked"
+                            title = stringResource(if (nuke) R.string.lock_guard_title_nuke else R.string.lock_guard_title_strict)
                         )
                     }
                 }

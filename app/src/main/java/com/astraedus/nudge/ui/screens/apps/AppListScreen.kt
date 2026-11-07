@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.apps
 
+import com.astraedus.nudge.ui.text.asString
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -180,7 +181,7 @@ fun AppListContent(
                             AppListItem(
                                 appName = app.appInfo.appName,
                                 icon = app.appInfo.icon,
-                                supportingText = app.supportingText,
+                                supportingText = app.supportingText?.asString(),
                                 modifier = Modifier.clickable { onNavigateToAppConfig(app.packageName) },
                                 trailingContent = {
                                     Switch(
@@ -228,10 +229,10 @@ private fun TopSection(
             key(rule.ruleId) {
                 ListItem(
                     headlineContent = {
-                        Text(rule.title, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(rule.title.asString(), maxLines = 1, overflow = TextOverflow.Ellipsis)
                     },
                     supportingContent = {
-                        Text(rule.summary, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                        Text(rule.summary.asString(), maxLines = 2, overflow = TextOverflow.Ellipsis)
                     },
                     leadingContent = { TonalIcon(AllAppsIcon) },
                     trailingContent = {
@@ -249,10 +250,10 @@ private fun TopSection(
             key(group.groupId) {
                 ListItem(
                     headlineContent = {
-                        Text(group.title, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(group.title.asString(), maxLines = 1, overflow = TextOverflow.Ellipsis)
                     },
                     supportingContent = {
-                        Text(group.summary, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                        Text(group.summary.asString(), maxLines = 2, overflow = TextOverflow.Ellipsis)
                     },
                     leadingContent = { TonalIcon(Icons.Default.Folder) },
                     trailingContent = {

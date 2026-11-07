@@ -1,5 +1,8 @@
 package com.astraedus.nudge.ui.screens.nuke
 
+import com.astraedus.nudge.ui.text.resolve
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -80,14 +83,15 @@ fun NukeScreen(
         val active = state.active
         val title = when (purpose) {
             NukeScanPurpose.TOGGLE ->
-                if (active) "Scan your Nuke code to end Nuke" else "Scan your Nuke code to start Nuke"
-            NukeScanPurpose.CONFIRM_NEW_QR -> "Scan the code you just saved"
-            NukeScanPurpose.PAIR_EXISTING -> "Scan any QR code or barcode"
+                context.getString(if (active) R.string.nuke_scan_title_end else R.string.nuke_scan_title_start)
+            NukeScanPurpose.CONFIRM_NEW_QR -> context.getString(R.string.nuke_scan_title_confirm)
+            NukeScanPurpose.PAIR_EXISTING -> context.getString(R.string.nuke_scan_title_pair)
         }
         val subtitle = when (purpose) {
-            NukeScanPurpose.TOGGLE -> if (active) "End Nuke" else "Start Nuke"
-            NukeScanPurpose.CONFIRM_NEW_QR -> "Proves you kept it somewhere you can reach"
-            NukeScanPurpose.PAIR_EXISTING -> "Any barcode you already have works"
+            NukeScanPurpose.TOGGLE ->
+                context.getString(if (active) R.string.nuke_scan_subtitle_end else R.string.nuke_scan_subtitle_start)
+            NukeScanPurpose.CONFIRM_NEW_QR -> context.getString(R.string.nuke_scan_subtitle_confirm)
+            NukeScanPurpose.PAIR_EXISTING -> context.getString(R.string.nuke_scan_subtitle_pair)
         }
         scanner.launch(ScanQrContract.Request(title = title, subtitle = subtitle))
         viewModel.consumeScanRequest()
@@ -95,17 +99,17 @@ fun NukeScreen(
 
     LaunchedEffect(message) {
         val text = message ?: return@LaunchedEffect
-        snackbarHostState.showSnackbar(text)
+        snackbarHostState.showSnackbar(text.resolve(context))
         viewModel.consumeMessage()
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Nuke") },
+                title = { Text(stringResource(R.string.nuke_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.nuke_back))
                     }
                 }
             )
@@ -149,7 +153,7 @@ fun NukeScreen(
 
             item {
                 Text(
-                    "Apps to nuke",
+                    stringResource(R.string.nuke_apps_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Medium
                 )
@@ -157,7 +161,7 @@ fun NukeScreen(
 
             item {
                 Text(
-                    "Your phone, messages, clock, launcher, keyboard and Settings are never on this list.",
+                    stringResource(R.string.nuke_apps_never_listed),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -168,7 +172,7 @@ fun NukeScreen(
                     value = state.query,
                     onValueChange = viewModel::setQuery,
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("Search apps…") },
+                    placeholder = { Text(stringResource(R.string.nuke_search_apps)) },
                     leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
                     singleLine = true
                 )
@@ -209,7 +213,7 @@ fun NukeScreen(
             token = currentPairing.token,
             onSaveShare = {
                 val bitmap = QrCodeGenerator.generate(currentPairing.token, 1024)
-                QrShare.share(context, bitmap, "nudge-nuke-code.png", "Save your Nuke code")
+                QrShare.share(context, bitmap, "nudge-nuke-code.png", context.getString(R.string.nuke_share_chooser))
             },
             onConfirmScan = { viewModel.requestScan(NukeScanPurpose.CONFIRM_NEW_QR) },
             onCancel = viewModel::cancelPairing

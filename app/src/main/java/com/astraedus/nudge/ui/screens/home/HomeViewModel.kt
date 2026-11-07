@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.screens.home
 
+import com.astraedus.nudge.domain.text.UiText
+import com.astraedus.nudge.ui.text.DurationText
 import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.compose.runtime.Immutable
@@ -65,7 +67,7 @@ import kotlinx.coroutines.launch
 @Immutable
 data class TopBlockedApp(
     val packageName: String,
-    val label: String,
+    val label: UiText,
     val icon: ImageBitmap?,
     val count: Int
 )
@@ -73,7 +75,7 @@ data class TopBlockedApp(
 @Immutable
 data class HomeUiState(
     val isGlobalEnabled: Boolean = true,
-    val todayTotalUsageFormatted: String = "0s",
+    val todayTotalUsageFormatted: UiText = DurationText.of(0L),
     val activeAppCount: Int = 0,
     /**
      * The "Blocked" tiles: confrontations the user was SHOWN, each counted once. A walk-away is a
@@ -87,7 +89,7 @@ data class HomeUiState(
     val hasUsagePermission: Boolean = true,
     /** The two mini charts on the dashboard. */
     val charts: HomeCharts = HomeCharts(),
-    val weekTotalFormatted: String = "0s",
+    val weekTotalFormatted: UiText = DurationText.of(0L),
     /** Apps that pulled hardest over the same 7 days the card above them charts. */
     val topBlocked: List<TopBlockedApp> = emptyList()
 )
@@ -377,7 +379,7 @@ class HomeViewModel @Inject constructor(
             allTimeChangedMindCount = counts.allTimeChangedMind,
             hasUsagePermission = screenTime.hasPermission,
             charts = charts,
-            weekTotalFormatted = timeTracker.formatDuration(charts.weekTotalMs)
+            weekTotalFormatted = DurationText.of(charts.weekTotalMs)
         )
     }.combine(topBlockedFlow) { state, topBlocked ->
         state.copy(topBlocked = topBlocked)

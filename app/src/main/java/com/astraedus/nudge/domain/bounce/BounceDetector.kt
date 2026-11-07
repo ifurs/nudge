@@ -300,22 +300,7 @@ data class BounceAlert(
 
     enum class Unit { APPS, SITES }
 
-    val title: String get() = TITLE
-
-    val body: String
-        get() {
-            val minutesUnit = if (minutes == 1) "minute" else "minutes"
-            val noun = when {
-                unit == Unit.SITES -> if (count == 1) "site" else "sites"
-                count == 1 -> "app"
-                else -> "apps"
-            }
-            return "You've bounced through $count $noun in $minutes $minutesUnit. Wanna take a break?"
-        }
-
     companion object {
-        const val TITLE = "Bro. wtf."
-
         fun minutesFor(elapsedMs: Long): Int {
             val clamped = elapsedMs.coerceAtLeast(0L)
             return ((clamped + 59_999L) / 60_000L).toInt().coerceAtLeast(1)

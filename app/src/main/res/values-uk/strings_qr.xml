@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="qr_hold_inside_frame">Тримайте код усередині рамки. Сканування відбувається саме.</string>
+    <string name="qr_torch_off">Вимкнути ліхтарик</string>
+    <string name="qr_torch_on">Увімкнути ліхтарик</string>
+    <string name="qr_camera_off_title">Доступ до камери вимкнено</string>
+    <string name="qr_camera_needed_title">Для сканування Nudge потрібна камера</string>
+    <string name="qr_camera_off_body">Android більше не запитуватиме. Дозвольте Nudge доступ до камери в налаштуваннях і поверніться сюди.</string>
+    <string name="qr_camera_needed_body">Камера лише зчитує код. Нічого не фотографується, не зберігається й нікуди не надсилається.</string>
+    <string name="qr_allow_camera">Дозволити доступ до камери</string>
+    <string name="qr_open_settings">Відкрити налаштування</string>
+    <string name="qr_share_save_failed">Не вдалося зберегти QR-зображення, щоб поділитися ним</string>
+    <string name="qr_share_no_app">Немає застосунку, через який можна поділитися</string>
+    <string name="qr_camera_open_failed">Не вдалося відкрити камеру</string>
+    <string name="qr_settings_path">Відкрийте Налаштування &gt; Застосунки &gt; Nudge &gt; Дозволи</string>
+</resources>

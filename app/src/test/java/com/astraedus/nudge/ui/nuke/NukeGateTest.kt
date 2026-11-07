@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.nuke
 
+import com.astraedus.nudge.domain.text.UiText
 import com.astraedus.nudge.domain.nuke.NukeEmergencyCode
 import com.astraedus.nudge.domain.nuke.NukeKey
 import com.astraedus.nudge.domain.nuke.NukeState
@@ -37,7 +38,7 @@ class NukeGateTest {
     fun `a weakening change waits behind the dialog`() = runTest {
         stash()
         assertEquals(0, ran)
-        assertEquals("End Nuke", gate.unlock.value?.prompt)
+        assertEquals(UiText.Raw("End Nuke"), gate.unlock.value?.prompt)
         assertNull(gate.unlock.value?.emergencyTarget)
     }
 

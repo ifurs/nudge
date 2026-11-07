@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.overlay
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -180,6 +182,8 @@ fun HoldTarget(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        val holdDescription = stringResource(R.string.overlay_hold_description, totalSeconds)
+        val openLabel = stringResource(R.string.overlay_hold_open_label, totalSeconds)
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
@@ -189,9 +193,8 @@ fun HoldTarget(
                 // number and a word.
                 .semantics(mergeDescendants = true) {
                     role = Role.Button
-                    contentDescription = "Hold to open. Press and hold for $totalSeconds seconds. " +
-                        "Let go and it starts over."
-                    onClick(label = "Open after $totalSeconds seconds") {
+                    contentDescription = holdDescription
+                    onClick(label = openLabel) {
                         accessibilityHold = true
                         true
                     }
@@ -235,7 +238,7 @@ fun HoldTarget(
                     color = faceContentColor
                 )
                 Text(
-                    text = if (holding) "KEEP HOLDING" else "HOLD",
+                    text = stringResource(if (holding) R.string.overlay_hold_keep_holding else R.string.overlay_hold_label),
                     style = MaterialTheme.typography.labelLarge.copy(
                         fontWeight = FontWeight.SemiBold,
                         letterSpacing = 2.sp
@@ -248,7 +251,7 @@ fun HoldTarget(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Hold to open. Let go and it starts over.",
+            text = stringResource(R.string.overlay_hold_hint),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center

@@ -8,7 +8,10 @@ import com.astraedus.nudge.data.db.entity.isShownConfrontation
 import com.astraedus.nudge.data.repository.InstalledAppsRepository
 import com.astraedus.nudge.data.repository.ScreenTimeProvider
 import com.astraedus.nudge.data.repository.UsageRepository
+import com.astraedus.nudge.R
 import com.astraedus.nudge.di.IoDispatcher
+import com.astraedus.nudge.domain.text.UiText
+import com.astraedus.nudge.ui.text.DurationText
 import com.astraedus.nudge.domain.engine.TimeTracker
 import com.astraedus.nudge.domain.usage.WeeklyUsage
 import com.astraedus.nudge.ui.screens.stats.charts.DayData
@@ -39,13 +42,13 @@ data class AppUsageStat(
     val packageName: String,
     val appName: String,
     val durationMs: Long,
-    val formattedDuration: String,
+    val formattedDuration: UiText,
     val fraction: Float
 )
 
 @Immutable
 data class StatsUiState(
-    val totalFormatted: String = "0s",
+    val totalFormatted: UiText = DurationText.of(0L),
     val appStats: List<AppUsageStat> = emptyList(),
     val weeklyData: List<DayData> = emptyList(),
     val trendData: List<TrendDay> = emptyList(),
@@ -53,15 +56,15 @@ data class StatsUiState(
     val streakDays: Int = 0,
     val hasUsagePermission: Boolean = true,
     val isToday: Boolean = true,
-    val dateLabel: String = "Today",
+    val dateLabel: UiText = UiText.of(R.string.stats_today),
     /** Which of the 7 bars is the selected day. Drives chart highlighting. */
     val selectedDayIndex: Int = StatsDaySelection.WINDOW_DAYS - 1,
     /** "Last 7 days", or explicit dates once the user scrolls back. */
-    val weekRangeLabel: String = "Last 7 days",
+    val weekRangeLabel: UiText = UiText.of(R.string.stats_last_7_days),
     /** Whether the forward arrow does anything. */
     val canGoForward: Boolean = false,
     /** Screen time across the whole 7-bar window, already formatted. */
-    val weekTotalFormatted: String = "0s",
+    val weekTotalFormatted: UiText = DurationText.of(0L),
     /** Nudge counts for the SELECTED day — the numbers a tapped bar has to move. */
     val selectedDayBlocked: Int = 0,
     val selectedDayWalkedAway: Int = 0
@@ -198,7 +201,7 @@ class StatsViewModel @Inject constructor(
                     packageName = pkg,
                     appName = resolveAppName(pkg),
                     durationMs = ms,
-                    formattedDuration = timeTracker.formatDuration(ms),
+                    formattedDuration = DurationText.of(ms),
                     fraction = (ms.toFloat() / maxMs.toFloat()).coerceIn(0.05f, 1f)
                 )
             }
@@ -222,7 +225,7 @@ class StatsViewModel @Inject constructor(
             selectedDayIndex = selection.selectedIndex,
             weekRangeLabel = StatsDateLabels.range(loadedWeekStart, loadedWeekEnd, today),
             canGoForward = selection.canGoForward(today),
-            weekTotalFormatted = timeTracker.formatDuration(weeklyTotals.sum()),
+            weekTotalFormatted = DurationText.of(weeklyTotals.sum()),
             // Confrontations shown, not rows written: the walk-away row below carries
             // `wasBlocked` too, and counting it here would show every walk-away twice.
             selectedDayBlocked = selectedDayEvents.count { it.isShownConfrontation },
@@ -244,7 +247,7 @@ class StatsViewModel @Inject constructor(
         fun Long.toLocalDate(): LocalDate =
             Instant.ofEpochMilli(this).atZone(ZoneId.systemDefault()).toLocalDate()
 
-        fun formatDateLabel(date: LocalDate): String = StatsDateLabels.full(date)
+        fun formatDateLabel(date: LocalDate): UiText = StatsDateLabels.full(date)
 
         /**
          * A day's screen-time total, worded the same on every day-scoped screen.
@@ -254,8 +257,8 @@ class StatsViewModel @Inject constructor(
          * you genuinely did not touch the phone is not "under a minute", and two screens
          * describing the same zero differently is exactly the class of oddity being fixed here.
          */
-        internal fun formatDayTotal(ms: Long, timeTracker: TimeTracker): String =
-            if (ms in 1L until 60_000L) "< 1m" else timeTracker.formatDuration(ms)
+        @Suppress("UNUSED_PARAMETER")
+        internal fun formatDayTotal(ms: Long, timeTracker: TimeTracker): UiText = DurationText.dayTotal(ms)
 
         /**
          * `UsageStatsManager` has no Flow, so a live day has to be polled. A window that has

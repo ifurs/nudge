@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="redirect_pick_better_app">Pick a better app</string>
+    <string name="redirect_bubble_pick_description">Pick a better app to go to instead</string>
+    <string name="redirect_bubble_go_description">Go to %1$s instead</string>
+    <string name="redirect_bubble_pick_action">Pick an app</string>
+    <string name="redirect_bubble_open_action">Open %1$s</string>
+    <string name="redirect_bubble_change_action">Change app</string>
+    <string name="redirect_bubble_empty_caption">Somewhere worth going instead</string>
+    <string name="redirect_bubble_caption">Go here instead</string>
+
+    <string name="redirect_settings_title">Redirect app</string>
+    <string name="redirect_settings_summary_empty">Offer one better app on every block screen, like a to-do list or a reader.</string>
+    <string name="redirect_settings_summary_set">%1$s is offered on every block screen. Tap to change or remove.</string>
+
+    <string name="redirect_picker_subtitle">It sits on every block screen. One tap takes you there instead.</string>
+    <string name="redirect_picker_remove">Remove</string>
+    <string name="redirect_picker_search">Search apps…</string>
+    <string name="redirect_picker_empty">No apps to offer.</string>
+    <string name="redirect_picker_no_match">No apps match \"%1$s\".</string>
+    <string name="redirect_picker_current">Current choice</string>
+    <string name="redirect_picker_not_offered">Apps you block, and apps on your Nuke list, are not offered: going there would only meet another block.</string>
+</resources>

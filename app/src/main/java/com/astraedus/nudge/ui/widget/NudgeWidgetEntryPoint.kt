@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.widget
 
+import dagger.hilt.android.qualifiers.ApplicationContext
 import android.content.Context
 import com.astraedus.nudge.data.preferences.NudgePreferences
 import com.astraedus.nudge.data.repository.InstalledAppsRepository
@@ -34,6 +35,9 @@ interface NudgeWidgetEntryPoint {
     fun timeTracker(): TimeTracker
     fun nudgePreferences(): NudgePreferences
     fun widgetSnapshotStore(): WidgetSnapshotStore
+
+    /** For resolving [com.astraedus.nudge.domain.text.UiText] into the user's language. */
+    @ApplicationContext fun appContext(): Context
 
     companion object {
         fun from(context: Context): NudgeWidgetEntryPoint = EntryPointAccessors.fromApplication(

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_ok">Гаразд</string>
+    <string name="backup_import_title">Імпорт резервної копії</string>
+    <string name="backup_import_confirm">Імпортувати</string>
+    <string name="backup_complete_title">Імпорт завершено</string>
+    <string name="backup_failed_title">Не вдалося імпортувати</string>
+    <string name="backup_save_title">Збереження резервної копії</string>
+    <string name="backup_share_chooser">Поділитися резервною копією</string>
+    <string name="backup_read_failed">Не вдалося прочитати цей файл.</string>
+    <string name="backup_prompt_import_weakens">Імпортувати резервну копію, що послаблює захист</string>
+    <string name="backup_save_success">Резервну копію збережено. У ній ваші правила, історія та налаштування застосунку.</string>
+    <string name="backup_save_failure">Не вдалося записати резервну копію туди. Спробуйте ще раз або виберіть іншу теку.</string>
+
+    <string name="backup_preview_rules">Імпортувати правила: %1$d?</string>
+    <string name="backup_preview_rules_groups">Імпортувати правила: %1$d і групи: %2$d?</string>
+    <string name="backup_preview_duplicates">Дублікати правил буде пропущено.</string>
+    <string name="backup_preview_history">Містить подій історії: %1$d (нових: %2$d).</string>
+    <string name="backup_preview_settings">Також відновить налаштування застосунку, замінивши налаштування цього пристрою.</string>
+    <plurals name="backup_entries_unreadable">
+        <item quantity="one">%1$d запис не вдалося прочитати, його буде пропущено:</item>
+        <item quantity="few">%1$d записи не вдалося прочитати, їх буде пропущено:</item>
+        <item quantity="many">%1$d записів не вдалося прочитати, їх буде пропущено:</item>
+        <item quantity="other">%1$d запису не вдалося прочитати, його буде пропущено:</item>
+    </plurals>
+    <plurals name="backup_history_unreadable">
+        <item quantity="one">%1$d подію історії не вдалося прочитати, її буде пропущено:</item>
+        <item quantity="few">%1$d події історії не вдалося прочитати, їх буде пропущено:</item>
+        <item quantity="many">%1$d подій історії не вдалося прочитати, їх буде пропущено:</item>
+        <item quantity="other">%1$d події історії не вдалося прочитати, її буде пропущено:</item>
+    </plurals>
+    <plurals name="backup_settings_unreadable">
+        <item quantity="one">%1$d налаштування не вдалося прочитати, його буде пропущено:</item>
+        <item quantity="few">%1$d налаштування не вдалося прочитати, їх буде пропущено:</item>
+        <item quantity="many">%1$d налаштувань не вдалося прочитати, їх буде пропущено:</item>
+        <item quantity="other">%1$d налаштування не вдалося прочитати, його буде пропущено:</item>
+    </plurals>
+    <string name="backup_reasons_more">…і ще %1$d</string>
+
+    <string name="backup_outcome_imported">Імпортовано правил: %1$d</string>
+    <string name="backup_outcome_groups">Створено груп: %1$d</string>
+    <string name="backup_outcome_duplicates">Пропущено (дублікати): %1$d</string>
+    <string name="backup_outcome_history_restored">Відновлено подій історії: %1$d</string>
+    <string name="backup_outcome_history_present">Історія вже наявна: %1$d</string>
+    <string name="backup_outcome_history_unreadable">Не вдалося прочитати історію: %1$d</string>
+    <string name="backup_outcome_settings_restored">Налаштування застосунку відновлено</string>
+    <string name="backup_outcome_settings_unreadable">Не вдалося прочитати налаштувань: %1$d</string>
+    <string name="backup_outcome_skipped_unreadable">Пропущено (не вдалося прочитати): %1$d</string>
+</resources>

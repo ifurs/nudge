@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.components.rule
 
+import com.astraedus.nudge.testing.RuleSummaryEn as RuleSummary
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test

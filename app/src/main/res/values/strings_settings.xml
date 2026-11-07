@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Settings</string>
+    <string name="settings_section_permissions">Permissions</string>
+    <string name="settings_section_content_filter">Content Filter</string>
+    <string name="settings_section_lock">Commitment Lock</string>
+    <string name="settings_section_escape">Escape Hatch</string>
+    <string name="settings_section_checkins">Check-ins</string>
+    <string name="settings_section_personalize">Personalize</string>
+    <string name="settings_section_backup">Backup</string>
+    <string name="settings_section_about">About</string>
+    <string name="settings_section_developer">Developer Options</string>
+
+    <!-- Permissions -->
+    <string name="settings_perm_accessibility_title">Accessibility Service</string>
+    <string name="settings_perm_accessibility_desc">Required to detect foreground apps</string>
+    <string name="settings_perm_accessibility_crashed">Enabled, but your phone stopped it — turn it off and back on to restart blocking.</string>
+    <string name="settings_perm_overlay_title">Overlay Permission</string>
+    <string name="settings_perm_overlay_granted">Shows block screens and helps Nudge restart protection if Android stops it in the background</string>
+    <string name="settings_perm_overlay_off">Off — Nudge can\'t show block screens, and Android is more likely to stop protection until you reopen the app</string>
+    <string name="settings_perm_usage_title">Usage Stats Access</string>
+    <string name="settings_perm_usage_desc">Required to track app usage</string>
+    <string name="settings_perm_grayscale_title">Grayscale Permission</string>
+    <string name="settings_perm_grayscale_granted">Granted</string>
+    <string name="settings_perm_grayscale_guide">Tap to see setup guide</string>
+
+    <!-- Content filter -->
+    <string name="settings_cf_block_title">Block restricted websites</string>
+    <string name="settings_cf_block_desc">Blocks adult and explicit sites and searches. Works in supported browsers.</string>
+    <string name="settings_cf_strict_title">Strict keyword matching</string>
+    <string name="settings_cf_strict_desc">Also blocks searches with ambiguous words. May catch innocent searches; you can add exceptions.</string>
+    <string name="settings_blocklist_title">Blocked words &amp; sites</string>
+    <string name="settings_blocklist_subtitle">Words and phrases block pages and searches containing them. A site blocks pages on that site and its subdomains.</string>
+    <string name="settings_blocklist_subtitle_strict">Words and phrases block pages and searches containing them. A site blocks pages on that site and its subdomains. Removing one requires the unlock challenge.</string>
+    <string name="settings_blocklist_unlock_prompt">Remove a blocked word or site</string>
+    <string name="settings_blocklist_empty">Nothing blocked yet.</string>
+    <string name="settings_allowlist_title">Allowed words &amp; sites</string>
+    <string name="settings_allowlist_subtitle">Words here excuse strict keyword matches and your blocked words. An allowed site skips both on that site.</string>
+    <string name="settings_allowlist_subtitle_strict">Words here excuse strict keyword matches and your blocked words. An allowed site skips both on that site. Adding one requires the unlock challenge.</string>
+    <string name="settings_allowlist_unlock_prompt">Add an allowed word or site</string>
+    <string name="settings_allowlist_empty">No exceptions yet.</string>
+    <string name="settings_list_invalid">Enter a word or a site, up to %1$d characters.</string>
+    <string name="settings_list_duplicate">Already on the list.</string>
+    <string name="settings_list_full">The list is full (%1$d). Remove one first.</string>
+    <string name="settings_list_field_label">Word or site</string>
+    <string name="settings_list_field_placeholder">A word, phrase or site</string>
+    <string name="settings_list_remove_entry">Remove %1$s</string>
+
+    <!-- Commitment lock and escape hatch -->
+    <string name="settings_lock_title">Lock my settings (Strict Mode)</string>
+    <string name="settings_lock_desc">While on, undoing any protection — or turning this off — requires typing the unlock challenge.</string>
+    <string name="settings_difficulty_easy">Easy</string>
+    <string name="settings_difficulty_medium">Medium</string>
+    <string name="settings_difficulty_hard">Hard</string>
+    <string name="settings_difficulty_chip">%1$s (%2$d)</string>
+    <string name="settings_pass_title">Daily 2-minute pass</string>
+    <string name="settings_pass_desc">Allow one 2-minute escape a day, shared across all blocked apps.</string>
+    <string name="settings_pass_desc_strict">Allow one 2-minute escape a day, shared across all blocked apps. Turning it on requires the unlock challenge.</string>
+
+    <!-- What is being unlocked (prompt of the Strict Mode challenge) -->
+    <string name="settings_unlock_strict_mode">Turn off Strict Mode</string>
+    <string name="settings_unlock_pass">Turn on the daily 2-minute pass</string>
+    <string name="settings_unlock_content_filter">Turn off website blocking</string>
+    <string name="settings_unlock_strict_keywords">Turn off strict keyword matching</string>
+
+    <!-- Check-ins -->
+    <string name="settings_bounce_title">Bro. wtf.</string>
+    <string name="settings_bounce_subtitle">Get a nudge when you bounce between apps or blocked sites after hitting a wall.</string>
+    <string name="settings_bounce_blocked_subtitle">Notifications are off for Nudge, so these can\'t reach you. Tap to turn them on.</string>
+    <string name="settings_phone_nudge_title">Phone nudge</string>
+    <plurals name="settings_phone_nudge_subtitle">
+        <item quantity="one">After %1$d minute on your phone in one go, show a pause screen. Counts every app.</item>
+        <item quantity="other">After %1$d minutes on your phone in one go, show a pause screen. Counts every app.</item>
+    </plurals>
+    <string name="settings_phone_nudge_threshold_label">Pause after</string>
+    <string name="settings_phone_nudge_pause_label">First pause length</string>
+    <string name="settings_phone_nudge_later_one">Later pauses: %1$s</string>
+    <string name="settings_phone_nudge_later_then">Later pauses: %1$s, then %2$s</string>
+    <string name="settings_minutes_spaced">%1$d min</string>
+    <string name="settings_seconds_spaced">%1$d s</string>
+    <string name="settings_collapse">Collapse</string>
+    <string name="settings_expand">Expand</string>
+
+    <!-- Personalize and block messages -->
+    <string name="settings_edit_messages_title">Edit block messages</string>
+    <string name="settings_edit_messages_desc">Customize the motivational text shown on block and delay screens.</string>
+    <string name="settings_messages_title">Block Messages</string>
+    <string name="settings_messages_intro">Customize the messages shown when an app is blocked or delayed. One message per line — a random one is picked each time.</string>
+    <string name="settings_messages_delay_title">Delay title</string>
+    <string name="settings_messages_delay_subtitle">Delay subtitle</string>
+    <string name="settings_messages_hard_block">Hard-block message</string>
+    <string name="settings_messages_reset">Reset to defaults</string>
+    <string name="settings_messages_field_help">One message per line. Leave empty to use the defaults.</string>
+    <string name="settings_messages_saved">Messages saved</string>
+
+    <!-- Backup -->
+    <string name="settings_backup_save_title">Save backup</string>
+    <string name="settings_backup_save_desc">Write your rules, history and settings to a file on this device.</string>
+    <string name="settings_backup_share_title">Share backup</string>
+    <string name="settings_backup_share_desc">Send the same file to another app or device.</string>
+    <string name="settings_backup_import_title">Import backup</string>
+    <string name="settings_backup_import_desc">Restore from a backup file. Rules you already have are left alone.</string>
+
+    <!-- About and developer options -->
+    <string name="settings_version_title">Version</string>
+    <string name="settings_version_desc">Nudge v%1$s (build %2$d)</string>
+    <string name="settings_developer_enabled">Developer options enabled</string>
+    <string name="settings_source_title">Source Code &amp; Feedback</string>
+    <string name="settings_source_desc">Open source on GitHub. Report bugs or suggest features.</string>
+    <string name="settings_license_title">License</string>
+    <string name="settings_debug_logging_title">Debug Logging</string>
+    <string name="settings_debug_logging_desc">Write diagnostic logs to Logcat</string>
+    <string name="settings_pin_unsupported">Launcher does not support pinning</string>
+
+    <!-- Grayscale setup guide -->
+    <string name="settings_gs_title">Grayscale Mode Setup</string>
+    <string name="settings_gs_intro_1">Grayscale mode makes your phone screen black-and-white when blocked apps are open, making them less appealing.</string>
+    <string name="settings_gs_intro_2">This requires a one-time setup because Android restricts apps from changing display settings directly.</string>
+    <string name="settings_gs_option_1">Option 1: Wireless (Android 11+, no computer needed)</string>
+    <string name="settings_gs_w_step_1">Go to Settings &gt; About Phone &gt; tap \"Build number\" 7 times to enable Developer Options</string>
+    <string name="settings_gs_w_step_2">Go to Settings &gt; Developer Options &gt; enable \"Wireless debugging\"</string>
+    <string name="settings_gs_w_step_3">Tap \"Pair device with pairing code\" and note the pairing code and port</string>
+    <string name="settings_gs_w_step_4">Open a terminal app (like Termux) and run the pairing command:</string>
+    <string name="settings_gs_pair_label">Then enter the pairing code when prompted</string>
+    <string name="settings_gs_w_step_5">Then run this command to grant the permission:</string>
+    <string name="settings_gs_option_2">Option 2: With a Computer</string>
+    <string name="settings_gs_c_step_1">Install ADB on your computer (search \"install adb\" for your OS)</string>
+    <string name="settings_gs_c_step_2">Enable USB Debugging on your phone (Settings &gt; Developer Options &gt; USB Debugging)</string>
+    <string name="settings_gs_c_step_3">Connect your phone via USB</string>
+    <string name="settings_gs_c_step_4">Run this command on your computer:</string>
+    <string name="settings_gs_done">That\'s it! One-time setup. Grayscale will work automatically after this.</string>
+    <string name="settings_gs_granted_title">Permission Granted</string>
+    <string name="settings_gs_granted_body">Grayscale mode is ready to use. Enable it per-app in rule settings.</string>
+    <string name="settings_gs_not_granted_title">Not Granted</string>
+    <string name="settings_gs_not_granted_body">Follow the guide below to enable grayscale.</string>
+    <string name="settings_gs_clipboard_label">ADB command</string>
+    <string name="settings_gs_copied">Copied to clipboard</string>
+    <string name="settings_gs_copy_command">Copy command</string>
+</resources>

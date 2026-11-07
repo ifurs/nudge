@@ -1,5 +1,10 @@
 package com.astraedus.nudge.ui.screens.stats.charts
 
+import com.astraedus.nudge.ui.text.rememberTextResolver
+import com.astraedus.nudge.ui.text.DurationText
+import com.astraedus.nudge.domain.text.UiText
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -32,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 data class DayData(
-    val label: String,
+    val label: UiText,
     val totalMs: Long
 )
 
@@ -55,8 +60,9 @@ fun WeeklyBarChart(
     selectedIndex: Int? = null,
     onSelectDay: ((Int) -> Unit)? = null,
     chartHeight: Dp = 100.dp,
-    formatDuration: (Long) -> String = ::formatShortDuration
+    formatDuration: (Long) -> UiText = DurationText::short
 ) {
+    val resolver = rememberTextResolver()
     val primaryColor = MaterialTheme.colorScheme.primary
     val surfaceVariantColor = MaterialTheme.colorScheme.surfaceVariant
     val onSurfaceVariant = MaterialTheme.colorScheme.onSurfaceVariant
@@ -70,7 +76,7 @@ fun WeeklyBarChart(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                "No data this week",
+                stringResource(R.string.stats_weekly_empty),
                 style = MaterialTheme.typography.bodySmall,
                 color = onSurfaceVariant
             )
@@ -86,6 +92,9 @@ fun WeeklyBarChart(
     // and route through the latest callback.
     val barCount = days.size
     val currentOnSelect by rememberUpdatedState(onSelectDay)
+    val description = days.joinToString(", ") {
+        "${it.label.resolve(resolver)} ${formatDuration(it.totalMs).resolve(resolver)}"
+    }
 
     Column(modifier = modifier.fillMaxWidth()) {
         Canvas(
@@ -93,9 +102,7 @@ fun WeeklyBarChart(
                 .fillMaxWidth()
                 .height(chartHeight)
                 .semantics {
-                    contentDescription = days.joinToString(", ") {
-                        "${it.label} ${formatDuration(it.totalMs)}"
-                    }
+                    contentDescription = description
                 }
                 .then(
                     if (onSelectDay == null) Modifier else Modifier.pointerInput(barCount) {
@@ -141,7 +148,7 @@ fun WeeklyBarChart(
         }
 
         DayAxisLabels(
-            labels = days.map { it.label },
+            labels = days.map { it.label.resolve(resolver) },
             selectedIndex = activeIndex
         )
     }
@@ -204,16 +211,6 @@ internal fun DayAxisLabels(
                 }
             }
         }
-    }
-}
-
-internal fun formatShortDuration(ms: Long): String {
-    val h = ms / 3_600_000
-    val m = (ms % 3_600_000) / 60_000
-    return when {
-        h > 0L -> "${h}h ${m}m"
-        m > 0L -> "${m}m"
-        else -> "< 1m"
     }
 }
 

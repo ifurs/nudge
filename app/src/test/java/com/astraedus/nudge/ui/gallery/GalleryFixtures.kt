@@ -1,5 +1,9 @@
 package com.astraedus.nudge.ui.gallery
 
+import com.astraedus.nudge.testing.XmlTextResolver
+import com.astraedus.nudge.ui.text.DurationText
+import com.astraedus.nudge.domain.text.UiText
+import com.astraedus.nudge.R
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import com.astraedus.nudge.data.db.entity.AppGroup
@@ -36,7 +40,8 @@ internal object GalleryFixtures {
     const val BLOCKED_LABEL = "Instagram"
 
     /** A real shipped overlay line, so the golden shows the copy users see. */
-    fun hardBlockMessage(): String = NudgeMessages.hardBlockMessages.first()
+    fun hardBlockMessage(): String =
+        XmlTextResolver.english.stringArray(NudgeMessages.HARD_BLOCK_MESSAGES).first()
 
     private const val MINUTE_MS = 60_000L
     private const val HOUR_MS = 60 * MINUTE_MS
@@ -48,26 +53,26 @@ internal object GalleryFixtures {
      */
     fun home(): HomeUiState {
         val screenTime = listOf(
-            DayData("Mon", 2 * HOUR_MS + 40 * MINUTE_MS),
-            DayData("Tue", 3 * HOUR_MS + 5 * MINUTE_MS),
-            DayData("Wed", 1 * HOUR_MS + 50 * MINUTE_MS),
-            DayData("Thu", 2 * HOUR_MS + 10 * MINUTE_MS),
-            DayData("Fri", 2 * HOUR_MS + 55 * MINUTE_MS),
-            DayData("Sat", 1 * HOUR_MS + 38 * MINUTE_MS),
-            DayData("Sun", 2 * HOUR_MS + 14 * MINUTE_MS)
+            DayData(UiText.of(R.string.components_day_short_mon), 2 * HOUR_MS + 40 * MINUTE_MS),
+            DayData(UiText.of(R.string.components_day_short_tue), 3 * HOUR_MS + 5 * MINUTE_MS),
+            DayData(UiText.of(R.string.components_day_short_wed), 1 * HOUR_MS + 50 * MINUTE_MS),
+            DayData(UiText.of(R.string.components_day_short_thu), 2 * HOUR_MS + 10 * MINUTE_MS),
+            DayData(UiText.of(R.string.components_day_short_fri), 2 * HOUR_MS + 55 * MINUTE_MS),
+            DayData(UiText.of(R.string.components_day_short_sat), 1 * HOUR_MS + 38 * MINUTE_MS),
+            DayData(UiText.of(R.string.components_day_short_sun), 2 * HOUR_MS + 14 * MINUTE_MS)
         )
         val trend = listOf(
-            TrendDay("Mon", blockedCount = 9, walkedAwayCount = 3),
-            TrendDay("Tue", blockedCount = 12, walkedAwayCount = 4),
-            TrendDay("Wed", blockedCount = 6, walkedAwayCount = 3),
-            TrendDay("Thu", blockedCount = 8, walkedAwayCount = 2),
-            TrendDay("Fri", blockedCount = 11, walkedAwayCount = 5),
-            TrendDay("Sat", blockedCount = 4, walkedAwayCount = 2),
-            TrendDay("Sun", blockedCount = 7, walkedAwayCount = 3)
+            TrendDay(UiText.of(R.string.components_day_short_mon), blockedCount = 9, walkedAwayCount = 3),
+            TrendDay(UiText.of(R.string.components_day_short_tue), blockedCount = 12, walkedAwayCount = 4),
+            TrendDay(UiText.of(R.string.components_day_short_wed), blockedCount = 6, walkedAwayCount = 3),
+            TrendDay(UiText.of(R.string.components_day_short_thu), blockedCount = 8, walkedAwayCount = 2),
+            TrendDay(UiText.of(R.string.components_day_short_fri), blockedCount = 11, walkedAwayCount = 5),
+            TrendDay(UiText.of(R.string.components_day_short_sat), blockedCount = 4, walkedAwayCount = 2),
+            TrendDay(UiText.of(R.string.components_day_short_sun), blockedCount = 7, walkedAwayCount = 3)
         )
         return HomeUiState(
             isGlobalEnabled = true,
-            todayTotalUsageFormatted = "2h 14m",
+            todayTotalUsageFormatted = DurationText.of(((2 * 60 + 14) * 60_000).toLong()),
             activeAppCount = 6,
             blockedCountToday = 7,
             changedMindCountToday = 3,
@@ -81,13 +86,13 @@ internal object GalleryFixtures {
                 weekBlocked = trend.sumOf { it.blockedCount },
                 weekWalkedAway = trend.sumOf { it.walkedAwayCount }
             ),
-            weekTotalFormatted = "16h 32m",
+            weekTotalFormatted = DurationText.of(((16 * 60 + 32) * 60_000).toLong()),
             // icon = null: the card's generic glyph. A launcher icon would need a real
             // PackageManager, which is exactly what this JVM render does not have.
             topBlocked = listOf(
-                TopBlockedApp(BLOCKED_PACKAGE, BLOCKED_LABEL, icon = null, count = 21),
-                TopBlockedApp("com.google.android.youtube", "YouTube", icon = null, count = 18),
-                TopBlockedApp("com.reddit.frontpage", "Reddit", icon = null, count = 12)
+                TopBlockedApp(BLOCKED_PACKAGE, UiText.Raw(BLOCKED_LABEL), icon = null, count = 21),
+                TopBlockedApp("com.google.android.youtube", UiText.Raw("YouTube"), icon = null, count = 18),
+                TopBlockedApp("com.reddit.frontpage", UiText.Raw("Reddit"), icon = null, count = 12)
             )
         )
     }

@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.apps
 
+import com.astraedus.nudge.testing.en
 import com.astraedus.nudge.data.db.entity.AppGroup
 import com.astraedus.nudge.data.db.entity.AppGroupMember
 import com.astraedus.nudge.data.db.entity.BlockRule
@@ -73,11 +74,11 @@ class ManageAppsSectionsTest {
     fun `typical - groups, the row, apps with rules by name, then Other apps`() {
         val s = sections(listOf(social), typicalMembers, typicalRules)
 
-        assertEquals(listOf("Social · 2 apps"), s.groups.map { it.title })
-        assertEquals(listOf("Delay 15s"), s.groups.map { it.summary })
+        assertEquals(listOf("Social · 2 apps"), s.groups.map { it.title?.en() })
+        assertEquals(listOf("Delay 15s"), s.groups.map { it.summary?.en() })
         assertTrue(s.showNewGroup)
         assertEquals(listOf("Instagram", "YouTube"), s.names(s.appsWithRules))
-        assertEquals(listOf("Hard Block", "Delay 15s · 30min limit"), s.appsWithRules.map { it.summary })
+        assertEquals(listOf("Hard Block", "Delay 15s · 30min limit"), s.appsWithRules.map { it.summary?.en() })
         // The switch shows the app's own rule: Instagram's is off.
         assertEquals(listOf(false, true), s.appsWithRules.map { it.isOn })
         assertEquals("Other apps", s.otherAppsTitle)
@@ -98,12 +99,12 @@ class ManageAppsSectionsTest {
         val s = sections(listOf(social), typicalMembers, typicalRules)
 
         val byName = s.otherApps.associateBy { it.appInfo.appName }
-        assertEquals("In Social", byName.getValue("TikTok").coveredBy)
-        assertEquals("In Social", byName.getValue("Reddit").supportingText)
+        assertEquals("In Social", byName.getValue("TikTok").coveredBy?.en())
+        assertEquals("In Social", byName.getValue("Reddit").supportingText?.en())
         assertFalse(byName.getValue("TikTok").isOn)
         assertFalse(byName.getValue("TikTok").hasRule)
         // Not in a group: no line at all.
-        assertEquals(null, byName.getValue("Calculator").supportingText)
+        assertEquals(null, byName.getValue("Calculator").supportingText?.en())
     }
 
     @Test
@@ -133,24 +134,24 @@ class ManageAppsSectionsTest {
 
         val byName = s.otherApps.associateBy { it.appInfo.appName }
         // TikTok: Social + Work blocking, Evening off.
-        assertEquals("In Social, Work", byName.getValue("TikTok").coveredBy)
+        assertEquals("In Social, Work", byName.getValue("TikTok").coveredBy?.en())
         // Reddit: Reading + Social + Work blocking, Evening off.
-        assertEquals("In 3 groups", byName.getValue("Reddit").coveredBy)
+        assertEquals("In 3 groups", byName.getValue("Reddit").coveredBy?.en())
     }
 
     @Test
     fun `search results keep the covered-by line`() {
         val s = sections(listOf(social), typicalMembers, typicalRules, query = "tik")
         assertEquals(listOf("TikTok"), s.names(s.otherApps))
-        assertEquals("In Social", s.otherApps.single().supportingText)
+        assertEquals("In Social", s.otherApps.single().supportingText?.en())
     }
 
     @Test
     fun `an app's own rule is its line, even when a group also covers it`() {
         val rules = typicalRules + aBlockRule(id = 9, packageName = "com.tiktok", mode = "HARD_BLOCK")
         val tiktok = sections(listOf(social), typicalMembers, rules).appsWithRules.single { it.appInfo.appName == "TikTok" }
-        assertEquals("Hard Block", tiktok.supportingText)
-        assertEquals(null, tiktok.coveredBy)
+        assertEquals("Hard Block", tiktok.supportingText?.en())
+        assertEquals(null, tiktok.coveredBy?.en())
     }
 
     @Test
@@ -182,13 +183,13 @@ class ManageAppsSectionsTest {
         )
         val s = buildManageAppsSections(installed + many, groups, emptyList(), rules, emptySet(), query = "", browsers = emptySet())
 
-        assertEquals(listOf("games · 0 apps", "Social · 0 apps", "Work · 0 apps"), s.groups.map { it.title })
+        assertEquals(listOf("games · 0 apps", "Social · 0 apps", "Work · 0 apps"), s.groups.map { it.title?.en() })
         assertEquals(listOf(true, false, false), s.groups.map { it.blocking })
-        assertEquals("Not blocked", s.groups.last().summary)
+        assertEquals("Not blocked", s.groups.last().summary?.en())
         assertEquals((1..8).map { "App $it" }, s.names(s.appsWithRules))
         assertEquals(
             "Delay 15s · Hard Block Sat, Sun · Reels: Hard Block",
-            s.appsWithRules.first().summary
+            s.appsWithRules.first().summary?.en()
         )
         // App 1's plain rule is off, but its other two are on: the row is on (Active Rules' "any").
         assertTrue(s.appsWithRules.first().isOn)
@@ -205,7 +206,7 @@ class ManageAppsSectionsTest {
     fun `search matching a group name keeps the group and hides the new-group row`() {
         val s = sections(listOf(social), typicalMembers, typicalRules, query = "soc")
 
-        assertEquals(listOf("Social · 2 apps"), s.groups.map { it.title })
+        assertEquals(listOf("Social · 2 apps"), s.groups.map { it.title?.en() })
         assertFalse(s.showNewGroup)
         assertTrue(s.appsWithRules.isEmpty())
         assertTrue(s.otherApps.isEmpty())
@@ -218,7 +219,7 @@ class ManageAppsSectionsTest {
 
         assertTrue(s.groups.isEmpty())
         assertEquals(listOf("Instagram"), s.names(s.appsWithRules))
-        assertEquals("Hard Block", s.appsWithRules.single().summary)
+        assertEquals("Hard Block", s.appsWithRules.single().summary?.en())
         assertTrue(s.otherApps.isEmpty())
         assertEquals(
             listOf(ManageAppsRow.Top, ManageAppsRow.Header(ManageAppsRow.WITH_RULES_KEY, "Apps with rules")) +
@@ -263,7 +264,7 @@ class ManageAppsSectionsTest {
         assertEquals(listOf("Instagram", "YouTube"), kept.names(kept.appsWithRules))
         assertEquals(listOf("Calculator", "Camera", "Reddit", "TikTok"), kept.names(kept.otherApps))
         val camera = kept.otherApps[1]
-        assertEquals("Delay 15s", camera.summary)
+        assertEquals("Delay 15s", camera.summary?.en())
         assertTrue(camera.isOn)
 
         // Next visit (nothing kept): it has moved up, in name order.
@@ -291,7 +292,7 @@ class ManageAppsSectionsTest {
 
         val s = sections(rules = rules, extraApps = mapOf("com.gone" to anApp("com.gone", "Gone")))
         assertEquals(listOf("Gone"), s.names(s.appsWithRules))
-        assertEquals("Hard Block", s.appsWithRules.single().summary)
+        assertEquals("Hard Block", s.appsWithRules.single().summary?.en())
         assertTrue(s.otherApps.none { it.packageName == "com.gone" })
     }
 
@@ -319,7 +320,7 @@ class ManageAppsSectionsTest {
             emptyList(), setOf("com.dialer"), query = "", browsers = emptySet()
         )
 
-        assertEquals(listOf("Social apps · 1 app"), s.groups.map { it.title })
+        assertEquals(listOf("Social apps · 1 app"), s.groups.map { it.title?.en() })
     }
 
     @Test
@@ -328,9 +329,9 @@ class ManageAppsSectionsTest {
         val s = buildManageAppsSections(phone, listOf(socialApps), emptyList(), rules, setOf("com.dialer"), query = "", browsers = emptySet())
         val byName = s.otherApps.associateBy { it.appInfo.appName }
 
-        assertEquals("In Social apps", byName.getValue("Instagram").coveredBy)
-        assertEquals(null, byName.getValue("Chess").coveredBy)
+        assertEquals("In Social apps", byName.getValue("Instagram").coveredBy?.en())
+        assertEquals(null, byName.getValue("Chess").coveredBy?.en())
         // The essential app carries the category but is never covered.
-        assertEquals(null, byName.getValue("Phone").coveredBy)
+        assertEquals(null, byName.getValue("Phone").coveredBy?.en())
     }
 }

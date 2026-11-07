@@ -1,5 +1,9 @@
 package com.astraedus.nudge.ui.screens.stats.charts
 
+import com.astraedus.nudge.ui.text.rememberTextResolver
+import com.astraedus.nudge.domain.text.UiText
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -32,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 data class TrendDay(
-    val label: String,
+    val label: UiText,
     val blockedCount: Int,
     val walkedAwayCount: Int
 )
@@ -56,6 +60,7 @@ fun BlockedTrendChart(
     val primaryColor = MaterialTheme.colorScheme.primary
     val secondaryColor = MaterialTheme.colorScheme.secondary
     val onSurfaceVariant = MaterialTheme.colorScheme.onSurfaceVariant
+    val resolver = rememberTextResolver()
 
     if (days.isEmpty() || days.all { it.blockedCount == 0 && it.walkedAwayCount == 0 }) {
         Column(
@@ -66,7 +71,7 @@ fun BlockedTrendChart(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                "No nudges yet",
+                stringResource(R.string.stats_trend_no_nudges),
                 style = MaterialTheme.typography.bodySmall,
                 color = onSurfaceVariant
             )
@@ -80,6 +85,11 @@ fun BlockedTrendChart(
     // recomposition, because a method reference is a fresh object each time.
     val barCount = days.size
     val currentOnSelect by rememberUpdatedState(onSelectDay)
+    val description = days.joinToString(", ") {
+        "${it.label.resolve(resolver)} " + UiText.of(
+            R.string.stats_trend_day_description, it.blockedCount, it.walkedAwayCount
+        ).resolve(resolver)
+    }
 
     Column(modifier = modifier.fillMaxWidth()) {
         Canvas(
@@ -87,9 +97,7 @@ fun BlockedTrendChart(
                 .fillMaxWidth()
                 .height(chartHeight)
                 .semantics {
-                    contentDescription = days.joinToString(", ") {
-                        "${it.label} ${it.blockedCount} blocked ${it.walkedAwayCount} walked away"
-                    }
+                    contentDescription = description
                 }
                 .then(
                     if (onSelectDay == null) Modifier else Modifier.pointerInput(barCount) {
@@ -156,7 +164,7 @@ fun BlockedTrendChart(
             }
         }
 
-        DayAxisLabels(labels = days.map { it.label }, selectedIndex = activeIndex)
+        DayAxisLabels(labels = days.map { it.label.resolve(resolver) }, selectedIndex = activeIndex)
 
         if (showLegend) {
             Row(
@@ -166,9 +174,9 @@ fun BlockedTrendChart(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                LegendSwatch(color = primaryColor.copy(alpha = 0.45f), label = "Blocked")
+                LegendSwatch(color = primaryColor.copy(alpha = 0.45f), label = stringResource(R.string.stats_legend_blocked))
                 Text("   ", style = MaterialTheme.typography.labelSmall)
-                LegendSwatch(color = secondaryColor, label = "Walked Away")
+                LegendSwatch(color = secondaryColor, label = stringResource(R.string.stats_legend_walked_away))
             }
         }
     }

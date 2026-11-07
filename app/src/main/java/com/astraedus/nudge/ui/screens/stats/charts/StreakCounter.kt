@@ -1,5 +1,8 @@
 package com.astraedus.nudge.ui.screens.stats.charts
 
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -29,7 +32,7 @@ fun StreakCounter(
     ) {
         Icon(
             imageVector = Icons.Default.LocalFireDepartment,
-            contentDescription = "Streak",
+            contentDescription = stringResource(R.string.stats_streak),
             tint = if (streakDays > 0) primaryColor else onSurfaceVariant.copy(alpha = 0.5f),
             modifier = Modifier.padding(end = 4.dp)
         )
@@ -40,7 +43,7 @@ fun StreakCounter(
             color = if (streakDays > 0) primaryColor else onSurfaceVariant
         )
         Text(
-            text = " day${if (streakDays != 1) "s" else ""} streak",
+            text = pluralStringResource(R.plurals.stats_streak_label, streakDays),
             style = MaterialTheme.typography.bodyMedium,
             color = onSurfaceVariant,
             modifier = Modifier.padding(start = 2.dp)

@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.qr
 
+import com.astraedus.nudge.R
 import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -198,7 +199,7 @@ class QrScanActivity : ComponentActivity() {
             .firstOrNull { selector -> runCatching { provider.hasCamera(selector) }.getOrDefault(false) }
 
     private fun cameraUnavailable() {
-        Toast.makeText(this, "Couldn't open the camera", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.qr_camera_open_failed), Toast.LENGTH_SHORT).show()
         finishWith(null)
     }
 
@@ -231,7 +232,7 @@ class QrScanActivity : ComponentActivity() {
         try {
             startActivity(intent)
         } catch (e: ActivityNotFoundException) {
-            Toast.makeText(this, "Open Settings > Apps > Nudge > Permissions", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.qr_settings_path), Toast.LENGTH_LONG).show()
         }
     }
 }

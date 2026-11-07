@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.screens.home
 
+import com.astraedus.nudge.domain.text.UiText
+import com.astraedus.nudge.ui.text.asString
 import android.content.Intent
 import android.provider.Settings
 import androidx.compose.foundation.clickable
@@ -210,7 +212,7 @@ fun HomeContent(
                 StatCard(
                     icon = Icons.Outlined.Schedule,
                     label = stringResource(R.string.home_tile_screen_time),
-                    value = if (state.hasUsagePermission) state.todayTotalUsageFormatted else "--",
+                    value = if (state.hasUsagePermission) state.todayTotalUsageFormatted.asString() else "--",
                     modifier = Modifier.weight(1f),
                     // Granted, this card used to be inert - the one tile showing a number the
                     // stats screen exists to explain, and tapping it did nothing. Ungranted, the
@@ -323,7 +325,7 @@ fun HomeContent(
 @Composable
 private fun WeekAtAGlanceCard(
     charts: HomeCharts,
-    weekTotalFormatted: String,
+    weekTotalFormatted: UiText,
     hasUsagePermission: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -349,7 +351,7 @@ private fun WeekAtAGlanceCard(
                     modifier = Modifier.weight(1f)
                 )
                 Text(
-                    if (hasUsagePermission) weekTotalFormatted else "--",
+                    if (hasUsagePermission) weekTotalFormatted.asString() else "--",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary

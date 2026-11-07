@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="stats_title">Статистика використання</string>
+    <string name="stats_app_details">Про застосунок</string>
+    <string name="stats_today">Сьогодні</string>
+    <string name="stats_yesterday">Учора</string>
+    <string name="stats_last_7_days">Останні 7 днів</string>
+    <string name="stats_date_range">%1$s – %2$s</string>
+    <string name="stats_previous_day">Попередній день</string>
+    <string name="stats_next_day">Наступний день</string>
+    <string name="stats_back_to_today">Повернутися до сьогодні</string>
+    <string name="stats_screen_time_day">Екранний час · %1$s</string>
+    <string name="stats_enable_usage_access">Торкніться, щоб дозволити доступ до даних про використання</string>
+    <string name="stats_open_card">Відкрити: %1$s</string>
+    <string name="stats_willpower_title">Сила волі</string>
+    <string name="stats_willpower_supporting">Як часто ви відмовляєтеся від входу і коли тримаєтеся найкраще</string>
+    <string name="stats_patterns_title">Закономірності спокус</string>
+    <string name="stats_patterns_supporting">Які застосунки притягують найсильніше і в які години</string>
+    <string name="stats_section_screen_time">Екранний час</string>
+    <string name="stats_section_effectiveness">Ефективність нагадувань</string>
+    <string name="stats_section_hourly">Розподіл за годинами</string>
+    <string name="stats_section_activity">Активність нагадувань</string>
+    <string name="stats_section_breakdown">Режими блокування</string>
+    <string name="stats_all_time">За весь час</string>
+    <string name="stats_tap_bar_subtitle">%1$s · торкніться стовпчика, щоб побачити цей день</string>
+    <string name="stats_app_usage_day">Використання застосунків · %1$s</string>
+    <string name="stats_no_app_usage_day">Використання застосунків не зафіксовано · %1$s</string>
+    <string name="stats_blocked_day">Заблоковано · %1$s</string>
+    <string name="stats_walked_away_day">Відмов від входу · %1$s</string>
+    <string name="stats_blocked_all_time">Заблоковано · за весь час</string>
+    <string name="stats_walked_away_all_time">Відмов від входу · за весь час</string>
+
+    <string name="stats_weekly_empty">Цього тижня даних немає</string>
+    <string name="stats_hourly_empty">Сьогодні використання не зафіксовано</string>
+    <string name="stats_trend_no_nudges">Нагадувань ще не було</string>
+    <string name="stats_trend_day_description">заблоковано: %1$d, відмов від входу: %2$d</string>
+    <string name="stats_legend_blocked">Заблоковано</string>
+    <string name="stats_legend_walked_away">Відмови від входу</string>
+    <string name="stats_ring_walked_away">відмов від входу</string>
+    <string name="stats_streak">Серія</string>
+    <!-- The number is drawn in its own Text right before this word, so the plural needs no %d of its
+         own; the lint rule would otherwise ask for a second copy of the number. -->
+    <plurals name="stats_streak_label" tools:ignore="ImpliedQuantity">
+        <item quantity="one">" день поспіль"</item>
+        <item quantity="few">" дні поспіль"</item>
+        <item quantity="many">" днів поспіль"</item>
+        <item quantity="other">" дня поспіль"</item>
+    </plurals>
+    <string name="stats_hour_am" tools:ignore="StringFormatCount">%2$d:00</string>
+    <string name="stats_hour_pm" tools:ignore="StringFormatCount">%2$d:00</string>
+
+    <string name="stats_interventions_title">Втручання</string>
+    <string name="stats_range_7_days">7 днів</string>
+    <string name="stats_range_30_days">30 днів</string>
+    <string name="stats_hero_today">Сьогодні</string>
+    <string name="stats_all_time_caption">Весь час</string>
+    <string name="stats_hero_walked_away">Ви відмовилися від входу %1$d з %2$d разів</string>
+    <string name="stats_hero_clean_slate">У цьому періоді блокувань ще не було — це чистий аркуш, а не невдача.</string>
+    <string name="stats_no_blocks_period">У цьому періоді блокувань ще не було</string>
+    <string name="stats_reclaimed_title">Повернутий час</string>
+    <string name="stats_reclaimed_subtitle">Оцінка за середньою тривалістю сеансу в кожному застосунку.</string>
+    <string name="stats_reclaimed_empty">Час ще не повернуто — тут з’являться ваші відмови від входу.</string>
+    <string name="stats_reclaimed_estimate">Повернутий час (приблизно)</string>
+    <string name="stats_reclaimed_default_note">Для деяких застосунків узято типові 5 хвилин.</string>
+    <string name="stats_clock_title">Годинник сили волі</string>
+    <string name="stats_rate_readout">%1$s: відмов від входу %2$d з %3$d (%4$s)</string>
+    <string name="stats_clock_empty">У цьому періоді відмов від входу ще не було</string>
+    <string name="stats_clock_strongest_weakest">Найсильніше о %1$s · найслабше о %2$s</string>
+    <string name="stats_clock_strongest">Найсильніше о %1$s</string>
+    <string name="stats_clock_weakest">Найслабше о %1$s</string>
+    <string name="stats_clock_not_enough">Поки замало даних, щоб помітити закономірність за годинами.</string>
+    <string name="stats_leaderboard_title">Рейтинг стійкості</string>
+    <string name="stats_row_walked_gave_in">Відмов від входу: %1$d · здалися: %2$d</string>
+    <string name="stats_trend_title">Тижнева динаміка</string>
+    <string name="stats_trend_empty">У цьому періоді даних немає</string>
+    <string name="stats_trend_up">Вище на %1$d п. п. порівняно з минулим тижнем</string>
+    <string name="stats_trend_down">Нижче на %1$d п. п. порівняно з минулим тижнем</string>
+    <string name="stats_trend_level">На рівні минулого тижня</string>
+    <string name="stats_trend_switch">Перейдіть на 30 днів, щоб побачити тижневу динаміку.</string>
+    <string name="stats_week_this">Цей тиж.</string>
+    <string name="stats_week_ago">%1$d тиж. тому</string>
+    <string name="stats_websites">Сайти</string>
+    <string name="stats_mode_hard_block">Повне блокування</string>
+    <string name="stats_mode_other">Інше</string>
+
+    <string name="stats_clock_temptation_title">Годинник спокус</string>
+    <string name="stats_clock_temptation_subtitle">Коли ви найімовірніше натрапляєте на блокування</string>
+    <string name="stats_danger_hour">Ваша небезпечна година — %1$s</string>
+    <string name="stats_weekday_title">Дні тижня</string>
+    <string name="stats_weekday_subtitle">Які дні найбільше випробовують вашу силу волі</string>
+    <string name="stats_toughest_day">Найважчий день: %1$s</string>
+    <string name="stats_top_apps_title">Найчастіше блоковані застосунки</string>
+    <string name="stats_top_apps_subtitle">Які застосунки спричиняють найбільше втручань і як саме</string>
+    <string name="stats_fingerprint_title">Відбиток спокус</string>
+    <string name="stats_fingerprint_subtitle">Темніше — більше блокувань у цю годину.</string>
+    <plurals name="stats_blocks_readout">
+        <item quantity="one">%1$s: %2$d блокування</item>
+        <item quantity="few">%1$s: %2$d блокування</item>
+        <item quantity="many">%1$s: %2$d блокувань</item>
+        <item quantity="other">%1$s: %2$d блокування</item>
+    </plurals>
+</resources>

@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.backup
 
+import com.astraedus.nudge.domain.text.UiText
+import com.astraedus.nudge.R
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -24,9 +26,9 @@ import kotlinx.coroutines.withContext
 data class BackupUiState(
     val importPreview: ImportPreview? = null,
     val importOutcome: ImportOutcome? = null,
-    val importError: String? = null,
+    val importError: UiText? = null,
     /** Result of a "Save backup", shown as its own dialog. Null = nothing to report. */
-    val saveMessage: String? = null
+    val saveMessage: UiText? = null
 )
 
 /**
@@ -108,7 +110,7 @@ class BackupViewModel @Inject constructor(
             val json = withContext(ioDispatcher) { readJson() }
             if (json == null) {
                 _uiState.value = _uiState.value.copy(
-                    importError = "Could not read that file.",
+                    importError = UiText.of(R.string.backup_read_failed),
                     importPreview = null
                 )
                 return@launch
@@ -116,7 +118,7 @@ class BackupViewModel @Inject constructor(
             val preview = importRulesUseCase.preview(json)
             val error = preview.result.error
             _uiState.value = if (error != null) {
-                _uiState.value.copy(importError = error, importPreview = null)
+                _uiState.value.copy(importError = UiText.Raw(error), importPreview = null)
             } else {
                 _uiState.value.copy(importPreview = preview, importError = null)
             }
@@ -148,7 +150,7 @@ class BackupViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(importOutcome = outcome)
             }
             if (importRulesUseCase.weakensProtection(preview.result)) {
-                strictModeGate.run(prompt = "Import a backup that reduces protection", action = write)
+                strictModeGate.run(prompt = R.string.backup_prompt_import_weakens, action = write)
             } else {
                 write()
             }
@@ -176,15 +178,13 @@ class BackupViewModel @Inject constructor(
     }
 
     companion object {
-        const val SAVE_SUCCESS_MESSAGE =
-            "Backup saved. It holds your rules, your history and your app settings."
+        val SAVE_SUCCESS_MESSAGE: UiText = UiText.of(R.string.backup_save_success)
 
         /**
          * Named as a failure rather than reported as nothing: a save that quietly did not happen
          * leaves the user believing they have a backup, which is the one thing worse than not
          * having one.
          */
-        const val SAVE_FAILURE_MESSAGE =
-            "Could not write the backup there. Try again, or pick a different folder."
+        val SAVE_FAILURE_MESSAGE: UiText = UiText.of(R.string.backup_save_failure)
     }
 }

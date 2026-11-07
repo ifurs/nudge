@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.groups
 
+import com.astraedus.nudge.R
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -336,7 +337,7 @@ class GroupEditorViewModel @Inject constructor(
                 refreshFirstUnlockHints()
             }
             if (setDayStartMinuteUseCase.requiresUnlock(minute)) {
-                strictModeGate.run(prompt = "Change when your day starts", action = write)
+                strictModeGate.run(prompt = R.string.components_prompt_day_start, action = write)
             } else {
                 write()
             }
@@ -364,7 +365,7 @@ class GroupEditorViewModel @Inject constructor(
                 repository.saveGroup(groupId, s.name, draft.categories, draft.includes, draft.excludes, newRule)
                 _state.update { it.copy(isFinished = true) }
             }
-            if (weakens) strictModeGate.run(prompt = "Save changes that reduce blocking", action = write)
+            if (weakens) strictModeGate.run(prompt = R.string.components_prompt_save_weakening, action = write)
             else write()
         }
     }
@@ -401,7 +402,7 @@ class GroupEditorViewModel @Inject constructor(
                 repository.deleteGroupWithRules(groupId)
                 _state.update { it.copy(isFinished = true) }
             }
-            if (weakens) strictModeGate.run(prompt = "Delete this group", action = delete)
+            if (weakens) strictModeGate.run(prompt = R.string.groups_prompt_delete_group, action = delete)
             else delete()
         }
     }

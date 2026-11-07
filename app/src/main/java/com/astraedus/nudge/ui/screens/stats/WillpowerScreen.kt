@@ -1,5 +1,8 @@
 package com.astraedus.nudge.ui.screens.stats
 
+import com.astraedus.nudge.ui.text.asString
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -53,10 +56,10 @@ fun WillpowerScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Willpower") },
+                title = { Text(stringResource(R.string.stats_willpower_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.components_action_back))
                     }
                 }
             )
@@ -110,9 +113,9 @@ private fun WillpowerHero(insights: WillpowerInsights, modifier: Modifier = Modi
             emptyMessage = ""
         )
         val supportiveLine = if (insights.attempts > 0) {
-            "You walked away ${insights.walkAways} of ${insights.attempts} times"
+            stringResource(R.string.stats_hero_walked_away, insights.walkAways, insights.attempts)
         } else {
-            "No blocks yet in this period — that is a clean slate, not a failure."
+            stringResource(R.string.stats_hero_clean_slate)
         }
         Text(
             supportiveLine,
@@ -126,27 +129,27 @@ private fun WillpowerHero(insights: WillpowerInsights, modifier: Modifier = Modi
 @Composable
 private fun TimeReclaimedSection(state: WillpowerUiState, modifier: Modifier = Modifier) {
     InsightSection(
-        title = "Time Reclaimed",
-        subtitle = "Estimated from your average session length in each app.",
+        title = stringResource(R.string.stats_reclaimed_title),
+        subtitle = stringResource(R.string.stats_reclaimed_subtitle),
         modifier = modifier
     ) {
         if (state.timeReclaimed.totalMs <= 0L) {
-            InsightEmptyState("No time reclaimed yet — your walk-aways will show up here.")
+            InsightEmptyState(stringResource(R.string.stats_reclaimed_empty))
         } else {
             Text(
-                state.timeReclaimedFormatted,
+                state.timeReclaimedFormatted.asString(),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                "Time reclaimed (est.)",
+                stringResource(R.string.stats_reclaimed_estimate),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             if (state.timeReclaimed.appsEstimatedFromDefault > 0) {
                 Text(
-                    "Some apps use a 5-minute default.",
+                    stringResource(R.string.stats_reclaimed_default_note),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -161,31 +164,42 @@ private fun WillpowerClockSection(
     calculator: InsightsCalculator,
     modifier: Modifier = Modifier
 ) {
-    InsightSection(title = "Willpower Clock", modifier = modifier) {
+    InsightSection(title = stringResource(R.string.stats_clock_title), modifier = modifier) {
         val maxAttempts = insights.hours.maxOfOrNull { it.attempts } ?: 0
         val bars = insights.hours.map { hour ->
             RateBar(
-                label = if (hour.hour % 6 == 0) calculator.hourLabel(hour.hour) else "",
+                label = if (hour.hour % 6 == 0) calculator.hourLabel(hour.hour).asString() else "",
                 fraction = hour.rate,
                 confidence = if (hour.attempts == 0 || maxAttempts <= 0) {
                     0f
                 } else {
                     (hour.attempts.toFloat() / maxAttempts.toFloat()).coerceIn(0f, 1f)
                 },
-                readout = "${calculator.hourLabel(hour.hour)}: ${hour.walkAways} of " +
-                    "${hour.attempts} walked away (${calculator.formatPercent(hour.rate)})"
+                readout = stringResource(
+                    R.string.stats_rate_readout,
+                    calculator.hourLabel(hour.hour).asString(),
+                    hour.walkAways,
+                    hour.attempts,
+                    calculator.formatPercent(hour.rate)
+                )
             )
         }
-        RateBarChart(bars = bars, emptyMessage = "No walk-aways yet in this period")
+        RateBarChart(bars = bars, emptyMessage = stringResource(R.string.stats_clock_empty))
 
         val strongest = insights.strongestHour
         val weakest = insights.weakestHour
         val callout = when {
             strongest != null && weakest != null ->
-                "Strongest at ${calculator.hourLabel(strongest)} · Weakest at ${calculator.hourLabel(weakest)}"
-            strongest != null -> "Strongest at ${calculator.hourLabel(strongest)}"
-            weakest != null -> "Weakest at ${calculator.hourLabel(weakest)}"
-            else -> "Not enough data yet to spot an hourly pattern."
+                stringResource(
+                    R.string.stats_clock_strongest_weakest,
+                    calculator.hourLabel(strongest).asString(),
+                    calculator.hourLabel(weakest).asString()
+                )
+            strongest != null ->
+                stringResource(R.string.stats_clock_strongest, calculator.hourLabel(strongest).asString())
+            weakest != null ->
+                stringResource(R.string.stats_clock_weakest, calculator.hourLabel(weakest).asString())
+            else -> stringResource(R.string.stats_clock_not_enough)
         }
         Text(
             callout,
@@ -198,9 +212,9 @@ private fun WillpowerClockSection(
 
 @Composable
 private fun ResistanceLeaderboardSection(apps: List<WillpowerAppRow>, modifier: Modifier = Modifier) {
-    InsightSection(title = "Resistance Leaderboard", modifier = modifier) {
+    InsightSection(title = stringResource(R.string.stats_leaderboard_title), modifier = modifier) {
         if (apps.isEmpty()) {
-            InsightEmptyState("No blocks yet in this period")
+            InsightEmptyState(stringResource(R.string.stats_no_blocks_period))
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 apps.forEach { row ->
@@ -231,12 +245,12 @@ private fun AppResistanceRow(row: WillpowerAppRow, modifier: Modifier = Modifier
                     val bitmap = remember(icon) { icon.toBitmap(32, 32).asImageBitmap() }
                     Image(
                         bitmap = bitmap,
-                        contentDescription = row.label,
+                        contentDescription = row.label.asString(),
                         modifier = Modifier.size(32.dp)
                     )
                 }
                 Text(
-                    row.label,
+                    row.label.asString(),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium
                 )
@@ -257,7 +271,7 @@ private fun AppResistanceRow(row: WillpowerAppRow, modifier: Modifier = Modifier
             )
         )
         Text(
-            "${row.walkAways} walked away · ${row.gaveIn} gave in",
+            stringResource(R.string.stats_row_walked_gave_in, row.walkAways, row.gaveIn),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -270,22 +284,27 @@ private fun WeeklyTrendSection(
     calculator: InsightsCalculator,
     modifier: Modifier = Modifier
 ) {
-    InsightSection(title = "Weekly Trend", modifier = modifier) {
+    InsightSection(title = stringResource(R.string.stats_trend_title), modifier = modifier) {
         val maxAttempts = insights.weeks.maxOfOrNull { it.attempts } ?: 0
         val bars = insights.weeks.map { week ->
             RateBar(
-                label = week.label,
+                label = week.label.asString(),
                 fraction = week.rate,
                 confidence = if (week.attempts == 0 || maxAttempts <= 0) {
                     0f
                 } else {
                     (week.attempts.toFloat() / maxAttempts.toFloat()).coerceIn(0f, 1f)
                 },
-                readout = "${week.label}: ${week.walkAways} of " +
-                    "${week.attempts} walked away (${calculator.formatPercent(week.rate)})"
+                readout = stringResource(
+                    R.string.stats_rate_readout,
+                    week.label.asString(),
+                    week.walkAways,
+                    week.attempts,
+                    calculator.formatPercent(week.rate)
+                )
             )
         }
-        RateBarChart(bars = bars, emptyMessage = "No data in this period")
+        RateBarChart(bars = bars, emptyMessage = stringResource(R.string.stats_trend_empty))
 
         val trendText = if (insights.weeks.size >= 2) {
             val previous = insights.weeks[insights.weeks.size - 2]
@@ -293,15 +312,15 @@ private fun WeeklyTrendSection(
             if (previous.attempts > 0) {
                 val deltaPoints = calculator.percentOf(last.rate) - calculator.percentOf(previous.rate)
                 when {
-                    deltaPoints > 0 -> "Up $deltaPoints points vs last week"
-                    deltaPoints < 0 -> "Down ${-deltaPoints} points vs last week"
-                    else -> "Level with last week"
+                    deltaPoints > 0 -> stringResource(R.string.stats_trend_up, deltaPoints)
+                    deltaPoints < 0 -> stringResource(R.string.stats_trend_down, -deltaPoints)
+                    else -> stringResource(R.string.stats_trend_level)
                 }
             } else {
                 null
             }
         } else {
-            "Switch to 30 days to see your weekly trend."
+            stringResource(R.string.stats_trend_switch)
         }
         if (trendText != null) {
             Text(

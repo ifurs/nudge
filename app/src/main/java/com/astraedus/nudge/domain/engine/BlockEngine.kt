@@ -1,5 +1,6 @@
 package com.astraedus.nudge.domain.engine
 
+import com.astraedus.nudge.domain.model.RuleLabel
 import com.astraedus.nudge.domain.model.ActiveRule
 import com.astraedus.nudge.domain.model.BlockDecision
 import com.astraedus.nudge.domain.model.BlockMode
@@ -125,7 +126,7 @@ class BlockEngine internal constructor(
         }
         if (timeBudgetRule != null) {
             logger.i("block package=$packageName reason=time_budget_exceeded grayscale=$wantsGrayscale")
-            val budgetRuleName = timeBudgetRule.ruleName?.let { "$it (limit reached)" }
+            val budgetRuleName = timeBudgetRule.ruleName?.withLimitReached()
             return BlockDecision.Block(
                 BlockMode.HARD_BLOCK,
                 grayscale = wantsGrayscale,
@@ -210,8 +211,8 @@ class BlockEngine internal constructor(
     }
 
     companion object {
-        /** What the overlay's rule footer and the logs call a Nuke block. */
-        const val NUKE_RULE_NAME = "Nuke"
+        /** What the overlay's rule footer calls a Nuke block. */
+        val NUKE_RULE_LABEL: RuleLabel = RuleLabel.of(RuleLabel.Subject.Nuke)
 
         /**
          * The one decision Nuke produces. A HARD_BLOCK (so every consumer that already understands a
@@ -222,7 +223,7 @@ class BlockEngine internal constructor(
          */
         val NUKE_DECISION = BlockDecision.Block(
             mode = BlockMode.HARD_BLOCK,
-            ruleName = NUKE_RULE_NAME,
+            ruleName = NUKE_RULE_LABEL,
             nuke = true
         )
 

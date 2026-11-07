@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.apps
 
+import com.astraedus.nudge.domain.text.UiText
 import androidx.compose.runtime.Immutable
 import com.astraedus.nudge.data.db.entity.AppGroup
 import com.astraedus.nudge.data.db.entity.AppGroupMember
@@ -19,8 +20,8 @@ import com.astraedus.nudge.ui.screens.groups.ownGroupRule
 @Immutable
 data class GroupRow(
     val groupId: Long,
-    val title: String,
-    val summary: String,
+    val title: UiText,
+    val summary: UiText,
     /** The group's own rule is on. */
     val blocking: Boolean,
     /** The group's own rule, or null for a group that has none. */
@@ -39,12 +40,12 @@ data class GroupRow(
 @Immutable
 data class AppRow(
     val appInfo: AppInfo,
-    val summary: String?,
+    val summary: UiText?,
     val isOn: Boolean,
-    val coveredBy: String? = null
+    val coveredBy: UiText? = null
 ) {
     /** The row's second line: its own rules, else the groups that block it, else nothing. */
-    val supportingText: String? get() = summary ?: coveredBy
+    val supportingText: UiText? get() = summary ?: coveredBy
 
     val hasRule: Boolean get() = summary != null
     val packageName: String get() = appInfo.packageName
@@ -165,7 +166,7 @@ fun buildManageAppsSections(
     val allAppsAll = allAppsRuleItems(rules, groups, installed.associate { it.packageName to it.appName })
     val firstRun = allAppsAll.isEmpty() && groups.isEmpty() && rulesByPackage.keys.none(::belowWithRules)
     return ManageAppsSections(
-        allApps = allAppsAll.filter { needle.isEmpty() || it.title.contains(needle, ignoreCase = true) },
+        allApps = allAppsAll.filter { needle.isEmpty() || it.searchKey.contains(needle, ignoreCase = true) },
         groups = buildGroupRows(groups, membership, categories, essentials, browsers, rules, needle),
         showNewGroup = needle.isEmpty(),
         appsWithRules = appsWithRules,

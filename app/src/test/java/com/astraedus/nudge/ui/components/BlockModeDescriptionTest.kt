@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.components
 
+import com.astraedus.nudge.testing.enString
 import com.astraedus.nudge.domain.model.BlockMode
 import com.astraedus.nudge.ui.components.rule.BLOCKING_MODES
 import org.junit.Assert.assertEquals
@@ -19,18 +20,18 @@ class BlockModeDescriptionTest {
     fun `hard block reads plural for many apps and singular for one`() {
         assertEquals(
             "Completely blocks these apps. You can only go back to the home screen.",
-            blockModeDescription(BlockMode.HARD_BLOCK, manyApps = true)
+            enString(blockModeDescriptionRes(BlockMode.HARD_BLOCK, manyApps = true))
         )
         assertEquals(
             "Completely blocks the app. You can only go back to the home screen.",
-            blockModeDescription(BlockMode.HARD_BLOCK, manyApps = false)
+            enString(blockModeDescriptionRes(BlockMode.HARD_BLOCK, manyApps = false))
         )
     }
 
     @Test
     fun `no mode's sentence for many apps names a single app`() {
         for (mode in BLOCKING_MODES) {
-            val text = blockModeDescription(mode, manyApps = true)
+            val text = enString(blockModeDescriptionRes(mode, manyApps = true))
             assertFalse("$mode -> \"$text\"", text.contains("the app", ignoreCase = true))
         }
     }

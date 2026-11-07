@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.overlay
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,7 +42,7 @@ fun NukeBlockContent(
     onGoHome: () -> Unit,
     redirect: @Composable () -> Unit = {}
 ) {
-    val name = appLabel ?: "This app"
+    val name = appLabel ?: stringResource(R.string.nuke_block_this_app)
     // Centred while it fits, scrollable only when it does not: see overlayContentScroll.
     val scroll = rememberScrollState()
     Surface(
@@ -67,7 +69,7 @@ fun NukeBlockContent(
             Spacer(Modifier.height(24.dp))
 
             Text(
-                text = "Nuked.",
+                text = stringResource(R.string.nuke_block_title),
                 style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -75,7 +77,7 @@ fun NukeBlockContent(
             Spacer(Modifier.height(12.dp))
 
             Text(
-                text = "$name is off until you end Nuke. Scan your Nuke code to end it.",
+                text = stringResource(R.string.nuke_block_body, name),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -92,7 +94,7 @@ fun NukeBlockContent(
 
             Spacer(Modifier.height(24.dp))
 
-            LeaveButton(text = "Go home", onClick = onGoHome)
+            LeaveButton(text = stringResource(R.string.overlay_go_home), onClick = onGoHome)
 
             Spacer(Modifier.height(24.dp))
 

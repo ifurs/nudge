@@ -1,5 +1,6 @@
 package com.astraedus.nudge.domain.usecase
 
+import com.astraedus.nudge.testing.en
 import com.astraedus.nudge.domain.engine.FirstUnlockState
 import com.astraedus.nudge.data.db.entity.BlockRule
 import com.astraedus.nudge.data.repository.BlockRuleRepository
@@ -90,7 +91,7 @@ class EvaluateBlockGroupRulesTest {
         val decision = useCase(snapshotOf(groupDelay)).invoke(instagram).block()
         assertEquals(BlockMode.DELAY, decision.mode)
         assertEquals(15, decision.delaySeconds)
-        assertEquals("Social", decision.ruleName)
+        assertEquals("Social", decision.ruleName.en())
     }
 
     @Test
@@ -98,7 +99,7 @@ class EvaluateBlockGroupRulesTest {
         val directHard = aBlockRule(id = 2, packageName = instagram, mode = BlockMode.HARD_BLOCK.name)
         val decision = useCase(snapshotOf(groupDelay, directHard)).invoke(instagram).block()
         assertEquals(BlockMode.HARD_BLOCK, decision.mode)
-        assertEquals("Hard Block", decision.ruleName)
+        assertEquals("Hard Block", decision.ruleName.en())
     }
 
     @Test
@@ -108,7 +109,7 @@ class EvaluateBlockGroupRulesTest {
             .invoke(instagram, excludeDirectRules = true)
             .block()
         assertEquals(BlockMode.DELAY, decision.mode)
-        assertEquals("Social", decision.ruleName)
+        assertEquals("Social", decision.ruleName.en())
     }
 
     @Test
@@ -123,7 +124,7 @@ class EvaluateBlockGroupRulesTest {
         val groupHard = groupDelay.copy(mode = BlockMode.HARD_BLOCK.name)
         val decision = useCase(snapshotOf(groupHard)).invoke(chrome, excludeDirectRules = true).block()
         assertEquals(BlockMode.HARD_BLOCK, decision.mode)
-        assertEquals("Social", decision.ruleName)
+        assertEquals("Social", decision.ruleName.en())
     }
 
     @Test
@@ -173,7 +174,7 @@ class EvaluateBlockGroupRulesTest {
         assertTrue("a cold browser in the group is covered (table read)", useCase.isCoveredWhole(chrome))
         val decision = useCase.invoke(chrome, excludeDirectRules = true).block()
         assertEquals(BlockMode.HARD_BLOCK, decision.mode)
-        assertEquals("Social", decision.ruleName)
+        assertEquals("Social", decision.ruleName.en())
         assertEquals(
             "the browser blocks exactly like a cold app in the same group",
             useCase.invoke(instagram).block().mode,

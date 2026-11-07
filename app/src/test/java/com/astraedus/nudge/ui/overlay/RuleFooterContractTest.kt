@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.overlay
 
+import com.astraedus.nudge.testing.ukString
+import com.astraedus.nudge.testing.enString
 import com.astraedus.nudge.testing.SourceScan
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -34,14 +36,21 @@ class RuleFooterContractTest {
             val src = code(file.readText())
             assertTrue("${file.name} must render RuleFooter", src.contains("RuleFooter(ruleName = ruleName, until = untilText)"))
             assertFalse("${file.name} must not print its own rule line", src.contains("\"Rule: "))
+            assertFalse(
+                "${file.name} must not print its own rule line",
+                src.contains("overlay_rule_footer")
+            )
         }
     }
 
     @Test
     fun `the footer is the only place that prints the rule line`() {
         val printers = overlayDir().listFiles { f -> f.name.endsWith(".kt") }!!
-            .filter { code(it.readText()).contains("\"Rule: ") }
+            .filter { code(it.readText()).contains("R.string.overlay_rule_footer") }
         assertEquals(listOf("RuleFooter.kt"), printers.map { it.name })
+        // ...and the words themselves are in the resources, in both languages.
+        assertTrue(enString(com.astraedus.nudge.R.string.overlay_rule_footer, "X").startsWith("Rule: "))
+        assertTrue(ukString(com.astraedus.nudge.R.string.overlay_rule_footer, "X").endsWith("X"))
     }
 
     @Test

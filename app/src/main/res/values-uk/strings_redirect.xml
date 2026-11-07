@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="redirect_pick_better_app">Оберіть кращий застосунок</string>
+    <string name="redirect_bubble_pick_description">Оберіть кращий застосунок, щоб перейти до нього замість цього</string>
+    <string name="redirect_bubble_go_description">Перейти до %1$s замість цього</string>
+    <string name="redirect_bubble_pick_action">Обрати застосунок</string>
+    <string name="redirect_bubble_open_action">Відкрити %1$s</string>
+    <string name="redirect_bubble_change_action">Змінити застосунок</string>
+    <string name="redirect_bubble_empty_caption">Місце, куди краще піти</string>
+    <string name="redirect_bubble_caption">Перейти сюди замість цього</string>
+
+    <string name="redirect_settings_title">Перенаправлення</string>
+    <string name="redirect_settings_summary_empty">Пропонуйте один кращий застосунок на кожному екрані блокування, наприклад список справ чи читалку.</string>
+    <string name="redirect_settings_summary_set">%1$s пропонується на кожному екрані блокування. Торкніться, щоб змінити або прибрати.</string>
+
+    <string name="redirect_picker_subtitle">Він з’являється на кожному екрані блокування. Один дотик — і ви там замість цього.</string>
+    <string name="redirect_picker_remove">Прибрати</string>
+    <string name="redirect_picker_search">Пошук застосунків…</string>
+    <string name="redirect_picker_empty">Немає застосунків для пропозиції.</string>
+    <string name="redirect_picker_no_match">Немає застосунків за запитом «%1$s».</string>
+    <string name="redirect_picker_current">Поточний вибір</string>
+    <string name="redirect_picker_not_offered">Заблоковані застосунки та застосунки зі списку ядерного режиму не пропонуються: перехід до них лише приведе до іншого блокування.</string>
+</resources>

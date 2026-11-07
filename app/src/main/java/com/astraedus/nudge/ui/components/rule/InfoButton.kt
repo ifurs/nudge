@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.components.rule
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.HelpOutline
@@ -28,7 +30,7 @@ fun InfoButton(explanation: String) {
     ) {
         Icon(
             Icons.AutoMirrored.Outlined.HelpOutline,
-            contentDescription = "More info",
+            contentDescription = stringResource(R.string.components_info_more),
             modifier = Modifier.size(20.dp),
             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
         )
@@ -39,7 +41,7 @@ fun InfoButton(explanation: String) {
             onDismissRequest = { showDialog = false },
             confirmButton = {
                 TextButton(onClick = { showDialog = false }) {
-                    Text("Got it")
+                    Text(stringResource(R.string.components_action_got_it))
                 }
             },
             text = {

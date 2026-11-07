@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.apps
 
+import com.astraedus.nudge.testing.en
 import com.astraedus.nudge.MainDispatcherRule
 import com.astraedus.nudge.domain.packages.FakeEssentialPackages
 import com.astraedus.nudge.testing.FakeInstalledAppsRepository
@@ -57,7 +58,7 @@ class SwitchedOnStaysInPlaceTest {
         assertEquals(1, db.rules.size)
         assertTrue(after.appsWithRules.isEmpty())
         assertEquals(listOf("Calculator", "Calendar", "Camera"), after.otherApps.map { it.appInfo.appName })
-        assertEquals("Delay 15s", after.otherApps[0].summary)
+        assertEquals("Delay 15s", after.otherApps[0].summary?.en())
         assertTrue(after.otherApps[0].isOn)
         assertEquals("Apps", after.otherAppsTitle)
     }

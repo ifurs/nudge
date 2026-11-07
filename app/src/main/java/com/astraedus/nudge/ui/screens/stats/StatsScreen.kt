@@ -1,5 +1,8 @@
 package com.astraedus.nudge.ui.screens.stats
 
+import com.astraedus.nudge.ui.text.asString
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import android.content.Intent
 import android.provider.Settings
 import androidx.compose.foundation.clickable
@@ -62,14 +65,16 @@ fun StatsScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val dateLabel = state.dateLabel.asString()
+    val rangeLabel = state.weekRangeLabel.asString()
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Usage Stats") },
+                title = { Text(stringResource(R.string.stats_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.components_action_back))
                     }
                 }
             )
@@ -83,8 +88,8 @@ fun StatsScreen(
         ) {
             item {
                 DayNavigationHeader(
-                    dayLabel = state.dateLabel,
-                    rangeLabel = state.weekRangeLabel,
+                    dayLabel = dateLabel,
+                    rangeLabel = rangeLabel,
                     canGoForward = state.canGoForward,
                     isToday = state.isToday,
                     onPreviousDay = viewModel::goToPreviousDay,
@@ -122,25 +127,25 @@ fun StatsScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            "Screen time · ${state.dateLabel}",
+                            stringResource(R.string.stats_screen_time_day, dateLabel),
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                         )
                         Text(
-                            if (state.hasUsagePermission) state.totalFormatted else "--",
+                            if (state.hasUsagePermission) state.totalFormatted.asString() else "--",
                             style = MaterialTheme.typography.headlineLarge,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                         if (state.hasUsagePermission) {
                             Text(
-                                "${state.weekTotalFormatted} · ${state.weekRangeLabel}",
+                                "${state.weekTotalFormatted.asString()} · $rangeLabel",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                             )
                         } else {
                             Text(
-                                "Tap to enable usage access",
+                                stringResource(R.string.stats_enable_usage_access),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.primary,
                             )
@@ -167,15 +172,15 @@ fun StatsScreen(
                 ) {
                     InsightEntryCard(
                         icon = Icons.Outlined.ThumbUp,
-                        title = "Willpower",
-                        supporting = "How often you walk away, and when you're strongest",
+                        title = stringResource(R.string.stats_willpower_title),
+                        supporting = stringResource(R.string.stats_willpower_supporting),
                         onClick = onNavigateToWillpower,
                         modifier = Modifier.weight(1f)
                     )
                     InsightEntryCard(
                         icon = Icons.Outlined.Block,
-                        title = "Temptation patterns",
-                        supporting = "Which apps pull hardest, and at what hours",
+                        title = stringResource(R.string.stats_patterns_title),
+                        supporting = stringResource(R.string.stats_patterns_supporting),
                         onClick = onNavigateToInterventions,
                         modifier = Modifier.weight(1f)
                     )
@@ -184,8 +189,8 @@ fun StatsScreen(
 
             item {
                 InsightSection(
-                    title = "Screen time",
-                    subtitle = "${state.weekRangeLabel} · tap a bar to see that day"
+                    title = stringResource(R.string.stats_section_screen_time),
+                    subtitle = stringResource(R.string.stats_tap_bar_subtitle, rangeLabel)
                 ) {
                     WeeklyBarChart(
                         days = state.weeklyData,
@@ -198,8 +203,8 @@ fun StatsScreen(
 
             item {
                 InsightSection(
-                    title = "Nudge effectiveness",
-                    subtitle = "${state.weekRangeLabel} · tap a bar to see that day"
+                    title = stringResource(R.string.stats_section_effectiveness),
+                    subtitle = stringResource(R.string.stats_tap_bar_subtitle, rangeLabel)
                 ) {
                     BlockedTrendChart(
                         days = state.trendData,
@@ -209,7 +214,7 @@ fun StatsScreen(
                     )
                     Spacer(Modifier.height(12.dp))
                     SelectedDayNudgeRow(
-                        dayLabel = state.dateLabel,
+                        dayLabel = dateLabel,
                         blocked = state.selectedDayBlocked,
                         walkedAway = state.selectedDayWalkedAway
                     )
@@ -218,8 +223,8 @@ fun StatsScreen(
 
             item {
                 InsightSection(
-                    title = "Hourly pattern",
-                    subtitle = state.dateLabel
+                    title = stringResource(R.string.stats_section_hourly),
+                    subtitle = dateLabel
                 ) {
                     HourlyHeatmap(
                         hourlyMs = state.hourlyMs,
@@ -231,7 +236,7 @@ fun StatsScreen(
             if (state.appStats.isNotEmpty()) {
                 item {
                     Text(
-                        "App usage · ${state.dateLabel}",
+                        stringResource(R.string.stats_app_usage_day, dateLabel),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -256,7 +261,7 @@ fun StatsScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            "No app usage recorded · ${state.dateLabel}",
+                            stringResource(R.string.stats_no_app_usage_day, dateLabel),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -304,7 +309,7 @@ fun DayNavigationHeader(
             IconButton(onClick = onPreviousDay) {
                 Icon(
                     Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                    contentDescription = "Previous day",
+                    contentDescription = stringResource(R.string.stats_previous_day),
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             }
@@ -327,7 +332,7 @@ fun DayNavigationHeader(
             ) {
                 Icon(
                     Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = "Next day",
+                    contentDescription = stringResource(R.string.stats_next_day),
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.alpha(if (canGoForward) 1f else 0.3f)
                 )
@@ -339,7 +344,7 @@ fun DayNavigationHeader(
         if (!isToday) {
             AssistChip(
                 onClick = onJumpToToday,
-                label = { Text("Back to today") },
+                label = { Text(stringResource(R.string.stats_back_to_today)) },
                 leadingIcon = {
                     Icon(
                         Icons.Outlined.Today,
@@ -371,8 +376,8 @@ private fun SelectedDayNudgeRow(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        DayStat(label = "Blocked · $dayLabel", value = blocked.toString())
-        DayStat(label = "Walked away · $dayLabel", value = walkedAway.toString())
+        DayStat(label = stringResource(R.string.stats_blocked_day, dayLabel), value = blocked.toString())
+        DayStat(label = stringResource(R.string.stats_walked_away_day, dayLabel), value = walkedAway.toString())
     }
 }
 
@@ -414,7 +419,7 @@ private fun InsightEntryCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val openLabel = "Open $title"
+    val openLabel = stringResource(R.string.stats_open_card, title)
 
     Card(
         modifier = modifier,
@@ -494,7 +499,7 @@ private fun UsageBar(stat: AppUsageStat, modifier: Modifier = Modifier) {
                 fontWeight = FontWeight.Medium
             )
             Text(
-                stat.formattedDuration,
+                stat.formattedDuration.asString(),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

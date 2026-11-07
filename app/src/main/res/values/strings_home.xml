@@ -41,8 +41,6 @@
         <item quantity="other">%d apps ready</item>
     </plurals>
     <!-- %1$s is the rule\'s title, e.g. "All apps except Spotify". -->
-    <string name="home_lock_headline">%1$s are blocked</string>
-    <string name="home_lock_until">Until %1$s</string>
 
     <!-- "Block short videos" card (Home) and the onboarding step that reuses its rows. -->
     <string name="home_short_title">Block short videos</string>

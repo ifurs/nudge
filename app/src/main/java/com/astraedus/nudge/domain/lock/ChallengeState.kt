@@ -1,5 +1,7 @@
 package com.astraedus.nudge.domain.lock
 
+import com.astraedus.nudge.domain.text.UiText
+
 /**
  * UI-facing state for an in-flight Strict Mode unlock challenge.
  *
@@ -11,5 +13,8 @@ package com.astraedus.nudge.domain.lock
  */
 data class ChallengeState(
     val target: String,
-    val prompt: String
-)
+    val prompt: UiText
+) {
+    /** For a prompt that is already text (a test, or a caller with nothing to translate). */
+    constructor(target: String, prompt: String) : this(target, UiText.Raw(prompt))
+}

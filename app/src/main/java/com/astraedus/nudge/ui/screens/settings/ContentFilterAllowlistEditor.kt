@@ -1,5 +1,10 @@
 package com.astraedus.nudge.ui.screens.settings
 
+import androidx.annotation.StringRes
+import com.astraedus.nudge.domain.text.UiText
+import com.astraedus.nudge.ui.text.asString
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -36,18 +41,17 @@ import androidx.compose.ui.unit.dp
 import com.astraedus.nudge.domain.ContentFilterUserList
 import com.astraedus.nudge.domain.lock.ContentFilterAllowlistWeakening
 
-internal const val ALLOWLIST_TITLE = "Allowed words & sites"
-internal const val ALLOWLIST_SUBTITLE =
-    "Words here excuse strict keyword matches and your blocked words. An allowed site skips " +
-        "both on that site."
-internal const val ALLOWLIST_STRICT_SUFFIX = " Adding one requires the unlock challenge."
-internal const val ALLOWLIST_UNLOCK_PROMPT = "Add an allowed word or site"
-internal const val ALLOWLIST_INVALID =
-    "Enter a word or a site, up to ${ContentFilterUserList.MAX_ENTRY_LENGTH} characters."
-internal const val ALLOWLIST_DUPLICATE = "Already on the list."
-internal const val ALLOWLIST_FULL =
-    "The list is full (${ContentFilterUserList.MAX_ENTRIES}). Remove one first."
-internal const val ALLOWLIST_EMPTY = "No exceptions yet."
+internal val ALLOWLIST_TITLE: Int = R.string.settings_allowlist_title
+internal val ALLOWLIST_SUBTITLE: Int = R.string.settings_allowlist_subtitle
+
+/** The same sentence with "Adding one requires the unlock challenge." added (Strict Mode on). */
+internal val ALLOWLIST_SUBTITLE_STRICT: Int = R.string.settings_allowlist_subtitle_strict
+internal val ALLOWLIST_UNLOCK_PROMPT: Int = R.string.settings_allowlist_unlock_prompt
+internal val ALLOWLIST_INVALID: UiText =
+    UiText.of(R.string.settings_list_invalid, ContentFilterUserList.MAX_ENTRY_LENGTH)
+internal val ALLOWLIST_DUPLICATE: UiText = UiText.of(R.string.settings_list_duplicate)
+internal val ALLOWLIST_FULL: UiText = UiText.of(R.string.settings_list_full, ContentFilterUserList.MAX_ENTRIES)
+internal val ALLOWLIST_EMPTY: Int = R.string.settings_allowlist_empty
 
 /** What submitting one of the user-owned list editors does. */
 internal sealed interface UserListSubmit {
@@ -55,7 +59,7 @@ internal sealed interface UserListSubmit {
     data class Add(val entry: String, val needsUnlock: Boolean) : UserListSubmit
 
     /** Nothing is stored; show [message] under the field. */
-    data class Rejected(val message: String) : UserListSubmit
+    data class Rejected(val message: UiText) : UserListSubmit
 }
 
 /**
@@ -63,16 +67,19 @@ internal sealed interface UserListSubmit {
  * words and the gated direction differ.
  */
 internal data class UserListCopy(
-    val title: String,
+    @StringRes val title: Int,
     val icon: ImageVector,
-    val subtitle: String,
-    val empty: String
+    @StringRes val subtitle: Int,
+    /** [subtitle] plus the sentence that says the gated direction needs the challenge. */
+    @StringRes val subtitleStrict: Int,
+    @StringRes val empty: Int
 )
 
 private val ALLOWLIST_COPY = UserListCopy(
     title = ALLOWLIST_TITLE,
     icon = Icons.Outlined.TaskAlt,
     subtitle = ALLOWLIST_SUBTITLE,
+    subtitleStrict = ALLOWLIST_SUBTITLE_STRICT,
     empty = ALLOWLIST_EMPTY
 )
 
@@ -116,10 +123,8 @@ internal fun ContentFilterAllowlistEditor(
     onRemove: (String) -> Unit
 ) {
     UserListEditor(
-        copy = ALLOWLIST_COPY.copy(
-            subtitle = ALLOWLIST_SUBTITLE +
-                if (strictModeEnabled) ALLOWLIST_STRICT_SUFFIX else ""
-        ),
+        copy = ALLOWLIST_COPY,
+        strictModeEnabled = strictModeEnabled,
         entries = entries,
         submit = { allowlistSubmit(it, entries, strictModeEnabled) },
         onAdd = onAdd,
@@ -136,13 +141,14 @@ internal fun ContentFilterAllowlistEditor(
 @Composable
 internal fun UserListEditor(
     copy: UserListCopy,
+    strictModeEnabled: Boolean,
     entries: Set<String>,
     submit: (String) -> UserListSubmit,
     onAdd: (entry: String, needsUnlock: Boolean) -> Unit,
     onRemove: (String) -> Unit
 ) {
     var input by rememberSaveable { mutableStateOf("") }
-    var error by remember { mutableStateOf<String?>(null) }
+    var error by remember { mutableStateOf<UiText?>(null) }
     val sorted = remember(entries) { entries.sorted() }
 
     // Clear the field once what it holds has actually been stored. Not on submit: under Strict Mode
@@ -160,8 +166,10 @@ internal fun UserListEditor(
 
     Column {
         ListItem(
-            headlineContent = { Text(copy.title) },
-            supportingContent = { Text(copy.subtitle) },
+            headlineContent = { Text(stringResource(copy.title)) },
+            supportingContent = {
+                Text(stringResource(if (strictModeEnabled) copy.subtitleStrict else copy.subtitle))
+            },
             leadingContent = { Icon(copy.icon, contentDescription = null) }
         )
         Row(
@@ -174,11 +182,11 @@ internal fun UserListEditor(
                     input = it
                     error = null
                 },
-                label = { Text("Word or site") },
-                placeholder = { Text("A word, phrase or site") },
+                label = { Text(stringResource(R.string.settings_list_field_label)) },
+                placeholder = { Text(stringResource(R.string.settings_list_field_placeholder)) },
                 singleLine = true,
                 isError = error != null,
-                supportingText = error?.let { message -> { Text(message) } },
+                supportingText = error?.let { message -> { Text(message.asString()) } },
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.None,
                     autoCorrectEnabled = false,
@@ -187,11 +195,11 @@ internal fun UserListEditor(
                 keyboardActions = KeyboardActions(onDone = { submitInput() }),
                 modifier = Modifier.weight(1f)
             )
-            TextButton(onClick = { submitInput() }, enabled = input.isNotBlank()) { Text("Add") }
+            TextButton(onClick = { submitInput() }, enabled = input.isNotBlank()) { Text(stringResource(R.string.components_action_add)) }
         }
         if (sorted.isEmpty()) {
             Text(
-                copy.empty,
+                stringResource(copy.empty),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
@@ -209,7 +217,7 @@ internal fun UserListEditor(
                         trailingIcon = {
                             Icon(
                                 Icons.Outlined.Close,
-                                contentDescription = "Remove $entry",
+                                contentDescription = stringResource(R.string.settings_list_remove_entry, entry),
                                 modifier = Modifier.size(InputChipDefaults.IconSize)
                             )
                         }

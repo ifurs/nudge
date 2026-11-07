@@ -8,7 +8,10 @@ import com.astraedus.nudge.data.db.entity.UsageEvent
 import com.astraedus.nudge.data.repository.InstalledAppsRepository
 import com.astraedus.nudge.data.repository.ScreenTimeProvider
 import com.astraedus.nudge.data.repository.UsageRepository
+import com.astraedus.nudge.R
 import com.astraedus.nudge.di.IoDispatcher
+import com.astraedus.nudge.domain.text.UiText
+import com.astraedus.nudge.ui.text.DurationText
 import com.astraedus.nudge.domain.engine.TimeTracker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.ZoneId
@@ -24,7 +27,7 @@ import kotlinx.coroutines.withContext
 @Immutable
 data class WillpowerAppRow(
     val packageName: String,
-    val label: String,
+    val label: UiText,
     val icon: Drawable?,
     val walkAways: Int,
     val gaveIn: Int,
@@ -37,7 +40,7 @@ data class WillpowerUiState(
     val range: InsightsRange = InsightsRange.THIRTY_DAYS,
     val insights: WillpowerInsights = WillpowerInsights(),
     val timeReclaimed: TimeReclaimed = TimeReclaimed(),
-    val timeReclaimedFormatted: String = "0m",
+    val timeReclaimedFormatted: UiText = UiText.of(R.string.components_duration_short_minutes, 0),
     val apps: List<WillpowerAppRow> = emptyList(),
     val isLoading: Boolean = true
 )
@@ -103,7 +106,7 @@ class WillpowerViewModel @Inject constructor(
             range = range,
             insights = insights,
             timeReclaimed = timeReclaimed,
-            timeReclaimedFormatted = timeTracker.formatDuration(timeReclaimed.totalMs),
+            timeReclaimedFormatted = DurationText.of(timeReclaimed.totalMs),
             apps = appRows,
             isLoading = false
         )

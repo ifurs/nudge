@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.stats
 
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,7 +43,7 @@ fun InsightsRangeToggle(
                 onClick = { onSelect(range) },
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size)
             ) {
-                Text(range.label)
+                Text(stringResource(range.labelRes))
             }
         }
     }

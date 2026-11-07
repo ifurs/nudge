@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.screens.settings
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -66,10 +68,10 @@ fun GrayscaleGuideScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Grayscale Mode Setup") },
+                title = { Text(stringResource(R.string.settings_gs_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.components_action_back))
                     }
                 }
             )
@@ -95,34 +97,32 @@ fun GrayscaleGuideScreen(
             } else {
                 // Explanation
                 Text(
-                    "Grayscale mode makes your phone screen black-and-white when blocked apps " +
-                        "are open, making them less appealing.",
+                    stringResource(R.string.settings_gs_intro_1),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
-                    "This requires a one-time setup because Android restricts apps from " +
-                        "changing display settings directly.",
+                    stringResource(R.string.settings_gs_intro_2),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 // Option 1: Wireless
-                SectionHeader("Option 1: Wireless (Android 11+, no computer needed)")
+                SectionHeader(stringResource(R.string.settings_gs_option_1))
 
-                NumberedStep(1, "Go to Settings > About Phone > tap \"Build number\" 7 times to enable Developer Options")
-                NumberedStep(2, "Go to Settings > Developer Options > enable \"Wireless debugging\"")
-                NumberedStep(3, "Tap \"Pair device with pairing code\" and note the pairing code and port")
-                NumberedStep(4, "Open a terminal app (like Termux) and run the pairing command:")
+                NumberedStep(1, stringResource(R.string.settings_gs_w_step_1))
+                NumberedStep(2, stringResource(R.string.settings_gs_w_step_2))
+                NumberedStep(3, stringResource(R.string.settings_gs_w_step_3))
+                NumberedStep(4, stringResource(R.string.settings_gs_w_step_4))
 
                 AdbCommandCard(
                     command = "adb pair <ip>:<port>",
-                    label = "Then enter the pairing code when prompted",
+                    label = stringResource(R.string.settings_gs_pair_label),
                     snackbarHostState = snackbarHostState,
                     scope = scope,
                     context = context
                 )
 
-                NumberedStep(5, "Then run this command to grant the permission:")
+                NumberedStep(5, stringResource(R.string.settings_gs_w_step_5))
 
                 AdbCommandCard(
                     command = grantCommand,
@@ -134,12 +134,12 @@ fun GrayscaleGuideScreen(
                 Spacer(Modifier.height(8.dp))
 
                 // Option 2: With a Computer
-                SectionHeader("Option 2: With a Computer")
+                SectionHeader(stringResource(R.string.settings_gs_option_2))
 
-                NumberedStep(1, "Install ADB on your computer (search \"install adb\" for your OS)")
-                NumberedStep(2, "Enable USB Debugging on your phone (Settings > Developer Options > USB Debugging)")
-                NumberedStep(3, "Connect your phone via USB")
-                NumberedStep(4, "Run this command on your computer:")
+                NumberedStep(1, stringResource(R.string.settings_gs_c_step_1))
+                NumberedStep(2, stringResource(R.string.settings_gs_c_step_2))
+                NumberedStep(3, stringResource(R.string.settings_gs_c_step_3))
+                NumberedStep(4, stringResource(R.string.settings_gs_c_step_4))
 
                 AdbCommandCard(
                     command = grantCommand,
@@ -151,7 +151,7 @@ fun GrayscaleGuideScreen(
                 Spacer(Modifier.height(8.dp))
 
                 Text(
-                    "That's it! One-time setup. Grayscale will work automatically after this.",
+                    stringResource(R.string.settings_gs_done),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.primary
@@ -190,26 +190,26 @@ private fun PermissionStatusCard(granted: Boolean) {
                 )
                 Column {
                     Text(
-                        "Permission Granted",
+                        stringResource(R.string.settings_gs_granted_title),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Medium,
                         color = Color(0xFF4CAF50)
                     )
                     Text(
-                        "Grayscale mode is ready to use. Enable it per-app in rule settings.",
+                        stringResource(R.string.settings_gs_granted_body),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             } else {
                 Text(
-                    "Not Granted",
+                    stringResource(R.string.settings_gs_not_granted_title),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.error
                 )
                 Text(
-                    "Follow the guide below to enable grayscale.",
+                    stringResource(R.string.settings_gs_not_granted_body),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.weight(1f)
@@ -258,6 +258,8 @@ private fun AdbCommandCard(
     scope: kotlinx.coroutines.CoroutineScope,
     context: Context
 ) {
+    val clipboardLabel = stringResource(R.string.settings_gs_clipboard_label)
+    val copiedText = stringResource(R.string.settings_gs_copied)
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -278,14 +280,14 @@ private fun AdbCommandCard(
             )
             IconButton(onClick = {
                 val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                clipboard.setPrimaryClip(ClipData.newPlainText("ADB command", command))
+                clipboard.setPrimaryClip(ClipData.newPlainText(clipboardLabel, command))
                 scope.launch {
-                    snackbarHostState.showSnackbar("Copied to clipboard")
+                    snackbarHostState.showSnackbar(copiedText)
                 }
             }) {
                 Icon(
                     Icons.Outlined.ContentCopy,
-                    contentDescription = "Copy command",
+                    contentDescription = stringResource(R.string.settings_gs_copy_command),
                     tint = MaterialTheme.colorScheme.primary
                 )
             }

@@ -1,5 +1,6 @@
 package com.astraedus.nudge.service
 
+import com.astraedus.nudge.testing.enString
 import android.content.Context
 import android.view.WindowManager
 import com.astraedus.nudge.domain.events.ForegroundSignal
@@ -37,6 +38,14 @@ class TabCoverOverlayManagerTest {
     private val windowManager = mockk<WindowManager>(relaxed = true)
     private val serviceContext = mockk<Context>(relaxed = true)
     private val coverView = mockk<AwarenessOverlayWindow.Container>(relaxed = true)
+
+    /** A context whose `getString` reads the shipped English resources, as a device would. */
+    private val resolvingContext = mockk<Context>(relaxed = true).also { ctx ->
+        every { ctx.getString(any<Int>()) } answers { enString(firstArg()) }
+        every { ctx.getString(any<Int>(), *anyVararg()) } answers {
+            enString(firstArg(), *(args[1] as Array<*>).map { it!! }.toTypedArray())
+        }
+    }
     private lateinit var manager: TabCoverOverlayManager
 
     private val instagram = InstagramSurfaces.packageName
@@ -53,6 +62,7 @@ class TabCoverOverlayManagerTest {
     fun setUp() {
         every { serviceContext.getSystemService(Context.WINDOW_SERVICE) } returns windowManager
         manager = TabCoverOverlayManager(mockk(relaxed = true), mockk<NudgeLogger>(relaxed = true))
+        every { coverView.context } returns resolvingContext
         manager.coverViewFactory = { coverView }
         manager.setServiceContext(serviceContext)
     }

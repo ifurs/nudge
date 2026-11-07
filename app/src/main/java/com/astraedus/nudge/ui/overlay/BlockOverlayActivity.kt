@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.overlay
 
+import com.astraedus.nudge.ui.text.resolve
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -360,13 +361,13 @@ class BlockOverlayActivity : ComponentActivity() {
         var redirectTarget: InstalledAppsRepository.AppInfo? = null
         runBlocking {
             titlePool = NudgeMessages.resolvePool(
-                nudgePreferences.customDelayTitles.first(), NudgeMessages.delayTitles
+                nudgePreferences.customDelayTitles.first(), NudgeMessages.delayTitles(resources)
             )
             subtitlePool = NudgeMessages.resolvePool(
-                nudgePreferences.customDelaySubtitles.first(), NudgeMessages.delaySubtitles
+                nudgePreferences.customDelaySubtitles.first(), NudgeMessages.delaySubtitles(resources)
             )
             hardBlockPool = NudgeMessages.resolvePool(
-                nudgePreferences.customHardBlockMessages.first(), NudgeMessages.hardBlockMessages
+                nudgePreferences.customHardBlockMessages.first(), NudgeMessages.hardBlockMessages(resources)
             )
 
             passState = resolveEmergencyPassState(
@@ -425,12 +426,12 @@ class BlockOverlayActivity : ComponentActivity() {
         val untilText = OverlayBlockInfo.untilLine(
             untilMs = intent.getLongExtra(EXTRA_UNTIL, -1L).takeIf { it >= 0 },
             formatClock = { android.text.format.DateFormat.getTimeFormat(this).format(java.util.Date(it)) }
-        )
+        )?.resolve(this)
         val visibleRuleName = OverlayBlockInfo.visibleRuleName(
             ruleName = ruleName,
             isAllApps = isAllApps,
             exceptNames = if (isAllApps) resolveExceptNames(intent) else emptyList()
-        )
+        )?.resolve(this)
 
         // Grant the pass and return to the blocked app. finish() brings it back to the foreground;
         // the service's isPassActive check then lets it through. NOT navigateHome and NOT a

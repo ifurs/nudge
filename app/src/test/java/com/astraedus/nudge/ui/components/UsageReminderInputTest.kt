@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.components
 
+import com.astraedus.nudge.testing.enString
+import com.astraedus.nudge.testing.en
 import com.astraedus.nudge.domain.autokick.UseReminderEvaluator
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -103,7 +105,7 @@ class UsageReminderInputTest {
 
     @Test
     fun `hint when the reminder equals the kick and it names the kick minutes`() {
-        val hint = UsageReminderInput.supersededHint(20, 20)
+        val hint = UsageReminderInput.supersededHint(20, 20)?.en()
 
         assertNotNull(hint)
         assertTrue(hint!!, hint.contains("20"))
@@ -111,7 +113,7 @@ class UsageReminderInputTest {
 
     @Test
     fun `hint when the reminder is after the kick and it names the kick minutes`() {
-        val hint = UsageReminderInput.supersededHint(30, 20)
+        val hint = UsageReminderInput.supersededHint(30, 20)?.en()
 
         assertNotNull(hint)
         assertTrue(hint!!, hint.contains("20"))
@@ -141,8 +143,8 @@ class UsageReminderInputTest {
 
     @Test
     fun `info mentions apps only exactly when websites are configured`() {
-        assertTrue(UsageReminderInput.info(websitesConfigured = true).contains("Apps only"))
-        assertFalse(UsageReminderInput.info(websitesConfigured = false).contains("Apps only"))
+        assertTrue(UsageReminderInput.info(websitesConfigured = true).en().contains("Apps only"))
+        assertFalse(UsageReminderInput.info(websitesConfigured = false).en().contains("Apps only"))
     }
 
     // ── copy tone ──
@@ -151,12 +153,12 @@ class UsageReminderInputTest {
     fun `no user-facing copy shames or lectures`() {
         val banned = listOf("wasted", "too long", "again", "addict", "should")
         val copy = listOf(
-            "TITLE" to UsageReminderInput.TITLE,
-            "FIELD_LABEL" to UsageReminderInput.FIELD_LABEL,
-            "FIELD_SUPPORTING" to UsageReminderInput.FIELD_SUPPORTING,
-            "BLOCKED_WARNING" to UsageReminderInput.BLOCKED_WARNING,
-            "info(true)" to UsageReminderInput.info(true),
-            "info(false)" to UsageReminderInput.info(false)
+            "TITLE" to enString(UsageReminderInput.TITLE),
+            "FIELD_LABEL" to enString(UsageReminderInput.FIELD_LABEL),
+            "FIELD_SUPPORTING" to enString(UsageReminderInput.FIELD_SUPPORTING),
+            "BLOCKED_WARNING" to enString(UsageReminderInput.BLOCKED_WARNING),
+            "info(true)" to UsageReminderInput.info(true).en(),
+            "info(false)" to UsageReminderInput.info(false).en()
         )
 
         for ((name, text) in copy) {

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Usage Stats and App Details -->
+    <string name="stats_title">Usage Stats</string>
+    <string name="stats_app_details">App Details</string>
+    <string name="stats_today">Today</string>
+    <string name="stats_yesterday">Yesterday</string>
+    <string name="stats_last_7_days">Last 7 days</string>
+    <string name="stats_date_range">%1$s – %2$s</string>
+    <string name="stats_previous_day">Previous day</string>
+    <string name="stats_next_day">Next day</string>
+    <string name="stats_back_to_today">Back to today</string>
+    <string name="stats_screen_time_day">Screen time · %1$s</string>
+    <string name="stats_enable_usage_access">Tap to enable usage access</string>
+    <string name="stats_open_card">Open %1$s</string>
+    <string name="stats_willpower_title">Willpower</string>
+    <string name="stats_willpower_supporting">How often you walk away, and when you\'re strongest</string>
+    <string name="stats_patterns_title">Temptation patterns</string>
+    <string name="stats_patterns_supporting">Which apps pull hardest, and at what hours</string>
+    <string name="stats_section_screen_time">Screen time</string>
+    <string name="stats_section_effectiveness">Nudge effectiveness</string>
+    <string name="stats_section_hourly">Hourly pattern</string>
+    <string name="stats_section_activity">Nudge activity</string>
+    <string name="stats_section_breakdown">Block mode breakdown</string>
+    <string name="stats_all_time">All time</string>
+    <string name="stats_tap_bar_subtitle">%1$s · tap a bar to see that day</string>
+    <string name="stats_app_usage_day">App usage · %1$s</string>
+    <string name="stats_no_app_usage_day">No app usage recorded · %1$s</string>
+    <string name="stats_blocked_day">Blocked · %1$s</string>
+    <string name="stats_walked_away_day">Walked away · %1$s</string>
+    <string name="stats_blocked_all_time">Blocked · all time</string>
+    <string name="stats_walked_away_all_time">Walked away · all time</string>
+
+    <!-- Charts -->
+    <string name="stats_weekly_empty">No data this week</string>
+    <string name="stats_hourly_empty">No usage recorded today</string>
+    <string name="stats_trend_no_nudges">No nudges yet</string>
+    <string name="stats_trend_day_description">%1$d blocked %2$d walked away</string>
+    <string name="stats_legend_blocked">Blocked</string>
+    <string name="stats_legend_walked_away">Walked Away</string>
+    <string name="stats_ring_walked_away">walked away</string>
+    <string name="stats_streak">Streak</string>
+    <plurals name="stats_streak_label">
+        <item quantity="one">" day streak"</item>
+        <item quantity="other">" days streak"</item>
+    </plurals>
+    <!-- %1$d is the hour on a 12-hour clock, %2$d on a 24-hour clock; each language reads its own. -->
+    <string name="stats_hour_am">%1$dam</string>
+    <string name="stats_hour_pm">%1$dpm</string>
+
+    <!-- Willpower and Interventions -->
+    <string name="stats_interventions_title">Interventions</string>
+    <string name="stats_range_7_days">7 days</string>
+    <string name="stats_range_30_days">30 days</string>
+    <string name="stats_hero_today">Today</string>
+    <string name="stats_all_time_caption">All time</string>
+    <string name="stats_hero_walked_away">You walked away %1$d of %2$d times</string>
+    <string name="stats_hero_clean_slate">No blocks yet in this period — that is a clean slate, not a failure.</string>
+    <string name="stats_no_blocks_period">No blocks yet in this period</string>
+    <string name="stats_reclaimed_title">Time Reclaimed</string>
+    <string name="stats_reclaimed_subtitle">Estimated from your average session length in each app.</string>
+    <string name="stats_reclaimed_empty">No time reclaimed yet — your walk-aways will show up here.</string>
+    <string name="stats_reclaimed_estimate">Time reclaimed (est.)</string>
+    <string name="stats_reclaimed_default_note">Some apps use a 5-minute default.</string>
+    <string name="stats_clock_title">Willpower Clock</string>
+    <string name="stats_rate_readout">%1$s: %2$d of %3$d walked away (%4$s)</string>
+    <string name="stats_clock_empty">No walk-aways yet in this period</string>
+    <string name="stats_clock_strongest_weakest">Strongest at %1$s · Weakest at %2$s</string>
+    <string name="stats_clock_strongest">Strongest at %1$s</string>
+    <string name="stats_clock_weakest">Weakest at %1$s</string>
+    <string name="stats_clock_not_enough">Not enough data yet to spot an hourly pattern.</string>
+    <string name="stats_leaderboard_title">Resistance Leaderboard</string>
+    <string name="stats_row_walked_gave_in">%1$d walked away · %2$d gave in</string>
+    <string name="stats_trend_title">Weekly Trend</string>
+    <string name="stats_trend_empty">No data in this period</string>
+    <string name="stats_trend_up">Up %1$d points vs last week</string>
+    <string name="stats_trend_down">Down %1$d points vs last week</string>
+    <string name="stats_trend_level">Level with last week</string>
+    <string name="stats_trend_switch">Switch to 30 days to see your weekly trend.</string>
+    <string name="stats_week_this">This wk</string>
+    <string name="stats_week_ago">%1$dw ago</string>
+    <string name="stats_websites">Websites</string>
+    <string name="stats_mode_hard_block">Hard block</string>
+    <string name="stats_mode_other">Other</string>
+
+    <string name="stats_clock_temptation_title">Temptation Clock</string>
+    <string name="stats_clock_temptation_subtitle">When you\'re most likely to hit a block</string>
+    <string name="stats_danger_hour">Your danger hour is %1$s</string>
+    <string name="stats_weekday_title">Day of Week</string>
+    <string name="stats_weekday_subtitle">Which days test your willpower most</string>
+    <string name="stats_toughest_day">Toughest day: %1$s</string>
+    <string name="stats_top_apps_title">Top Blocked Apps</string>
+    <string name="stats_top_apps_subtitle">Which apps trigger the most interventions, and how</string>
+    <string name="stats_fingerprint_title">Temptation Fingerprint</string>
+    <string name="stats_fingerprint_subtitle">Darker means more blocks at that hour.</string>
+    <plurals name="stats_blocks_readout">
+        <item quantity="one">%1$s: %2$d block</item>
+        <item quantity="other">%1$s: %2$d blocks</item>
+    </plurals>
+</resources>

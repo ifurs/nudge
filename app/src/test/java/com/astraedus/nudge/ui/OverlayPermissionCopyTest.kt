@@ -1,6 +1,8 @@
 package com.astraedus.nudge.ui
 
 import com.astraedus.nudge.testing.SourceScan
+import com.astraedus.nudge.testing.enString
+import com.astraedus.nudge.testing.ukString
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -91,8 +93,24 @@ class OverlayPermissionCopyTest {
         onboardingString("res/values-uk/strings_onboarding.xml")
     }
 
+    /**
+     * Settings' copy lives in `strings_settings.xml` now, so the words are read from the resources
+     * (English AND Ukrainian: the cost sentence must survive translation), and the source is still
+     * asked for the one thing a resource cannot say: that the description BRANCHES on the live
+     * overlay state.
+     */
+    private val settingsOverlaySource by lazy {
+        overlaySnippet(settingsSource, "settings_perm_overlay_title")
+    }
+
+    private fun settingsOverlayCopy(resolve: (Int) -> String): String = listOf(
+        com.astraedus.nudge.R.string.settings_perm_overlay_title,
+        com.astraedus.nudge.R.string.settings_perm_overlay_granted,
+        com.astraedus.nudge.R.string.settings_perm_overlay_off
+    ).joinToString("\n") { resolve(it) }
+
     private val settingsOverlaySnippet by lazy {
-        overlaySnippet(settingsSource, "\"Overlay Permission\"")
+        settingsOverlayCopy { enString(it) } + "\n" + settingsOverlaySource
     }
 
     @Test
@@ -158,9 +176,16 @@ class OverlayPermissionCopyTest {
                 "state, the same pattern the sibling Accessibility row already uses for " +
                 "accessibilityCrashed — a single static string cannot say 'off' only when it is " +
                 "actually off.",
-            settingsOverlaySnippet.contains("if (overlayEnabled)") ||
-                settingsOverlaySnippet.contains("if(overlayEnabled)")
+            settingsOverlaySource.contains("if (overlayEnabled)") ||
+                settingsOverlaySource.contains("if(overlayEnabled)")
         )
+    }
+
+    @Test
+    fun `the ukrainian settings overlay copy keeps the restart cost too`() {
+        val lower = settingsOverlayCopy { ukString(it) }.lowercase()
+        assertTrue("the block screen is named", lower.contains("блокування"))
+        assertTrue("the background restart cost is named", lower.contains("зупинить") && lower.contains("фон"))
     }
 
     @Test

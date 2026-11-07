@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Налаштування</string>
+    <string name="settings_section_permissions">Дозволи</string>
+    <string name="settings_section_content_filter">Фільтр вмісту</string>
+    <string name="settings_section_lock">Замок зобов’язань</string>
+    <string name="settings_section_escape">Запасний вихід</string>
+    <string name="settings_section_checkins">Перевірки</string>
+    <string name="settings_section_personalize">Персоналізація</string>
+    <string name="settings_section_backup">Резервна копія</string>
+    <string name="settings_section_about">Про застосунок</string>
+    <string name="settings_section_developer">Параметри розробника</string>
+
+    <string name="settings_perm_accessibility_title">Служба спеціальних можливостей</string>
+    <string name="settings_perm_accessibility_desc">Потрібна, щоб визначати застосунок на передньому плані</string>
+    <string name="settings_perm_accessibility_crashed">Увімкнено, але телефон її зупинив — вимкніть і ввімкніть знову, щоб відновити блокування.</string>
+    <string name="settings_perm_overlay_title">Показ поверх інших застосунків</string>
+    <string name="settings_perm_overlay_granted">Показує екрани блокування й допомагає Nudge відновити захист, якщо Android зупинить його у фоновому режимі</string>
+    <string name="settings_perm_overlay_off">Вимкнено — Nudge не може показувати екрани блокування, а Android із більшою ймовірністю зупинить захист, доки ви не відкриєте застосунок знову</string>
+    <string name="settings_perm_usage_title">Доступ до статистики використання</string>
+    <string name="settings_perm_usage_desc">Потрібен, щоб відстежувати використання застосунків</string>
+    <string name="settings_perm_grayscale_title">Дозвіл для відтінків сірого</string>
+    <string name="settings_perm_grayscale_granted">Надано</string>
+    <string name="settings_perm_grayscale_guide">Торкніться, щоб побачити інструкцію з налаштування</string>
+
+    <string name="settings_cf_block_title">Блокувати сайти з обмеженим вмістом</string>
+    <string name="settings_cf_block_desc">Блокує сайти й пошукові запити для дорослих та відверті. Працює в підтримуваних браузерах.</string>
+    <string name="settings_cf_strict_title">Суворе зіставлення ключових слів</string>
+    <string name="settings_cf_strict_desc">Також блокує запити з неоднозначними словами. Може зачепити невинні запити; можна додати винятки.</string>
+    <string name="settings_blocklist_title">Заблоковані слова й сайти</string>
+    <string name="settings_blocklist_subtitle">Слова й фрази блокують сторінки та пошукові запити, що їх містять. Сайт блокує сторінки на цьому сайті та його піддоменах.</string>
+    <string name="settings_blocklist_subtitle_strict">Слова й фрази блокують сторінки та пошукові запити, що їх містять. Сайт блокує сторінки на цьому сайті та його піддоменах. Щоб видалити запис, потрібно пройти завдання для розблокування.</string>
+    <string name="settings_blocklist_unlock_prompt">Видалити заблоковане слово або сайт</string>
+    <string name="settings_blocklist_empty">Поки що нічого не заблоковано.</string>
+    <string name="settings_allowlist_title">Дозволені слова й сайти</string>
+    <string name="settings_allowlist_subtitle">Слова тут роблять винятки для суворого зіставлення та ваших заблокованих слів. Дозволений сайт пропускає і те, й інше на цьому сайті.</string>
+    <string name="settings_allowlist_subtitle_strict">Слова тут роблять винятки для суворого зіставлення та ваших заблокованих слів. Дозволений сайт пропускає і те, й інше на цьому сайті. Щоб додати запис, потрібно пройти завдання для розблокування.</string>
+    <string name="settings_allowlist_unlock_prompt">Додати дозволене слово або сайт</string>
+    <string name="settings_allowlist_empty">Винятків поки немає.</string>
+    <string name="settings_list_invalid">Введіть слово або сайт, до %1$d символів.</string>
+    <string name="settings_list_duplicate">Уже є в списку.</string>
+    <string name="settings_list_full">Список заповнено (%1$d). Спершу видаліть один запис.</string>
+    <string name="settings_list_field_label">Слово або сайт</string>
+    <string name="settings_list_field_placeholder">Слово, фраза або сайт</string>
+    <string name="settings_list_remove_entry">Видалити: %1$s</string>
+
+    <string name="settings_lock_title">Заблокувати мої налаштування (Суворий режим)</string>
+    <string name="settings_lock_desc">Поки режим увімкнено, щоб зняти будь-який захист або вимкнути сам режим, потрібно пройти завдання для розблокування.</string>
+    <string name="settings_difficulty_easy">Легко</string>
+    <string name="settings_difficulty_medium">Середньо</string>
+    <string name="settings_difficulty_hard">Складно</string>
+    <string name="settings_difficulty_chip">%1$s (%2$d)</string>
+    <string name="settings_pass_title">Денна 2-хвилинна перепустка</string>
+    <string name="settings_pass_desc">Дозволяє один 2-хвилинний вихід на день, спільний для всіх заблокованих застосунків.</string>
+    <string name="settings_pass_desc_strict">Дозволяє один 2-хвилинний вихід на день, спільний для всіх заблокованих застосунків. Щоб увімкнути її, потрібно пройти завдання для розблокування.</string>
+
+    <string name="settings_unlock_strict_mode">Вимкнути Суворий режим</string>
+    <string name="settings_unlock_pass">Увімкнути денну 2-хвилинну перепустку</string>
+    <string name="settings_unlock_content_filter">Вимкнути блокування сайтів</string>
+    <string name="settings_unlock_strict_keywords">Вимкнути суворе зіставлення ключових слів</string>
+
+    <string name="settings_bounce_title">Bro. wtf.</string>
+    <string name="settings_bounce_subtitle">Отримуйте нагадування, коли метаєтеся між застосунками чи заблокованими сайтами після блокування.</string>
+    <string name="settings_bounce_blocked_subtitle">Сповіщення для Nudge вимкнено, тож вони не дійдуть до вас. Торкніться, щоб увімкнути.</string>
+    <string name="settings_phone_nudge_title">Нагадування про телефон</string>
+    <plurals name="settings_phone_nudge_subtitle">
+        <item quantity="one">Після %1$d хвилини в телефоні поспіль показувати екран паузи. Враховує всі застосунки.</item>
+        <item quantity="few">Після %1$d хвилин у телефоні поспіль показувати екран паузи. Враховує всі застосунки.</item>
+        <item quantity="many">Після %1$d хвилин у телефоні поспіль показувати екран паузи. Враховує всі застосунки.</item>
+        <item quantity="other">Після %1$d хвилини в телефоні поспіль показувати екран паузи. Враховує всі застосунки.</item>
+    </plurals>
+    <string name="settings_phone_nudge_threshold_label">Пауза після</string>
+    <string name="settings_phone_nudge_pause_label">Тривалість першої паузи</string>
+    <string name="settings_phone_nudge_later_one">Наступні паузи: %1$s</string>
+    <string name="settings_phone_nudge_later_then">Наступні паузи: %1$s, потім %2$s</string>
+    <string name="settings_minutes_spaced">%1$d хв</string>
+    <string name="settings_seconds_spaced">%1$d с</string>
+    <string name="settings_collapse">Згорнути</string>
+    <string name="settings_expand">Розгорнути</string>
+
+    <string name="settings_edit_messages_title">Змінити повідомлення блокування</string>
+    <string name="settings_edit_messages_desc">Налаштуйте мотиваційний текст на екранах блокування й затримки.</string>
+    <string name="settings_messages_title">Повідомлення блокування</string>
+    <string name="settings_messages_intro">Налаштуйте повідомлення, які показуються, коли застосунок заблоковано або затримано. Одне повідомлення на рядок — щоразу обирається випадкове.</string>
+    <string name="settings_messages_delay_title">Заголовок затримки</string>
+    <string name="settings_messages_delay_subtitle">Підзаголовок затримки</string>
+    <string name="settings_messages_hard_block">Повідомлення повного блокування</string>
+    <string name="settings_messages_reset">Скинути до типових</string>
+    <string name="settings_messages_field_help">Одне повідомлення на рядок. Залиште порожнім, щоб використовувати типові.</string>
+    <string name="settings_messages_saved">Повідомлення збережено</string>
+
+    <string name="settings_backup_save_title">Зберегти резервну копію</string>
+    <string name="settings_backup_save_desc">Записати правила, історію й налаштування у файл на цьому пристрої.</string>
+    <string name="settings_backup_share_title">Поділитися резервною копією</string>
+    <string name="settings_backup_share_desc">Надіслати цей самий файл в інший застосунок чи на інший пристрій.</string>
+    <string name="settings_backup_import_title">Імпортувати резервну копію</string>
+    <string name="settings_backup_import_desc">Відновити з файлу резервної копії. Наявні правила не змінюються.</string>
+
+    <string name="settings_version_title">Версія</string>
+    <string name="settings_version_desc">Nudge v%1$s (збірка %2$d)</string>
+    <string name="settings_developer_enabled">Параметри розробника ввімкнено</string>
+    <string name="settings_source_title">Вихідний код і відгуки</string>
+    <string name="settings_source_desc">Відкритий код на GitHub. Повідомляйте про помилки або пропонуйте нові функції.</string>
+    <string name="settings_license_title">Ліцензія</string>
+    <string name="settings_debug_logging_title">Журнал налагодження</string>
+    <string name="settings_debug_logging_desc">Записувати діагностичні журнали в Logcat</string>
+    <string name="settings_pin_unsupported">Лаунчер не підтримує закріплення віджетів</string>
+
+    <string name="settings_gs_title">Налаштування відтінків сірого</string>
+    <string name="settings_gs_intro_1">Режим відтінків сірого робить екран чорно-білим, коли відкрито заблоковані застосунки, і вони стають менш привабливими.</string>
+    <string name="settings_gs_intro_2">Потрібне одноразове налаштування, бо Android не дозволяє застосункам напряму змінювати параметри екрана.</string>
+    <string name="settings_gs_option_1">Варіант 1: Бездротово (Android 11+, комп’ютер не потрібен)</string>
+    <string name="settings_gs_w_step_1">Перейдіть у Налаштування &gt; Про телефон &gt; торкніться «Номер збірки» 7 разів, щоб увімкнути параметри розробника</string>
+    <string name="settings_gs_w_step_2">Перейдіть у Налаштування &gt; Параметри розробника &gt; увімкніть «Бездротове налагодження»</string>
+    <string name="settings_gs_w_step_3">Торкніться «Підключити пристрій за кодом підключення» і запишіть код та порт</string>
+    <string name="settings_gs_w_step_4">Відкрийте застосунок-термінал (наприклад, Termux) і виконайте команду підключення:</string>
+    <string name="settings_gs_pair_label">Потім введіть код підключення, коли його запросять</string>
+    <string name="settings_gs_w_step_5">Потім виконайте цю команду, щоб надати дозвіл:</string>
+    <string name="settings_gs_option_2">Варіант 2: З комп’ютером</string>
+    <string name="settings_gs_c_step_1">Встановіть ADB на комп’ютер (знайдіть «install adb» для вашої системи)</string>
+    <string name="settings_gs_c_step_2">Увімкніть налагодження USB на телефоні (Налаштування &gt; Параметри розробника &gt; Налагодження USB)</string>
+    <string name="settings_gs_c_step_3">Підключіть телефон кабелем USB</string>
+    <string name="settings_gs_c_step_4">Виконайте цю команду на комп’ютері:</string>
+    <string name="settings_gs_done">Це все! Одноразове налаштування. Далі відтінки сірого працюватимуть автоматично.</string>
+    <string name="settings_gs_granted_title">Дозвіл надано</string>
+    <string name="settings_gs_granted_body">Режим відтінків сірого готовий до роботи. Вмикайте його для окремих застосунків у налаштуваннях правила.</string>
+    <string name="settings_gs_not_granted_title">Не надано</string>
+    <string name="settings_gs_not_granted_body">Виконайте інструкцію нижче, щоб увімкнути відтінки сірого.</string>
+    <string name="settings_gs_clipboard_label">Команда ADB</string>
+    <string name="settings_gs_copied">Скопійовано в буфер обміну</string>
+    <string name="settings_gs_copy_command">Копіювати команду</string>
+</resources>

@@ -1,5 +1,6 @@
 package com.astraedus.nudge.testing
 
+import com.astraedus.nudge.domain.model.RuleLabel
 import com.astraedus.nudge.data.db.entity.AppGroup
 import com.astraedus.nudge.data.db.entity.AppGroupMember
 import com.astraedus.nudge.data.db.entity.BlockRule
@@ -180,7 +181,7 @@ fun anActiveRule(
     scheduleEndMinute: Int? = SHIPPED_DATA.scheduleEndMinute,
     inAppFeatures: List<String>? = SHIPPED_DATA.inAppFeatures,
     grayscale: Boolean = SHIPPED_DATA.grayscale,
-    ruleName: String? = ACTIVE_DEFAULTS.ruleName,
+    ruleName: RuleLabel? = ACTIVE_DEFAULTS.ruleName,
     tabVanish: Boolean = SHIPPED_DATA.tabVanish,
     followingSteer: Boolean = SHIPPED_DATA.followingSteer,
     keepPassOnShortTrips: Boolean = SHIPPED_DATA.keepPassOnShortTrips,

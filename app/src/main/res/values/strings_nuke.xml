@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Nuke screen -->
+    <string name="nuke_title">Nuke</string>
+    <string name="nuke_back">Back</string>
+    <string name="nuke_apps_title">Apps to nuke</string>
+    <string name="nuke_apps_never_listed">Your phone, messages, clock, launcher, keyboard and Settings are never on this list.</string>
+    <string name="nuke_search_apps">Search apps…</string>
+    <string name="nuke_share_chooser">Save your Nuke code</string>
+
+    <string name="nuke_intro_1">Nuke is a second list, separate from your rules. When it\'s on, those apps don\'t open. At all.</string>
+    <string name="nuke_intro_2">You turn it on and off by scanning a code you keep somewhere inconvenient.</string>
+    <string name="nuke_intro_3">Lost the code? There\'s an emergency way out: typing 64 characters by hand. It\'s meant to be annoying.</string>
+
+    <plurals name="nuke_status_on">
+        <item quantity="one">Nuke is on · %1$d app</item>
+        <item quantity="other">Nuke is on · %1$d apps</item>
+    </plurals>
+    <string name="nuke_status_off">Nuke is off</string>
+    <string name="nuke_scan_to_end">Scan to end</string>
+    <string name="nuke_scan_to_start">Scan to start</string>
+    <string name="nuke_emergency_end">Emergency: end without your code</string>
+    <string name="nuke_active_note">Removing apps or changing the code needs the code too.</string>
+    <string name="nuke_now">Nuke now</string>
+    <string name="nuke_hint_pair_first">Pair a Nuke code first.</string>
+    <string name="nuke_hint_add_app">Add at least one app below first.</string>
+
+    <string name="nuke_key_title">Your Nuke code</string>
+    <string name="nuke_key_needs_camera">Pairing a Nuke code needs a camera, and this phone doesn\'t have one.</string>
+    <string name="nuke_key_pair_first">Pair a code first. Stick it somewhere inconvenient: the other side of the house, your car, a friend.</string>
+    <string name="nuke_key_create_qr">Create a Nuke QR</string>
+    <string name="nuke_key_use_barcode">Use a barcode I already have</string>
+    <string name="nuke_key_any_barcode">Any QR or product barcode works. The one on a cereal box is fine.</string>
+    <string name="nuke_key_paired_qr">Paired: Nuke QR</string>
+    <string name="nuke_key_paired_own">Paired: your own barcode</string>
+    <string name="nuke_key_paired">Paired</string>
+    <string name="nuke_key_replace">Replace</string>
+    <string name="nuke_key_new_qr">New QR</string>
+    <string name="nuke_key_own_barcode">Own barcode</string>
+    <string name="nuke_key_remove">Remove</string>
+
+    <string name="nuke_pairing_qr_description">Your Nuke QR code</string>
+    <string name="nuke_pairing_save_note">Save it, print it, or send it somewhere hard to reach. You\'ll scan it to start and end Nuke.</string>
+    <string name="nuke_pairing_save_share">Save or share</string>
+    <string name="nuke_pairing_confirm">I\'ve saved it. Scan to confirm</string>
+
+    <!-- Scanner title and subtitle for each purpose -->
+    <string name="nuke_scan_title_end">Scan your Nuke code to end Nuke</string>
+    <string name="nuke_scan_title_start">Scan your Nuke code to start Nuke</string>
+    <string name="nuke_scan_title_confirm">Scan the code you just saved</string>
+    <string name="nuke_scan_title_pair">Scan any QR code or barcode</string>
+    <string name="nuke_scan_subtitle_end">End Nuke</string>
+    <string name="nuke_scan_subtitle_start">Start Nuke</string>
+    <string name="nuke_scan_subtitle_confirm">Proves you kept it somewhere you can reach</string>
+    <string name="nuke_scan_subtitle_pair">Any barcode you already have works</string>
+
+    <!-- What is being unlocked (the unlock dialog's prompt) -->
+    <string name="nuke_prompt_remove_app">Take this app off your Nuke list</string>
+    <string name="nuke_prompt_end">End Nuke</string>
+    <string name="nuke_prompt_end_no_code">End Nuke without your code</string>
+    <string name="nuke_prompt_replace_code">Replace your Nuke code</string>
+    <string name="nuke_prompt_remove_code">Remove your Nuke code</string>
+
+    <!-- Snackbar messages -->
+    <string name="nuke_msg_armed">Nuke is on.</string>
+    <string name="nuke_msg_disarmed">Nuke is off.</string>
+    <string name="nuke_msg_no_key">Pair a Nuke code first.</string>
+    <string name="nuke_msg_empty_list">Add at least one app to your Nuke list first.</string>
+    <string name="nuke_msg_paired">Paired. Keep that code somewhere inconvenient.</string>
+    <string name="nuke_msg_code_removed">Nuke code removed.</string>
+    <string name="nuke_msg_not_code_on_screen">That\'s not the code on screen. Scan the one you just saved.</string>
+
+    <!-- Unlock dialog -->
+    <string name="nuke_gate_wrong_key">That\'s not your Nuke code.</string>
+    <string name="nuke_unlock_title">Nuke is on</string>
+    <string name="nuke_unlock_needs_code">%1$s? That needs your Nuke code. Go and get it, and scan it here.</string>
+    <string name="nuke_unlock_needs_code_no_camera">%1$s? That needs your Nuke code, and this phone has no camera to scan it with. The emergency code is the way out.</string>
+    <string name="nuke_unlock_use_emergency">No code on you? Type the emergency code</string>
+    <string name="nuke_unlock_scan_title">Scan your Nuke code</string>
+    <string name="nuke_unlock_scan">Scan code</string>
+    <string name="nuke_unlock_never_mind">Never mind</string>
+    <string name="nuke_unlock_emergency_title">Emergency: end Nuke</string>
+    <string name="nuke_unlock_emergency_prompt">%1$s. No code on you? Type all %2$d characters below, exactly. Every attempt gets a new one.</string>
+    <string name="nuke_unlock_emergency_confirm">End it</string>
+
+    <!-- The block screen Nuke shows -->
+    <string name="nuke_block_this_app">This app</string>
+    <string name="nuke_block_title">Nuked.</string>
+    <string name="nuke_block_body">%1$s is off until you end Nuke. Scan your Nuke code to end it.</string>
+
+    <!-- Strict Mode / Nuke escape-route guard (StrictModeGuardActivity) -->
+    <string name="lock_guard_prompt_nuke">Nuke is on, and this screen is a way around it. Type the code to change Nudge\'s system settings, or go back.</string>
+    <string name="lock_guard_prompt_strict">Strict Mode is protecting this screen. Unlock to change Nudge\'s system settings, or go back.</string>
+    <string name="lock_guard_title_nuke">Nuke is on</string>
+    <string name="lock_guard_title_strict">Strict Mode locked</string>
+</resources>

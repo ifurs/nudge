@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shared buttons and units. Every area of the app reuses components_action_*. -->
+    <string name="components_action_cancel">Cancel</string>
+    <string name="components_action_done">Done</string>
+    <string name="components_action_got_it">Got it</string>
+    <string name="components_action_set">Set</string>
+    <string name="components_action_back">Back</string>
+    <string name="components_action_add">Add</string>
+    <string name="components_action_save">Save</string>
+    <string name="components_action_delete">Delete</string>
+    <string name="components_action_close">Close</string>
+    <string name="components_state_off">Off</string>
+    <string name="components_chip_custom">Custom</string>
+    <string name="components_info_more">More info</string>
+    <string name="components_unit_min_short">min</string>
+    <string name="components_unit_minutes">minutes</string>
+    <string name="components_unit_seconds">seconds</string>
+
+    <!-- Compact durations: chips and labels. -->
+    <string name="components_duration_short_seconds">%1$ds</string>
+    <string name="components_duration_short_minutes">%1$dm</string>
+    <string name="components_duration_short_hours">%1$dh</string>
+    <string name="components_duration_short_hours_minutes">%1$dh %2$dm</string>
+    <string name="components_duration_spaced_minutes">%1$d min</string>
+    <string name="components_duration_spaced_hours">%1$d h</string>
+    <string name="components_duration_short_minutes_seconds">%1$dm %2$ds</string>
+    <string name="components_duration_under_minute">&lt; 1m</string>
+    <string name="components_duration_spoken_minutes">%1$d min</string>
+    <string name="components_duration_spoken_hours">%1$d hr</string>
+    <string name="components_duration_spoken_hours_minutes">%1$d hr %2$d min</string>
+
+    <string name="components_custom_time_value_label">Value (%1$s)</string>
+    <string name="components_custom_time_range_error">Enter a number between %1$d and %2$d</string>
+    <string name="components_minutes_field_invalid">Enter 1-%1$d minutes, or leave blank for off</string>
+
+    <!-- Prominent disclosure for the accessibility service (Play policy, docs/play-store.md). -->
+    <string name="components_disclosure_title">How Nudge Works</string>
+    <string name="components_disclosure_what">Nudge uses Android\'s Accessibility Service to detect which app is currently open on your screen.</string>
+    <string name="components_disclosure_why">This lets Nudge show breathing exercises, delays, or blocks when you open apps you\'ve chosen to limit.</string>
+    <string name="components_disclosure_reads">Nudge only reads the name of the app in the foreground. It does not read your messages, keystrokes, passwords, or screen content.</string>
+    <string name="components_disclosure_local">All data stays on your device. Nudge has no internet permission and cannot send data anywhere.</string>
+    <string name="components_disclosure_confirm">I Understand</string>
+    <string name="components_disclosure_dismiss">Not Now</string>
+
+    <!-- Strict Mode unlock challenge dialog. -->
+    <string name="components_challenge_title_strict">Strict Mode locked</string>
+    <string name="components_challenge_unlock">Unlock</string>
+    <string name="components_challenge_type_code">Type the code to continue:</string>
+    <string name="components_challenge_code_label">Unlock code</string>
+    <string name="components_challenge_no_match">Doesn\'t match</string>
+    <string name="components_challenge_changed_mind">I changed my mind</string>
+
+    <!-- Block mode names, short names for the four-segment picker, and one-line descriptions. -->
+    <string name="components_block_mode_none">Off</string>
+    <string name="components_block_mode_hard_block">Hard Block</string>
+    <string name="components_block_mode_delay">Delay</string>
+    <string name="components_block_mode_hold">Hold</string>
+    <string name="components_block_mode_breathing">Breathing</string>
+    <string name="components_block_mode_short_hard_block">Hard</string>
+    <string name="components_block_mode_short_breathing">Breathing</string>
+    <string name="components_block_mode_desc_none">Not blocked.</string>
+    <string name="components_block_mode_desc_hard_block_one">Completely blocks the app. You can only go back to the home screen.</string>
+    <string name="components_block_mode_desc_hard_block_many">Completely blocks these apps. You can only go back to the home screen.</string>
+    <string name="components_block_mode_desc_delay">Shows a countdown timer before letting you in. Gives you time to reconsider.</string>
+    <string name="components_block_mode_desc_hold">You hold a button for the whole wait. Let go and it starts over.</string>
+    <string name="components_block_mode_desc_breathing">Guides you through a breathing exercise before opening. Calms the impulse.</string>
+
+    <!-- App categories: chip titles, then the short tag on a member row. -->
+    <string name="components_category_social">Social &amp; Communication</string>
+    <string name="components_category_video">Movies &amp; Video</string>
+    <string name="components_category_game">Games</string>
+    <string name="components_category_news">News &amp; Magazines</string>
+    <string name="components_category_audio">Music &amp; Audio</string>
+    <string name="components_category_image">Photos &amp; Images</string>
+    <string name="components_category_maps">Maps &amp; Navigation</string>
+    <string name="components_category_productivity">Productivity</string>
+    <string name="components_category_undefined">Other</string>
+    <string name="components_category_short_social">Social</string>
+    <string name="components_category_short_video">Movies</string>
+    <string name="components_category_short_news">News</string>
+    <string name="components_category_short_audio">Music</string>
+    <string name="components_category_short_image">Photos</string>
+    <string name="components_category_short_maps">Maps</string>
+
+    <!-- Days of the week: three-letter summary names, the one-letter chips, the full names read by TalkBack. -->
+    <string name="components_day_short_mon">Mon</string>
+    <string name="components_day_short_tue">Tue</string>
+    <string name="components_day_short_wed">Wed</string>
+    <string name="components_day_short_thu">Thu</string>
+    <string name="components_day_short_fri">Fri</string>
+    <string name="components_day_short_sat">Sat</string>
+    <string name="components_day_short_sun">Sun</string>
+    <string name="components_day_letter_mon">M</string>
+    <string name="components_day_letter_tue">T</string>
+    <string name="components_day_letter_wed">W</string>
+    <string name="components_day_letter_thu">T</string>
+    <string name="components_day_letter_fri">F</string>
+    <string name="components_day_letter_sat">S</string>
+    <string name="components_day_letter_sun">S</string>
+    <string name="components_day_full_mon">Monday</string>
+    <string name="components_day_full_tue">Tuesday</string>
+    <string name="components_day_full_wed">Wednesday</string>
+    <string name="components_day_full_thu">Thursday</string>
+    <string name="components_day_full_fri">Friday</string>
+    <string name="components_day_full_sat">Saturday</string>
+    <string name="components_day_full_sun">Sunday</string>
+
+    <!-- Schedule editor and the "When" section. -->
+    <string name="components_schedule_active_days">Active days</string>
+    <string name="components_schedule_start_time">Start time</string>
+    <string name="components_schedule_end_time">End time</string>
+    <string name="components_when_all_time">All the time</string>
+    <string name="components_when_days_times">Days and times</string>
+    <string name="components_when_first_unlock">After first unlock</string>
+    <string name="components_when_for">For</string>
+    <string name="components_when_days">Days</string>
+    <string name="components_when_starts_next_unlock">Starts at your next first unlock.</string>
+    <string name="components_when_custom_duration">Custom duration</string>
+    <string name="components_when_new_day_starts_at">New day starts at %1$s</string>
+    <string name="components_when_new_day_starts">New day starts at</string>
+
+    <!-- App picker. -->
+    <string name="components_picker_search_apps">Search apps</string>
+    <string name="components_picker_search_apps_groups">Search apps and groups</string>
+    <string name="components_picker_clear_search">Clear search</string>
+    <string name="components_picker_groups">Groups</string>
+    <string name="components_picker_apps">Apps</string>
+    <string name="components_picker_title_add_apps">Add apps</string>
+    <string name="components_picker_title_add_apps_groups">Add apps or groups</string>
+    <string name="components_picker_no_match_apps">No apps match \"%1$s\"</string>
+    <string name="components_picker_no_match_apps_groups">No apps or groups match \"%1$s\"</string>
+    <string name="components_picker_selected">%1$d selected</string>
+
+    <!-- Usage reminder section shared by both rule editors. -->
+    <string name="components_usage_reminder_title">Usage reminder</string>
+    <string name="components_usage_reminder_field_label">Remind me after</string>
+    <string name="components_usage_reminder_field_supporting">Counts time in the app in one sitting. One heads-up, nothing closes.</string>
+    <string name="components_usage_reminder_blocked_warning">Notifications are off for Nudge, so this reminder can\'t reach you. Tap to turn them on.</string>
+    <string name="components_usage_reminder_superseded">Auto-kick at %1$d min comes first, so this reminder won\'t show. Set it below %1$d min to get both.</string>
+    <string name="components_usage_reminder_info">Get one gentle notification once you\'ve spent this long in the app in one sitting. It doesn\'t close anything, it just lets you know.\n\nIt resets the same way auto-kick does: a short trip to another app keeps the sitting going, a real break (5 minutes or more) starts a new one. If auto-kick by time is set for the same or a shorter time, auto-kick wins and the reminder is skipped.</string>
+    <string name="components_usage_reminder_info_apps_only">Apps only: it does not cover the websites below.</string>
+
+    <!-- Rule summaries on lists: "Delay 15s · 30min limit", "Hard Block Mon–Fri 9:00–17:00". -->
+    <string name="components_summary_configured">Configured</string>
+    <string name="components_lockcard_headline">%1$s are blocked</string>
+    <string name="components_summary_not_blocked">Not blocked</string>
+    <string name="components_summary_mode_hard_block">Hard Block</string>
+    <string name="components_summary_mode_delay">Delay %1$ds</string>
+    <string name="components_summary_mode_hold">Hold %1$ds</string>
+    <string name="components_summary_mode_breathing">Breathing %1$ds</string>
+    <string name="components_summary_feature_mode">%1$s: %2$s</string>
+    <string name="components_summary_limit_minutes">%1$dmin limit</string>
+    <string name="components_summary_every_day">Every day %1$s</string>
+    <string name="components_summary_day_range">%1$s–%2$s</string>
+    <string name="components_summary_duration_minutes">%1$dmin</string>
+    <string name="components_summary_duration_hours">%1$d h</string>
+    <string name="components_summary_first_unlock">%1$s after first unlock</string>
+    <string name="components_summary_first_unlock_on_days">%1$s after first unlock on %2$s</string>
+    <string name="components_summary_until">Until %1$s</string>
+    <string name="components_summary_all_apps">All apps</string>
+    <string name="components_summary_all_apps_except">All apps except %1$s</string>
+    <string name="components_summary_all_apps_except_more">All apps except %1$s +%2$d</string>
+    <plurals name="components_summary_in_groups_named">
+        <item quantity="one">In %1$s</item>
+        <item quantity="other">In %1$s</item>
+    </plurals>
+    <plurals name="components_summary_in_groups_count">
+        <item quantity="one">In %1$d group</item>
+        <item quantity="other">In %1$d groups</item>
+    </plurals>
+    <plurals name="components_summary_group_title">
+        <item quantity="one">%1$s · %2$d app</item>
+        <item quantity="other">%1$s · %2$d apps</item>
+    </plurals>
+</resources>

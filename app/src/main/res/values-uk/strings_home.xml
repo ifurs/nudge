@@ -38,8 +38,6 @@
         <item quantity="many">%d застосунків готові</item>
         <item quantity="other">%d застосунку готові</item>
     </plurals>
-    <string name="home_lock_headline">Заблоковано: %1$s</string>
-    <string name="home_lock_until">До %1$s</string>
 
     <string name="home_short_title">Блокування коротких відео</string>
     <string name="home_short_subtitle">Залиште застосунок, але приберіть лише Reels чи Shorts.</string>

@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.screens.allapps
 
+import com.astraedus.nudge.domain.text.UiText
+import com.astraedus.nudge.R
 import com.astraedus.nudge.data.db.entity.AppGroup
 import com.astraedus.nudge.data.db.entity.AppGroupMember
 import com.astraedus.nudge.data.db.entity.BlockRule
@@ -112,12 +114,12 @@ fun alsoBlockedBy(
     otherRules: List<BlockRuleData>,
     tables: RuleTables,
     device: DeviceApps
-): List<String> = RuleCoverage
+): List<UiText> = RuleCoverage
     .coveringRules(packageName, otherRules, tables.membership, device.factsFor(packageName))
     .mapNotNull { rule ->
         when (RuleTarget.of(rule)) {
-            is RuleTarget.App -> OWN_RULE
-            is RuleTarget.Group -> rule.groupName
+            is RuleTarget.App -> UiText.of(R.string.allapps_own_rule)
+            is RuleTarget.Group -> rule.groupName?.let { UiText.Raw(it) }
             is RuleTarget.AllApps -> RuleSummary.allAppsTitle(rule, device.labels)
             null -> null
         }
@@ -130,10 +132,11 @@ fun alsoBlockedBy(
  * carries its own commas ("All apps except Work, Maps"), so a comma between rules would read as one
  * more allowed app.
  */
-fun alsoBlockedByText(names: List<String>): String? = when (names.size) {
+fun alsoBlockedByText(names: List<UiText>): UiText? = when (names.size) {
     0 -> null
-    1, 2 -> "Also blocked by ${names.joinToString(" and ")}"
-    else -> "Also blocked by ${names.size} rules"
+    1 -> UiText.of(R.string.allapps_also_blocked_one, names[0])
+    2 -> UiText.of(R.string.allapps_also_blocked_two, names[0], names[1])
+    else -> UiText.of(R.string.allapps_also_blocked_many, names.size)
 }
 
 /**
@@ -152,32 +155,23 @@ fun stillBlockedCount(
     .count { alsoBlockedBy(it, otherRules, tables, device).isNotEmpty() }
 
 /** "1 still blocked by another rule", "2 still blocked by other rules"; null for none. */
-fun stillBlockedText(count: Int): String? = when {
-    count <= 0 -> null
-    count == 1 -> "1 still blocked by another rule"
-    else -> "$count still blocked by other rules"
-}
+fun stillBlockedText(count: Int): UiText? =
+    if (count <= 0) null else UiText.plural(R.plurals.allapps_still_blocked, count)
 
 /** The line under Enabled: "Blocks 47 apps", or "Would block 47 apps" while the rule is off. */
-fun blocksText(count: Int, enabled: Boolean): String {
-    val apps = appCount(count)
-    return if (enabled) "Blocks $apps" else "Would block $apps"
-}
+fun blocksText(count: Int, enabled: Boolean): UiText =
+    UiText.plural(if (enabled) R.plurals.allapps_blocks else R.plurals.allapps_would_block, count)
 
 /** The save confirm's title: "Block 47 apps all the time?". */
-fun confirmTitle(count: Int): String = "Block ${appCount(count)} all the time?"
+fun confirmTitle(count: Int): UiText = UiText.plural(R.plurals.allapps_confirm_title, count)
 
 /**
  * The locked row: "Always allowed: Phone, Messages, Settings and 5 more". [labels] in the order to
  * name them. Before the list resolves (or on a phone where none can be opened) it names no app.
  */
-fun alwaysAllowedText(labels: List<String>): String = when (labels.size) {
-    0 -> "Always allowed: your essential apps"
-    1 -> "Always allowed: ${labels[0]}"
-    2, 3 -> "Always allowed: ${labels.dropLast(1).joinToString(", ")} and ${labels.last()}"
-    else -> "Always allowed: ${labels.take(3).joinToString(", ")} and ${labels.size - 3} more"
+fun alwaysAllowedText(labels: List<String>): UiText = when (labels.size) {
+    0 -> UiText.of(R.string.allapps_always_none)
+    1 -> UiText.of(R.string.allapps_always_one, labels[0])
+    2, 3 -> UiText.of(R.string.allapps_always_list, labels.dropLast(1).joinToString(", "), labels.last())
+    else -> UiText.of(R.string.allapps_always_more, labels.take(3).joinToString(", "), labels.size - 3)
 }
-
-private fun appCount(count: Int): String = if (count == 1) "1 app" else "$count apps"
-
-private const val OWN_RULE = "its own rule"

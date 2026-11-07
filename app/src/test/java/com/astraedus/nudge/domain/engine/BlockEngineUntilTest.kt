@@ -1,5 +1,6 @@
 package com.astraedus.nudge.domain.engine
 
+import com.astraedus.nudge.domain.model.RuleLabel
 import com.astraedus.nudge.domain.engine.FirstUnlockState
 import com.astraedus.nudge.domain.logging.NudgeLog
 import com.astraedus.nudge.domain.model.AllAppsBlock
@@ -67,13 +68,13 @@ class BlockEngineUntilTest {
     @Test
     fun `a non-deciding rule's until and All apps line never leak`() {
         val now = at(4, 10, 0)
-        val group = anActiveRule(mode = BlockMode.HARD_BLOCK, ruleName = "Social")
-        val allApps = anActiveRule(mode = BlockMode.DELAY, scheduleStartMinute = 9 * 60, scheduleEndMinute = 17 * 60, allApps = allAppsLine, ruleName = "All apps")
+        val group = anActiveRule(mode = BlockMode.HARD_BLOCK, ruleName = RuleLabel.named("Social"))
+        val allApps = anActiveRule(mode = BlockMode.DELAY, scheduleStartMinute = 9 * 60, scheduleEndMinute = 17 * 60, allApps = allAppsLine, ruleName = RuleLabel.named("All apps"))
 
         for (rules in listOf(listOf(group, allApps), listOf(allApps, group))) {
             val decision = block(engineAt(now).evaluate("app", rules, 0L))
             assertEquals(BlockMode.HARD_BLOCK, decision.mode)
-            assertEquals("Social", decision.ruleName)
+            assertEquals(RuleLabel.named("Social"), decision.ruleName)
             assertNull(decision.allApps)
             assertNull(decision.until)
         }

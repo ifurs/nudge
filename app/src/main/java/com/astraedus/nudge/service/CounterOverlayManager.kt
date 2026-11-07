@@ -1,5 +1,6 @@
 package com.astraedus.nudge.service
 
+import com.astraedus.nudge.R
 import android.content.Context
 import android.graphics.Color
 import android.graphics.PixelFormat
@@ -93,7 +94,7 @@ class CounterOverlayManager @Inject constructor(
     override fun updateCount(sessionCount: Int, dailyTotal: Int) {
         if (!isShowing) return
         counterText?.text = sessionCount.toString()
-        dailyText?.text = "today: $dailyTotal"
+        dailyText?.text = appContext.getString(R.string.service_counter_today, dailyTotal)
 
         val counterColor = when {
             sessionCount >= 30 -> Color.argb(220, 255, 0, 0)
@@ -117,7 +118,7 @@ class CounterOverlayManager @Inject constructor(
         // corrected" look identical from the outside otherwise -- which is exactly how the stale
         // "shorts" survived a QA pass.
         logger.d("counter overlay label updated to $label")
-        labelText?.text = label
+        labelText?.text = displayLabel(serviceContext ?: appContext, label)
     }
 
     override fun hide() {
@@ -172,7 +173,7 @@ class CounterOverlayManager @Inject constructor(
         container.addView(counterText)
 
         labelText = AwarenessOverlayWindow.Label(ctx).apply {
-            text = label
+            text = displayLabel(ctx, label)
             setTextColor(Color.argb(200, 255, 255, 255))
             textSize = 16f
             gravity = Gravity.CENTER
@@ -180,7 +181,7 @@ class CounterOverlayManager @Inject constructor(
         container.addView(labelText)
 
         dailyText = AwarenessOverlayWindow.Label(ctx).apply {
-            text = "today: 0"
+            text = ctx.getString(R.string.service_counter_today, 0)
             setTextColor(Color.argb(150, 255, 255, 255))
             textSize = 13f
             gravity = Gravity.CENTER
@@ -191,16 +192,17 @@ class CounterOverlayManager @Inject constructor(
     }
 
     companion object {
-        fun formatCompactDuration(ms: Long): String {
-            if (ms <= 0) return "0s"
-            val totalSeconds = ms / 1000
-            val hours = totalSeconds / 3600
-            val minutes = (totalSeconds % 3600) / 60
-            return when {
-                hours > 0 -> "${hours}h ${minutes}m"
-                minutes > 0 -> "${minutes}m"
-                else -> "${totalSeconds}s"
-            }
+        /**
+         * The caption under the number. The tracker hands over a stable KEY ("taps", "scrolls",
+         * "videos", or a feature name such as "reels"): that key is what the handler compares and
+         * what the tests pin. Only the words the user reads are translated here; a feature name is
+         * a brand word and passes through.
+         */
+        fun displayLabel(context: Context, key: String): String = when (key) {
+            "taps" -> context.getString(R.string.service_counter_taps)
+            "scrolls" -> context.getString(R.string.service_counter_scrolls)
+            "videos" -> context.getString(R.string.service_counter_videos)
+            else -> key
         }
     }
 }

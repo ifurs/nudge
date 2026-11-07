@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.overlay
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -23,7 +25,7 @@ fun RuleFooter(ruleName: String?, until: String?) {
         Spacer(modifier = Modifier.height(24.dp))
         if (ruleName != null) {
             Text(
-                text = "Rule: $ruleName",
+                text = stringResource(R.string.overlay_rule_footer, ruleName),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center

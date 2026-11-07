@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.stats
 
+import com.astraedus.nudge.domain.text.UiText
 import android.graphics.drawable.Drawable
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
@@ -19,7 +20,7 @@ import javax.inject.Inject
 @Immutable
 data class InterventionAppRow(
     val packageName: String,
-    val label: String,
+    val label: UiText,
     val icon: Drawable?,
     val total: Int,
     val byMode: Map<String, Int>

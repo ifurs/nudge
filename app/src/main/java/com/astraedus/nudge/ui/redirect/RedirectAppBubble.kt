@@ -1,5 +1,7 @@
 package com.astraedus.nudge.ui.redirect
 
+import androidx.compose.ui.res.stringResource
+import com.astraedus.nudge.R
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -80,10 +82,16 @@ fun RedirectAppBubble(
         }
     }
     val description = if (target == null) {
-        "Pick a better app to go to instead"
+        stringResource(R.string.redirect_bubble_pick_description)
     } else {
-        "Go to ${target.appName} instead"
+        stringResource(R.string.redirect_bubble_go_description, target.appName)
     }
+    val clickLabel = if (target == null) {
+        stringResource(R.string.redirect_bubble_pick_action)
+    } else {
+        stringResource(R.string.redirect_bubble_open_action, target.appName)
+    }
+    val longClickLabel = stringResource(R.string.redirect_bubble_change_action)
 
     CompositionLocalProvider(LocalViewConfiguration provides viewConfiguration) {
         Column(
@@ -94,8 +102,8 @@ fun RedirectAppBubble(
                 .clip(RoundedCornerShape(20.dp))
                 .combinedClickable(
                     role = Role.Button,
-                    onClickLabel = if (target == null) "Pick an app" else "Open ${target.appName}",
-                    onLongClickLabel = "Change app",
+                    onClickLabel = clickLabel,
+                    onLongClickLabel = longClickLabel,
                     onLongClick = {
                         haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                         onEdit()
@@ -112,7 +120,7 @@ fun RedirectAppBubble(
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = target?.appName ?: "Pick a better app",
+                text = target?.appName ?: stringResource(R.string.redirect_pick_better_app),
                 style = MaterialTheme.typography.labelLarge,
                 color = if (target == null) {
                     MaterialTheme.colorScheme.primary
@@ -124,7 +132,9 @@ fun RedirectAppBubble(
                 textAlign = TextAlign.Center
             )
             Text(
-                text = if (target == null) "Somewhere worth going instead" else "Go here instead",
+                text = stringResource(
+                    if (target == null) R.string.redirect_bubble_empty_caption else R.string.redirect_bubble_caption
+                ),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
