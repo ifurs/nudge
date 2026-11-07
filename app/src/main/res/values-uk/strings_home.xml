@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_tile_screen_time">Екранний час</string>
+    <string name="home_action_see_breakdown">Докладніше</string>
+    <string name="home_action_tap_to_enable">Увімкнути</string>
+    <string name="home_tile_blocked_apps">Заблоковані застосунки</string>
+    <string name="home_action_see_apps">Відкрити список</string>
+    <string name="home_section_today">Сьогодні</string>
+    <string name="home_section_hint">Торкніться плитки, щоб побачити графіки</string>
+    <string name="home_section_all_time">За весь час</string>
+    <string name="home_tile_blocked">Заблоковано</string>
+    <string name="home_tile_walked_away">Відмов від входу</string>
+    <string name="home_action_patterns">Що вас спокушає</string>
+    <string name="home_action_willpower">Ваша сила волі</string>
+
+    <string name="home_week_open_stats">Відкрити статистику використання</string>
+    <string name="home_week_empty">Тут з’являться графіки екранного часу й нагадувань, щойно накопичиться день даних.</string>
+    <string name="home_week_nudges">Нагадування</string>
+    <string name="home_week_counts">Заблоковано: %1$d · відмов від входу: %2$d</string>
+
+    <string name="home_prompt_turn_off_all">Вимкнути все блокування</string>
+
+    <string name="home_card_description">%1$s. %2$s.</string>
+    <string name="home_nuke_setup_title">Ядерний режим</string>
+    <string name="home_nuke_setup_subtitle">Налаштуйте список, який неможливо обійти</string>
+    <plurals name="home_nuke_on_title">
+        <item quantity="one">Ядерний режим увімкнено · %d застосунок</item>
+        <item quantity="few">Ядерний режим увімкнено · %d застосунки</item>
+        <item quantity="many">Ядерний режим увімкнено · %d застосунків</item>
+        <item quantity="other">Ядерний режим увімкнено · %d застосунку</item>
+    </plurals>
+    <string name="home_nuke_on_subtitle">Скануйте код, щоб вимкнути</string>
+    <string name="home_nuke_off_title">Ядерний режим вимкнено</string>
+    <string name="home_nuke_off_incomplete">Додайте застосунки та прив’яжіть код</string>
+    <plurals name="home_nuke_ready">
+        <item quantity="one">%d застосунок готовий</item>
+        <item quantity="few">%d застосунки готові</item>
+        <item quantity="many">%d застосунків готові</item>
+        <item quantity="other">%d застосунку готові</item>
+    </plurals>
+    <string name="home_lock_headline">Заблоковано: %1$s</string>
+    <string name="home_lock_until">До %1$s</string>
+
+    <string name="home_short_title">Блокування коротких відео</string>
+    <string name="home_short_subtitle">Залиште застосунок, але приберіть лише Reels чи Shorts.</string>
+    <string name="home_short_title_reels">Reels у %1$s</string>
+    <string name="home_short_title_shorts">Shorts у %1$s</string>
+    <string name="home_short_title_tiktok_feed">Стрічка у %1$s</string>
+    <string name="home_short_title_explore">Розділ «Цікаве» у %1$s</string>
+    <string name="home_short_status_blocked">Заблоковано. Решта %1$s працює як завжди.</string>
+    <string name="home_short_status_off">Не заблоковано</string>
+    <string name="home_short_status_slowed">Лише сповільнено, не заблоковано. Увімкніть, щоб заблокувати повністю.</string>
+    <string name="home_short_status_scheduled">Блокується лише за розкладом. Увімкніть, щоб блокувати завжди.</string>
+    <string name="home_short_more_options">Більше параметрів</string>
+    <string name="home_short_more_options_for">Більше параметрів: %1$s</string>
+    <string name="home_short_none_installed">Застосунків Instagram, YouTube і TikTok на цьому телефоні немає.</string>
+    <string name="home_short_accessibility_off">Nudge поки не бачить Reels і Shorts. Увімкніть службу спеціальних можливостей.</string>
+    <string name="home_short_accessibility_action">Увімкнути</string>
+    <string name="home_short_unlock_prompt">Вимкнути блокування коротких відео у %1$s</string>
+</resources>

@@ -1,6 +1,8 @@
 package com.astraedus.nudge.ui.screens.config
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
+import com.astraedus.nudge.R
 import com.astraedus.nudge.domain.model.BlockMode
 import com.astraedus.nudge.domain.model.FeatureMode
 import com.astraedus.nudge.domain.surfaces.PlatformSurfacesRegistry
@@ -172,12 +174,17 @@ data class UnifiedAppConfigState(
         }
 
     /**
-     * What to call that control. A HOLD rule's seconds are not a countdown the user watches, they
+     * The string resource naming that control. A HOLD rule's seconds are not a countdown the user watches, they
      * are how long a thumb has to stay down, and "Delay Duration" over a hold picker reads as a
      * second, separate wait.
      */
-    val delayDurationLabel: String
-        get() = if (durationMode == BlockMode.HOLD) "Hold Duration" else "Delay Duration"
+    @get:StringRes
+    val delayDurationLabelRes: Int
+        get() = if (durationMode == BlockMode.HOLD) {
+            R.string.config_hold_duration
+        } else {
+            R.string.config_delay_duration
+        }
 
     /**
      * Whether this package exposes a vanishable in-app tab to cover (e.g. Instagram's Reels

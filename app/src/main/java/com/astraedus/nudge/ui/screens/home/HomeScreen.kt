@@ -13,16 +13,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.outlined.Apps
-import androidx.compose.material.icons.outlined.BarChart
 import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.Schedule
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material.icons.outlined.ThumbUp
 import androidx.compose.material3.Card
@@ -38,15 +34,21 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.astraedus.nudge.R
+import com.astraedus.nudge.ui.components.AccessibilityDisclosureDialog
 import com.astraedus.nudge.ui.components.StrictModeChallengeHost
 import com.astraedus.nudge.ui.components.qaTag
 import com.astraedus.nudge.ui.nuke.NukeUnlockHost
@@ -58,16 +60,22 @@ import com.astraedus.nudge.ui.testtags.UiTags
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
+    shortVideoViewModel: ShortVideoBlocksViewModel,
     onNavigateToApps: () -> Unit,
     onNavigateToStats: () -> Unit,
-    onNavigateToSettings: () -> Unit,
     onNavigateToWillpower: () -> Unit = {},
     onNavigateToInterventions: () -> Unit = {},
     onNavigateToAppDetail: (String) -> Unit = {},
     onNavigateToNuke: () -> Unit = {},
-    onOpenAllAppsRule: (Long) -> Unit = {}
+    onOpenAllAppsRule: (Long) -> Unit = {},
+    /** Opens an app's config screen, from a short-video row's "More options". */
+    onOpenAppConfig: (String) -> Unit = {}
 ) {
+    val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val shortVideos by shortVideoViewModel.uiState.collectAsStateWithLifecycle()
+    val shortVideoChallenge by shortVideoViewModel.challenge.collectAsStateWithLifecycle()
+    var showAccessibilityDisclosure by remember { mutableStateOf(false) }
     val challenge by viewModel.challenge.collectAsStateWithLifecycle()
     val nukeSummary by viewModel.nukeSummary.collectAsStateWithLifecycle()
     val lockCard by viewModel.lockCard.collectAsStateWithLifecycle()
@@ -78,6 +86,25 @@ fun HomeScreen(
         onVerify = viewModel::verifyChallenge,
         onCancel = viewModel::cancelChallenge
     )
+
+    // Switching a short-video block off under Strict Mode: the same unlock challenge as everywhere.
+    StrictModeChallengeHost(
+        challenge = shortVideoChallenge,
+        onVerify = shortVideoViewModel::verifyChallenge,
+        onCancel = shortVideoViewModel::cancelChallenge
+    )
+
+    // Play policy: the prominent disclosure comes BEFORE the system accessibility screen, here as
+    // on Settings and in onboarding.
+    if (showAccessibilityDisclosure) {
+        AccessibilityDisclosureDialog(
+            onConfirm = {
+                showAccessibilityDisclosure = false
+                context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+            },
+            onDismiss = { showAccessibilityDisclosure = false }
+        )
+    }
 
     NukeUnlockHost(
         state = nukeUnlock,
@@ -92,10 +119,13 @@ fun HomeScreen(
         state = state,
         nukeSummary = nukeSummary,
         lockCard = lockCard,
+        shortVideos = shortVideos,
         onToggleGlobalEnabled = { viewModel.toggleGlobalEnabled() },
+        onToggleShortVideo = shortVideoViewModel::setBlocked,
+        onShortVideoMoreOptions = onOpenAppConfig,
+        onEnableAccessibility = { showAccessibilityDisclosure = true },
         onNavigateToApps = onNavigateToApps,
         onNavigateToStats = onNavigateToStats,
-        onNavigateToSettings = onNavigateToSettings,
         onNavigateToWillpower = onNavigateToWillpower,
         onNavigateToInterventions = onNavigateToInterventions,
         onNavigateToAppDetail = onNavigateToAppDetail,
@@ -114,10 +144,13 @@ fun HomeContent(
     state: HomeUiState,
     nukeSummary: NukeSummary,
     lockCard: LockCard?,
+    shortVideos: ShortVideoState,
     onToggleGlobalEnabled: () -> Unit,
+    onToggleShortVideo: (ShortVideoRow, Boolean) -> Unit,
+    onShortVideoMoreOptions: (String) -> Unit,
+    onEnableAccessibility: () -> Unit,
     onNavigateToApps: () -> Unit,
     onNavigateToStats: () -> Unit,
-    onNavigateToSettings: () -> Unit,
     onNavigateToWillpower: () -> Unit,
     onNavigateToInterventions: () -> Unit,
     onNavigateToAppDetail: (String) -> Unit,
@@ -131,7 +164,7 @@ fun HomeContent(
             TopAppBar(
                 title = {
                     Text(
-                        "Nudge",
+                        stringResource(R.string.app_name_short),
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -161,22 +194,31 @@ fun HomeContent(
         ) {
             Spacer(Modifier.height(8.dp))
 
+            // First, directly under the header: "keep Instagram, lose Reels" is what most people
+            // install Nudge for, and it used to be four taps away inside an app's config screen.
+            ShortVideoCard(
+                state = shortVideos,
+                onToggle = onToggleShortVideo,
+                onMoreOptions = onShortVideoMoreOptions,
+                onEnableAccessibility = onEnableAccessibility
+            )
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 StatCard(
                     icon = Icons.Outlined.Schedule,
-                    label = "Screen Time",
+                    label = stringResource(R.string.home_tile_screen_time),
                     value = if (state.hasUsagePermission) state.todayTotalUsageFormatted else "--",
                     modifier = Modifier.weight(1f),
                     // Granted, this card used to be inert - the one tile showing a number the
                     // stats screen exists to explain, and tapping it did nothing. Ungranted, the
                     // label IS the call to action, which is why it is not also a subtitle.
                     action = if (state.hasUsagePermission) {
-                        TileAction("See breakdown", onNavigateToStats)
+                        TileAction(stringResource(R.string.home_action_see_breakdown), onNavigateToStats)
                     } else {
-                        TileAction("Tap to enable") {
+                        TileAction(stringResource(R.string.home_action_tap_to_enable)) {
                             context.startActivity(
                                 Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
                                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -187,10 +229,10 @@ fun HomeContent(
                 )
                 StatCard(
                     icon = Icons.Outlined.Shield,
-                    label = "Active Apps",
+                    label = stringResource(R.string.home_tile_blocked_apps),
                     value = state.activeAppCount.toString(),
                     modifier = Modifier.weight(1f),
-                    action = TileAction("Manage", onNavigateToApps)
+                    action = TileAction(stringResource(R.string.home_action_see_apps), onNavigateToApps)
                 )
             }
 
@@ -217,10 +259,10 @@ fun HomeContent(
             )
 
             SectionHeader(
-                title = "Today",
+                title = stringResource(R.string.home_section_today),
                 // Said once, on the first section only. Repeating it over "All Time" reads as
                 // noise, and by then the chevrons have already taught the pattern.
-                hint = "Tap a tile for charts"
+                hint = stringResource(R.string.home_section_hint)
             )
 
             Row(
@@ -229,21 +271,21 @@ fun HomeContent(
             ) {
                 StatCard(
                     icon = Icons.Outlined.Block,
-                    label = "Blocked",
+                    label = stringResource(R.string.home_tile_blocked),
                     value = state.blockedCountToday.toString(),
                     modifier = Modifier.weight(1f),
-                    action = TileAction("Temptation patterns", onNavigateToInterventions)
+                    action = TileAction(stringResource(R.string.home_action_patterns), onNavigateToInterventions)
                 )
                 StatCard(
                     icon = Icons.Outlined.ThumbUp,
-                    label = "Walked Away",
+                    label = stringResource(R.string.home_tile_walked_away),
                     value = state.changedMindCountToday.toString(),
                     modifier = Modifier.weight(1f),
-                    action = TileAction("Your willpower", onNavigateToWillpower)
+                    action = TileAction(stringResource(R.string.home_action_willpower), onNavigateToWillpower)
                 )
             }
 
-            SectionHeader(title = "All Time")
+            SectionHeader(title = stringResource(R.string.home_section_all_time))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -251,48 +293,19 @@ fun HomeContent(
             ) {
                 StatCard(
                     icon = Icons.Outlined.Block,
-                    label = "Blocked",
+                    label = stringResource(R.string.home_tile_blocked),
                     value = state.allTimeBlockedCount.toString(),
                     modifier = Modifier.weight(1f),
-                    action = TileAction("Temptation patterns", onNavigateToInterventions)
+                    action = TileAction(stringResource(R.string.home_action_patterns), onNavigateToInterventions)
                 )
                 StatCard(
                     icon = Icons.Outlined.ThumbUp,
-                    label = "Walked Away",
+                    label = stringResource(R.string.home_tile_walked_away),
                     value = state.allTimeChangedMindCount.toString(),
                     modifier = Modifier.weight(1f),
-                    action = TileAction("Your willpower", onNavigateToWillpower)
+                    action = TileAction(stringResource(R.string.home_action_willpower), onNavigateToWillpower)
                 )
             }
-
-            Spacer(Modifier.height(8.dp))
-
-            Text(
-                "Quick Actions",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Medium
-            )
-
-            NavCard(
-                icon = Icons.Outlined.Apps,
-                title = "Manage Apps",
-                subtitle = "Configure block rules per app",
-                onClick = onNavigateToApps
-            )
-
-            NavCard(
-                icon = Icons.Outlined.BarChart,
-                title = "Usage Stats",
-                subtitle = "See how you spend your time",
-                onClick = onNavigateToStats
-            )
-
-            NavCard(
-                icon = Icons.Outlined.Settings,
-                title = "Settings",
-                subtitle = "Permissions and preferences",
-                onClick = onNavigateToSettings
-            )
 
             Spacer(Modifier.height(16.dp))
         }
@@ -330,7 +343,7 @@ private fun WeekAtAGlanceCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "Last 7 days",
+                    stringResource(R.string.widget_top_blocked_range),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.weight(1f)
@@ -343,14 +356,14 @@ private fun WeekAtAGlanceCard(
                 )
                 Icon(
                     Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = "Open usage stats",
+                    contentDescription = stringResource(R.string.home_week_open_stats),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
             if (charts.isEmpty) {
                 Text(
-                    "Your screen time and nudges will chart here once there's a day of data.",
+                    stringResource(R.string.home_week_empty),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 8.dp)
@@ -370,16 +383,21 @@ private fun WeekAtAGlanceCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "Nudges",
+                    stringResource(R.string.home_week_nudges),
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(1f)
-                )
-                Text(
-                    "${charts.weekBlocked} blocked · ${charts.weekWalkedAway} walked away",
-                    style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                // The counts take what the label leaves, right-aligned and free to wrap: a long
+                // translation here once squeezed the label above it to one letter per line.
+                Text(
+                    stringResource(R.string.home_week_counts, charts.weekBlocked, charts.weekWalkedAway),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.End,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 12.dp)
                 )
             }
             Spacer(Modifier.height(6.dp))
@@ -512,48 +530,6 @@ private fun SectionHeader(title: String, hint: String? = null) {
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-        }
-    }
-}
-
-@Composable
-private fun NavCard(
-    icon: ImageVector,
-    title: String,
-    subtitle: String,
-    onClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
-    ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                icon,
-                contentDescription = null,
-                modifier = Modifier.size(28.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-            Spacer(Modifier.width(16.dp))
-            Column {
-                Text(
-                    title,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Medium
-                )
-                Text(
-                    subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
         }
     }
 }

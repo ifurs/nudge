@@ -1,6 +1,8 @@
 package com.astraedus.nudge.ui.screens.config
 
+import android.content.Context
 import com.astraedus.nudge.ui.components.UsageReminderInput
+import io.mockk.mockk
 import androidx.lifecycle.SavedStateHandle
 import com.astraedus.nudge.MainDispatcherRule
 import com.astraedus.nudge.data.db.entity.BlockRule
@@ -82,7 +84,9 @@ class UnifiedAppConfigViewModelTest {
             FakeEssentialPackages(),
             FakePackageFacts(),
             prefs,
-            dayStartUseCase()
+            dayStartUseCase(),
+            // Only the Strict Mode prompt text reads it; a relaxed mock answers with "".
+            mockk<Context>(relaxed = true)
         )
     }
 

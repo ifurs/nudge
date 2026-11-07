@@ -4,6 +4,17 @@ All notable changes to Nudge are documented here. Format follows [Keep a Changel
 
 ## [Unreleased]
 
+### Added
+- **Block short videos, right on Home.** A new card at the top of the dashboard has one switch for Reels in Instagram, Shorts in YouTube and the feed in TikTok (and Instagram Explore), for the apps you have installed. Turning one on blocks only that part and leaves the rest of the app alone; turning it off removes the block, and asks for the Strict Mode challenge first when Strict Mode is on. If the accessibility service is off, the card says so and has a button to turn it on. "More options" opens the app's own settings.
+- **Bottom navigation bar.** Home, Apps, Stats and Settings are one tap apart from every main screen. Screens you open from them (an app's settings, groups, Nuke) keep their back arrow and have no bar.
+- **Ukrainian.** The home screen, the bottom bar, Manage Apps, app settings and the first-run setup are now available in Ukrainian.
+- First-run setup has a new step, "What do you want to block?", after the permissions, with the same switches.
+
+### Changed
+- The "Active Apps / Manage" tile on Home is now "Blocked apps" with the number of apps that are being blocked. The three big "Manage Apps / Usage Stats / Settings" cards are gone: the bottom bar replaces them.
+- An app's settings screen now starts with the part of the app you can block on its own (Reels, Shorts, the TikTok feed) under a plain headline such as "Block only Reels, keep the rest of Instagram", above "Default Behavior". Nothing else about how it works changed.
+- Manage Apps no longer has a back arrow, because it is one of the main screens.
+
 ## [1.28.0] - 2026-11-07
 
 ### Added

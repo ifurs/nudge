@@ -42,7 +42,13 @@ class FirstUnlockEditorWiringContractTest {
             )
             assertTrue(
                 "$path must challenge a weakening change",
-                text.contains("strictModeGate.run(prompt = \"Change when your day starts\"")
+                // The prompt text is a string resource now (or still a literal in an editor that is
+                // not localised yet); what is pinned is that the day start goes through the gate.
+                Regex("""strictModeGate\.run\(\s*prompt\s*=""").containsMatchIn(text) &&
+                    (
+                        text.contains("Change when your day starts") ||
+                            Regex("""day_start""").containsMatchIn(text)
+                        )
             )
             assertTrue(
                 "$path must not call setDayStartMinute on the preferences itself",

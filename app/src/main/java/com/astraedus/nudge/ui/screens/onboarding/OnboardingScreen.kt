@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Accessibility
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Layers
+import androidx.compose.material.icons.outlined.PlayDisabled
 import androidx.compose.material.icons.outlined.QueryStats
 import androidx.compose.material.icons.outlined.SelfImprovement
 import androidx.compose.material3.Button
@@ -38,19 +39,36 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.astraedus.nudge.R
 import com.astraedus.nudge.ui.components.AccessibilityDisclosureDialog
+import com.astraedus.nudge.ui.components.StrictModeChallengeHost
+import com.astraedus.nudge.ui.screens.home.ShortVideoBlockRows
+import com.astraedus.nudge.ui.screens.home.ShortVideoBlocksViewModel
+import com.astraedus.nudge.ui.screens.home.ShortVideoRow
+import com.astraedus.nudge.ui.screens.home.ShortVideoState
 import kotlinx.coroutines.launch
 
 @Composable
 fun OnboardingScreen(
+    shortVideoViewModel: ShortVideoBlocksViewModel,
     onComplete: () -> Unit
 ) {
-    val pagerState = rememberPagerState(pageCount = { 3 })
+    val pagerState = rememberPagerState(pageCount = { PAGE_COUNT })
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    val shortVideos by shortVideoViewModel.uiState.collectAsStateWithLifecycle()
+    val shortVideoChallenge by shortVideoViewModel.challenge.collectAsStateWithLifecycle()
+
+    StrictModeChallengeHost(
+        challenge = shortVideoChallenge,
+        onVerify = shortVideoViewModel::verifyChallenge,
+        onCancel = shortVideoViewModel::cancelChallenge
+    )
 
     Column(modifier = Modifier.fillMaxSize().navigationBarsPadding()) {
         HorizontalPager(
@@ -75,7 +93,11 @@ fun OnboardingScreen(
                         context.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
                     }
                 )
-                2 -> ReadyPage()
+                2 -> WhatToBlockPage(
+                    state = shortVideos,
+                    onToggle = shortVideoViewModel::setBlocked
+                )
+                3 -> ReadyPage()
             }
         }
 
@@ -85,26 +107,28 @@ fun OnboardingScreen(
                 .padding(24.dp),
             contentAlignment = Alignment.Center
         ) {
-            if (pagerState.currentPage < 2) {
+            if (pagerState.currentPage < PAGE_COUNT - 1) {
                 Button(
                     onClick = {
                         scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Next")
+                    Text(stringResource(R.string.onboarding_next))
                 }
             } else {
                 Button(
                     onClick = onComplete,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Get Started")
+                    Text(stringResource(R.string.onboarding_get_started))
                 }
             }
         }
     }
 }
+
+private const val PAGE_COUNT = 4
 
 @Composable
 private fun WelcomePage() {
@@ -123,20 +147,20 @@ private fun WelcomePage() {
         )
         Spacer(Modifier.height(32.dp))
         Text(
-            "Nudge",
+            stringResource(R.string.app_name_short),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            "Mindful app usage through gentle friction",
+            stringResource(R.string.onboarding_welcome_tagline),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(Modifier.height(16.dp))
         Text(
-            "Take back control of your screen time with breathing exercises, delays, and daily limits.",
+            stringResource(R.string.onboarding_welcome_body),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -173,13 +197,13 @@ private fun PermissionsPage(
     ) {
         Spacer(Modifier.height(24.dp))
         Text(
-            "Permissions",
+            stringResource(R.string.onboarding_permissions_title),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            "Nudge needs these permissions to work. No data is ever sent anywhere — the app has no internet permission.",
+            stringResource(R.string.onboarding_permissions_intro),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -188,8 +212,8 @@ private fun PermissionsPage(
 
         PermissionCard(
             icon = Icons.Outlined.Accessibility,
-            title = "Accessibility Service",
-            description = "Detects which app is in the foreground so Nudge can trigger your block rules. Also identifies in-app screens (like YouTube Shorts or Instagram Reels) by checking navigation elements. Does not read your messages, keystrokes, or screen content.",
+            title = stringResource(R.string.onboarding_accessibility_title),
+            description = stringResource(R.string.onboarding_accessibility_description),
             onClick = { showAccessibilityDisclosure = true }
         )
 
@@ -197,8 +221,8 @@ private fun PermissionsPage(
 
         PermissionCard(
             icon = Icons.Outlined.Layers,
-            title = "Display Over Other Apps",
-            description = "Shows the delay countdown or breathing exercise overlay on top of blocked apps — this is how Nudge presents the pause before opening. Granting it also helps Nudge restart its own protection if Android stops it in the background. Either way, opening Nudge yourself always brings blocking back if it's stopped.",
+            title = stringResource(R.string.onboarding_overlay_title),
+            description = stringResource(R.string.onboarding_overlay_description),
             onClick = onGrantOverlay
         )
 
@@ -206,9 +230,78 @@ private fun PermissionsPage(
 
         PermissionCard(
             icon = Icons.Outlined.QueryStats,
-            title = "Usage Stats Access",
-            description = "Tracks how long you use each app per day to enforce daily time budgets. Usage data is stored locally on your device only.",
+            title = stringResource(R.string.onboarding_usage_title),
+            description = stringResource(R.string.onboarding_usage_description),
             onClick = onGrantUsageStats
+        )
+        Spacer(Modifier.height(24.dp))
+    }
+}
+
+/**
+ * "What do you want to block?": the Home card's switches, offered once at the end of setup, so the
+ * first thing a new user does is the thing they installed Nudge for.
+ */
+@Composable
+private fun WhatToBlockPage(
+    state: ShortVideoState,
+    onToggle: (ShortVideoRow, Boolean) -> Unit
+) {
+    val context = LocalContext.current
+    var showAccessibilityDisclosure by remember { mutableStateOf(false) }
+
+    if (showAccessibilityDisclosure) {
+        AccessibilityDisclosureDialog(
+            onConfirm = {
+                showAccessibilityDisclosure = false
+                context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+            },
+            onDismiss = { showAccessibilityDisclosure = false }
+        )
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(Modifier.height(24.dp))
+        Icon(
+            Icons.Outlined.PlayDisabled,
+            contentDescription = null,
+            modifier = Modifier.size(56.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Spacer(Modifier.height(16.dp))
+        Text(
+            stringResource(R.string.onboarding_block_title),
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            stringResource(R.string.onboarding_block_body),
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(Modifier.height(24.dp))
+        ShortVideoBlockRows(
+            state = state,
+            onToggle = onToggle,
+            // The app's config screen is not reachable from setup; Home offers it later.
+            onMoreOptions = null,
+            onEnableAccessibility = { showAccessibilityDisclosure = true }
+        )
+        Spacer(Modifier.height(16.dp))
+        Text(
+            stringResource(R.string.onboarding_block_footer),
+            style = MaterialTheme.typography.bodySmall,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(Modifier.height(24.dp))
     }
@@ -238,7 +331,7 @@ private fun PermissionCard(
             )
             Spacer(Modifier.height(12.dp))
             OutlinedButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
-                Text("Grant Permission")
+                Text(stringResource(R.string.onboarding_grant_permission))
             }
         }
     }
@@ -261,13 +354,13 @@ private fun ReadyPage() {
         )
         Spacer(Modifier.height(32.dp))
         Text(
-            "You're all set",
+            stringResource(R.string.onboarding_ready_title),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            "Add apps to start building healthier habits",
+            stringResource(R.string.onboarding_ready_body),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant

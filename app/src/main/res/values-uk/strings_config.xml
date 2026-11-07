@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="config_back">Назад</string>
+    <string name="config_save">Зберегти</string>
+    <string name="config_cancel">Скасувати</string>
+    <string name="config_remove">Видалити</string>
+    <string name="config_enabled">Увімкнено</string>
+    <string name="config_also_covered_by">Також охоплює</string>
+
+    <string name="config_prompt_weaken">Послабити блокування цього застосунку</string>
+    <string name="config_prompt_delete">Видалити блокування цього застосунку</string>
+    <string name="config_prompt_day_start">Змінити початок вашої доби</string>
+
+    <string name="config_features_headline">Блокувати лише %1$s, решту %2$s не чіпати</string>
+    <string name="config_features_headline_feed">Блокувати лише стрічку відео, решту %1$s не чіпати</string>
+    <string name="config_feature_rules_info">Оберіть, що відбувається з окремою частиною застосунку. «Успадкувати» означає поведінку за замовчуванням, наведену нижче.</string>
+    <string name="config_feature_whole_app_hint">%1$s також налаштовано блокувати цілком («Блокувати весь застосунок» нижче). Вимкніть це, щоб блокувалися лише обрані тут розділи.</string>
+    <string name="config_feature_explore">Цікаве</string>
+    <string name="config_feature_tiktok_feed">Стрічка</string>
+    <string name="config_mode_inherit">Успадкувати</string>
+    <string name="config_mode_block">Блокувати</string>
+    <string name="config_mode_delay">Затримка</string>
+    <string name="config_mode_hold">Утримання</string>
+    <string name="config_mode_breathing">Дихальна пауза</string>
+    <string name="config_tab_vanish_title">Приховати вкладку %1$s</string>
+    <string name="config_tab_vanish_description">Поки %1$s заблоковано, Nudge закриває вкладку %1$s на нижній панелі %2$s: значка немає, а торкання нічого не робить. Решта %2$s працює як зазвичай.</string>
+    <string name="config_following_title">Відкривати «Підписки» замість головної</string>
+    <string name="config_following_description">Експериментально. Коли ви відкриваєте головну стрічку Instagram, Nudge перемикає її на «Підписки», тож ви бачите дописи людей, на яких підписані, а не рекомендовані. Повернутися назад можна будь-коли. Якщо Instagram змінить свій інтерфейс, ця функція тихо перестане працювати.</string>
+
+    <string name="config_section_always_active">Завжди активне</string>
+    <string name="config_daily_limit">Денний ліміт часу</string>
+    <string name="config_daily_limit_custom">Власний денний ліміт</string>
+    <string name="config_daily_limit_info">Установіть добовий бюджет часу для цього застосунку.\n\nЩойно ви користуватиметеся застосунком стільки хвилин за день, він повністю блокуватиметься до кінця доби. Блокування настає одразу, щойно бюджет вичерпано, навіть якщо ви ще в застосунку.</string>
+    <string name="config_daily_limit_info_web">Установіть добовий бюджет часу для цього застосунку.\n\nЩойно ви користуватиметеся застосунком стільки хвилин за день, він повністю блокуватиметься до кінця доби. Блокування настає одразу, щойно бюджет вичерпано, навіть якщо ви ще в застосунку.\n\nЦей бюджет враховує лише час у застосунку. Коли його вичерпано, сайти нижче також блокуються повністю, але час на них поки що не враховується — щоб обмежити сайти, скористайтеся тригером за часом в автовиході.</string>
+    <string name="config_show_time_remaining">Показувати залишок часу</string>
+    <string name="config_show_time_remaining_info" formatted="false">Показує залишок денного часу у плаваючому віконці.\n\nКолір змінюється, коли час спливає: зелений (>50%), помаранчевий (25–50%), червоний (&lt;25%).</string>
+    <string name="config_counter">Лічильник дій</string>
+    <string name="config_counter_info">Показує плаваючий лічильник, поки ви користуєтеся цим застосунком.\n\nДля YouTube, Instagram і TikTok: рахує прокручені Reels чи Shorts.\nДля інших застосунків: рахує торкання екрана.\n\nСтає помаранчевим на 10, темно-помаранчевим на 20 і червоним на 30.</string>
+    <string name="config_grayscale">Відтінки сірого</string>
+    <string name="config_grayscale_info">Робить екран чорно-білим, поки відкрито цей застосунок.\n\nПрибирає кольорову винагороду, через яку гортати цікаво.\n\nПотрібне одноразове налаштування через ADB — інструкція в налаштуваннях.</string>
+    <string name="config_grayscale_hint">Потрібне налаштування дозволу через ADB</string>
+    <string name="config_grayscale_hint_features">Потрібне налаштування дозволу через ADB. Якщо сам застосунок не заблоковано, це діє лише тоді, коли на екрані заблокований розділ.</string>
+    <string name="config_grayscale_setup">Для відтінків сірого потрібне налаштування — див. налаштування</string>
+
+    <string name="config_web_title">Блокувати й у вебі</string>
+    <string name="config_web_info">Також блокує сайт цього застосунку в браузері.\n\nПрацює навіть тоді, коли «Блокувати весь застосунок» вимкнено: застосунок відкривається як завжди, а сайт усе одно заблоковано в обраному тут режимі.\n\nНаразі підтримується лише Chrome.</string>
+    <string name="config_web_domains_label">Домени (через кому)</string>
+    <string name="config_web_subdomains">Піддомени на кшталт www. і m. враховуються автоматично</string>
+    <string name="config_web_same_mode">Сайти використовують той самий режим блокування, що й застосунок.</string>
+    <string name="config_web_mode">Режим блокування сайтів</string>
+    <string name="config_web_opens_normally">%1$s відкривається як завжди, а ці сайти все одно заблоковано. %2$s</string>
+
+    <string name="config_section_default">Поведінка за замовчуванням</string>
+    <string name="config_section_default_info">Ці налаштування діють, коли не активне жодне перевизначення за розкладом.</string>
+    <string name="config_block_whole_app">Блокувати весь застосунок</string>
+    <string name="config_whole_app_on">Відкриття %1$s запускає блокування нижче.</string>
+    <string name="config_whole_app_off_features">%1$s відкривається як завжди. Блокуються лише розділи, які ви ввімкнули.</string>
+    <string name="config_whole_app_off">%1$s відкривається як завжди. Денний ліміт нижче, якщо він є, усе одно діє.</string>
+    <string name="config_delay_duration">Тривалість затримки</string>
+    <string name="config_hold_duration">Тривалість утримання</string>
+    <string name="config_custom_duration_title">Власне значення: %1$s</string>
+    <string name="config_keep_pass">Зберігати перепустку під час коротких відлучок</string>
+    <string name="config_keep_pass_info">Коли ви вже дочекалися, перехід на головний екран чи ненадовго в інший застосунок зберігає вашу перепустку. Поверніться протягом 2 хвилин, і застосунок відкриється одразу.\n\nВимкнено: перехід на головний екран скасовує перепустку, і наступного разу доведеться чекати знову.</string>
+    <string name="config_auto_kick">Автовихід</string>
+    <string name="config_auto_kick_info">Повертає вас на головний екран після певної кількості прокруток чи торкань або після певного часу в застосунку — залежно від того, що станеться раніше.\n\nЛічильник і таймер скидаються, коли ви знову відкриваєте застосунок. Це радикальний спосіб зупинити нескінченне гортання.</string>
+    <string name="config_auto_kick_info_web">Повертає вас на головний екран після певної кількості прокруток чи торкань або після певного часу в застосунку — залежно від того, що станеться раніше.\n\nЛічильник і таймер скидаються, коли ви знову відкриваєте застосунок. Це радикальний спосіб зупинити нескінченне гортання.\n\nТригер за часом охоплює й сайти нижче: кожен сайт має власний таймер і власну паузу. Тригер за діями працює лише для застосунку.</string>
+    <string name="config_auto_kick_either">На головний екран вас поверне той тригер, що спрацює першим.</string>
+    <string name="config_auto_kick_by_interactions">Після N дій</string>
+    <plurals name="config_auto_kick_after_interactions">
+        <item quantity="one">Після %1$d дії</item>
+        <item quantity="few">Після %1$d дій</item>
+        <item quantity="many">Після %1$d дій</item>
+        <item quantity="other">Після %1$d дії</item>
+    </plurals>
+    <plurals name="config_auto_kick_after_scrolls">
+        <item quantity="one">Після %1$d прокрутки</item>
+        <item quantity="few">Після %1$d прокруток</item>
+        <item quantity="many">Після %1$d прокруток</item>
+        <item quantity="other">Після %1$d прокрутки</item>
+    </plurals>
+    <string name="config_auto_kick_minutes_label">Або після стільки часу в застосунку</string>
+    <string name="config_auto_kick_minutes_hint">Рахує час на екрані за один сеанс. Залиште порожнім, щоб вимкнути.</string>
+    <string name="config_cooldown">Пауза</string>
+    <string name="config_cooldown_hint">Стільки потрібно зачекати, перш ніж знову відкрити застосунок після автоматичного закриття.</string>
+
+    <string name="config_section_schedule">Перевизначення за розкладом</string>
+    <string name="config_section_schedule_info">Застосовуйте інші налаштування в певні години. Поза розкладом діє поведінка за замовчуванням.</string>
+    <string name="config_schedule_enable">Увімкнути розклад</string>
+    <string name="config_schedule_days_times">Дні й години</string>
+    <string name="config_schedule_first_unlock">Після першого розблокування</string>
+    <string name="config_schedule_feature_overrides">Перевизначення розділів під час розкладу</string>
+
+    <string name="config_remove_all">Видалити всі правила</string>
+    <string name="config_remove_all_title">Видалити всі правила?</string>
+    <string name="config_remove_all_body">Буде видалено всі правила для %1$s. Застосунок більше не блокуватиметься.</string>
+</resources>

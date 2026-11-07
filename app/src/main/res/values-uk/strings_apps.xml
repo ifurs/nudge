@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="apps_title">Керування застосунками</string>
+    <string name="apps_search_placeholder">Пошук застосунків і груп</string>
+    <string name="apps_no_matches">Нічого не знайдено за запитом «%1$s»</string>
+    <string name="apps_section_all_apps">Усі застосунки</string>
+    <string name="apps_section_groups">Групи</string>
+    <string name="apps_block_several">Заблокувати кілька застосунків</string>
+</resources>

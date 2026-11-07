@@ -19,9 +19,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.astraedus.nudge.R
 
 /**
  * The dashboard's Nuke tile. Always visible, always full width, next to the two stat tiles.
@@ -42,20 +45,20 @@ fun NukeCard(
 
     when {
         summary.needsSetup -> {
-            title = "Nuke"
-            subtitle = "Set up a no-way-around-it list"
+            title = stringResource(R.string.home_nuke_setup_title)
+            subtitle = stringResource(R.string.home_nuke_setup_subtitle)
         }
         summary.active -> {
-            title = "Nuke is on · ${pluralApps(summary.appCount)}"
-            subtitle = "Scan your code to end it"
+            title = pluralStringResource(R.plurals.home_nuke_on_title, summary.appCount, summary.appCount)
+            subtitle = stringResource(R.string.home_nuke_on_subtitle)
         }
         summary.appCount == 0 || !summary.hasKey -> {
-            title = "Nuke is off"
-            subtitle = "Add apps and pair a code"
+            title = stringResource(R.string.home_nuke_off_title)
+            subtitle = stringResource(R.string.home_nuke_off_incomplete)
         }
         else -> {
-            title = "Nuke is off"
-            subtitle = "${pluralApps(summary.appCount)} ready"
+            title = stringResource(R.string.home_nuke_off_title)
+            subtitle = pluralStringResource(R.plurals.home_nuke_ready, summary.appCount, summary.appCount)
         }
     }
 
@@ -70,11 +73,12 @@ fun NukeCard(
         MaterialTheme.colorScheme.onSurfaceVariant
     }
 
+    val description = stringResource(R.string.home_card_description, title, subtitle)
     Card(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick, onClickLabel = title)
-            .semantics { contentDescription = "$title. $subtitle." },
+            .semantics { contentDescription = description },
         colors = CardDefaults.cardColors(containerColor = containerColor)
     ) {
         Row(
@@ -109,5 +113,3 @@ fun NukeCard(
         }
     }
 }
-
-private fun pluralApps(count: Int): String = if (count == 1) "1 app" else "$count apps"

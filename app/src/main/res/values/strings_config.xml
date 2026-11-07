@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App config screen (UnifiedAppConfigScreen) -->
+    <string name="config_back">Back</string>
+    <string name="config_save">Save</string>
+    <string name="config_cancel">Cancel</string>
+    <string name="config_remove">Remove</string>
+    <string name="config_enabled">Enabled</string>
+    <string name="config_also_covered_by">Also covered by</string>
+
+    <!-- Text of the Strict Mode unlock dialog for each weakening action on this screen. -->
+    <string name="config_prompt_weaken">Weaken blocking for this app</string>
+    <string name="config_prompt_delete">Delete blocking for this app</string>
+    <string name="config_prompt_day_start">Change when your day starts</string>
+
+    <!-- Feature section: first on the screen for Instagram, YouTube and TikTok.
+         %1$s = the feature (Reels, Shorts), %2$s = the app. -->
+    <string name="config_features_headline">Block only %1$s, keep the rest of %2$s</string>
+    <string name="config_features_headline_feed">Block only the video feed, keep the rest of %1$s</string>
+    <string name="config_feature_rules_info">Choose what happens to a part of the app. \"Inherit\" follows the default behavior below.</string>
+    <string name="config_feature_whole_app_hint">%1$s is also set to block as a whole (\"Block the whole app\" below). Turn that off to block only the parts you pick here.</string>
+    <string name="config_feature_explore">Explore</string>
+    <string name="config_feature_tiktok_feed">Feed</string>
+    <string name="config_mode_inherit">Inherit</string>
+    <string name="config_mode_block">Block</string>
+    <string name="config_mode_delay">Delay</string>
+    <string name="config_mode_hold">Hold</string>
+    <string name="config_mode_breathing">Breathing</string>
+    <string name="config_tab_vanish_title">Hide the %1$s tab</string>
+    <string name="config_tab_vanish_description">While %1$s is blocked, Nudge covers the %1$s tab in %2$s\'s bottom bar, so the icon is not there and tapping it does nothing. The rest of %2$s works as normal.</string>
+    <string name="config_following_title">Open to Following instead of Home</string>
+    <string name="config_following_description">Experimental. When you open Instagram\'s home feed, Nudge switches it to Following, so you see posts from people you follow rather than suggested ones. You can switch back at any time. If Instagram changes its layout this quietly stops working.</string>
+
+    <!-- Always active -->
+    <string name="config_section_always_active">Always Active</string>
+    <string name="config_daily_limit">Daily Time Limit</string>
+    <string name="config_daily_limit_custom">Custom Daily Limit</string>
+    <string name="config_daily_limit_info">Set a daily usage budget for this app.\n\nOnce you\'ve used the app for this many minutes today, it switches to a hard block for the rest of the day. The block lands as soon as the budget runs out, even if you\'re still inside the app.</string>
+    <string name="config_daily_limit_info_web">Set a daily usage budget for this app.\n\nOnce you\'ve used the app for this many minutes today, it switches to a hard block for the rest of the day. The block lands as soon as the budget runs out, even if you\'re still inside the app.\n\nThis budget counts time in the app only. Once it runs out the websites below are hard-blocked as well, but time spent on them does not yet count towards it -- use Auto-kick\'s time trigger to limit the websites.</string>
+    <string name="config_show_time_remaining">Show time remaining</string>
+    <string name="config_show_time_remaining_info" formatted="false">Displays remaining daily time as a floating overlay.\n\nChanges color as time runs out: green (>50%), orange (25-50%), red (&lt;25%).</string>
+    <string name="config_counter">Interaction counter</string>
+    <string name="config_counter_info">Shows a floating counter while you use this app.\n\nFor YouTube/Instagram/TikTok: counts Reels or Shorts scrolled.\nFor other apps: counts screen taps.\n\nTurns orange at 10, deep orange at 20, red at 30.</string>
+    <string name="config_grayscale">Grayscale</string>
+    <string name="config_grayscale_info">Makes your screen black-and-white while this app is open.\n\nRemoves the color reward that makes scrolling engaging.\n\nRequires one-time ADB setup -- check Settings for the guide.</string>
+    <string name="config_grayscale_hint">Requires ADB permission setup</string>
+    <string name="config_grayscale_hint_features">Requires ADB permission setup. With the whole app unblocked, this only applies while a blocked feature is on screen.</string>
+    <string name="config_grayscale_setup">Grayscale requires setup -- check Settings</string>
+
+    <!-- Web domains -->
+    <string name="config_web_title">Block on web too</string>
+    <string name="config_web_info">Also blocks this app\'s website in the browser.\n\nWorks even with \"Block the whole app\" off — the app opens normally while the website is still blocked, with the mode you pick here.\n\nCurrently supports Chrome only.</string>
+    <string name="config_web_domains_label">Domains (comma-separated)</string>
+    <string name="config_web_domains_placeholder" translatable="false">instagram.com, www.instagram.com</string>
+    <string name="config_web_subdomains">Subdomains like www. and m. are matched automatically</string>
+    <string name="config_web_same_mode">Websites use the same block mode as the app.</string>
+    <string name="config_web_mode">Website block mode</string>
+    <!-- %1$s = the app, %2$s = the sentence describing the chosen block mode. -->
+    <string name="config_web_opens_normally">%1$s opens normally; these websites are still blocked. %2$s</string>
+
+    <!-- Default behavior -->
+    <string name="config_section_default">Default Behavior</string>
+    <string name="config_section_default_info">These settings apply whenever no scheduled override is active.</string>
+    <string name="config_block_whole_app">Block the whole app</string>
+    <string name="config_whole_app_on">Opening %1$s triggers the block below.</string>
+    <string name="config_whole_app_off_features">%1$s opens normally. Only the features you turn on are blocked.</string>
+    <string name="config_whole_app_off">%1$s opens normally. Any daily limit below still applies.</string>
+    <string name="config_delay_duration">Delay Duration</string>
+    <string name="config_hold_duration">Hold Duration</string>
+    <!-- %1$s = "Delay Duration" or "Hold Duration" as written above. -->
+    <string name="config_custom_duration_title">Custom %1$s</string>
+    <string name="config_keep_pass">Keep the pass on short trips</string>
+    <string name="config_keep_pass_info">Once you have waited, going to the home screen or switching apps for a moment keeps your pass. Come back within 2 minutes and the app opens straight away.\n\nOff: going to the home screen ends the pass, and the next open waits again.</string>
+    <string name="config_auto_kick">Auto-kick</string>
+    <string name="config_auto_kick_info">Sends you to the home screen after a set number of scrolls/taps, or after a set amount of time in the app -- whichever fires first.\n\nThe counter and timer reset when you re-open the app. This is the nuclear option for stopping infinite scroll.</string>
+    <string name="config_auto_kick_info_web">Sends you to the home screen after a set number of scrolls/taps, or after a set amount of time in the app -- whichever fires first.\n\nThe counter and timer reset when you re-open the app. This is the nuclear option for stopping infinite scroll.\n\nThe time trigger also covers the websites below -- each site gets its own timer and its own cooldown. The interaction trigger is app-only.</string>
+    <string name="config_auto_kick_either">Whichever trigger fires first sends you to the home screen.</string>
+    <string name="config_auto_kick_by_interactions">After N interactions</string>
+    <plurals name="config_auto_kick_after_interactions">
+        <item quantity="one">After %1$d interaction</item>
+        <item quantity="other">After %1$d interactions</item>
+    </plurals>
+    <plurals name="config_auto_kick_after_scrolls">
+        <item quantity="one">After %1$d scroll</item>
+        <item quantity="other">After %1$d scrolls</item>
+    </plurals>
+    <string name="config_auto_kick_minutes_label">Or after this long in the app</string>
+    <string name="config_auto_kick_minutes_hint">Counts foreground time in one session. Leave blank for off.</string>
+    <string name="config_cooldown">Cooldown</string>
+    <string name="config_cooldown_hint">Wait this long before you can re-open the app after an auto-close.</string>
+
+    <!-- Scheduled override -->
+    <string name="config_section_schedule">Scheduled Override</string>
+    <string name="config_section_schedule_info">Apply different settings during specific times. Outside this schedule, the default behavior is used.</string>
+    <string name="config_schedule_enable">Enable schedule</string>
+    <string name="config_schedule_days_times">Days and times</string>
+    <string name="config_schedule_first_unlock">After first unlock</string>
+    <string name="config_schedule_feature_overrides">Feature overrides during schedule</string>
+
+    <!-- Remove -->
+    <string name="config_remove_all">Remove All Rules</string>
+    <string name="config_remove_all_title">Remove all rules?</string>
+    <string name="config_remove_all_body">This will delete all rules for %1$s. The app will no longer be blocked.</string>
+</resources>

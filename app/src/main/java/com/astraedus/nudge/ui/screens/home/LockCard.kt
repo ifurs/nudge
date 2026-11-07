@@ -21,10 +21,12 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.astraedus.nudge.R
 import com.astraedus.nudge.domain.engine.ScheduleEvaluator
 import com.astraedus.nudge.domain.model.BlockRuleData
 import com.astraedus.nudge.domain.model.RuleTarget
@@ -42,16 +44,10 @@ import java.util.Date
 @Immutable
 data class LockCard(
     val ruleId: Long,
-    /** "All apps except Spotify, Maps"; the card reads "<title> are blocked". */
+    /** "All apps except Spotify, Maps"; the card reads "<title> are blocked" (`home_lock_headline`). */
     val title: String,
     val untilMs: Long?
-) {
-    val headline: String get() = "$title are blocked"
-
-    /** "Until 8:42 AM", with [formatClock] turning the end into the user's 12/24-hour text. */
-    fun untilText(formatClock: (Long) -> String): String? =
-        untilMs?.let { RuleSummary.untilText(formatClock(it)) }
-}
+)
 
 /**
  * The card to show at [now], or null when no All apps rule is blocking (spec 3.8). Pure.
@@ -113,13 +109,17 @@ fun LockCardTile(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val until = card.untilText { DateFormat.getTimeFormat(context).format(Date(it)) }
+    // "Until 8:42 AM", the end in the user's 12/24-hour format.
+    val until = card.untilMs?.let {
+        stringResource(R.string.home_lock_until, DateFormat.getTimeFormat(context).format(Date(it)))
+    }
+    val headline = stringResource(R.string.home_lock_headline, card.title)
     val contentColor = MaterialTheme.colorScheme.onSurfaceVariant
     Card(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick, onClickLabel = card.title)
-            .semantics { contentDescription = listOfNotNull(card.headline, until).joinToString(". ") },
+            .semantics { contentDescription = listOfNotNull(headline, until).joinToString(". ") },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Row(
@@ -135,7 +135,7 @@ fun LockCardTile(
             Spacer(Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    card.headline,
+                    headline,
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Medium,
                     color = contentColor

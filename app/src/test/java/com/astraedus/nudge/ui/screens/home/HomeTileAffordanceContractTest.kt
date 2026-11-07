@@ -102,7 +102,9 @@ class HomeTileAffordanceContractTest {
      */
     @Test
     fun `tiles sharing a destination share the same action label`() {
-        val labelsByDestination = Regex("""TileAction\(\s*"([^"]+)"\s*,\s*(\w+)\s*\)""")
+        // The label is a string RESOURCE now (Ukrainian ships beside English), so "the same name"
+        // means the same resource key.
+        val labelsByDestination = Regex("""TileAction\(\s*stringResource\(R\.string\.(\w+)\)\s*,\s*(\w+)\s*\)""")
             .findAll(homeScreen)
             .map { it.groupValues[2] to it.groupValues[1] }
             .groupBy({ it.first }, { it.second })

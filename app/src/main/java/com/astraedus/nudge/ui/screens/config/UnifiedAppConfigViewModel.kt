@@ -1,8 +1,10 @@
 package com.astraedus.nudge.ui.screens.config
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.astraedus.nudge.R
 import com.astraedus.nudge.data.db.entity.BlockRule
 import com.astraedus.nudge.data.preferences.NudgePreferences
 import com.astraedus.nudge.data.repository.BlockRuleRepository
@@ -22,6 +24,7 @@ import com.astraedus.nudge.data.repository.RuleArming
 import com.astraedus.nudge.domain.engine.FirstUnlockWindow
 import com.astraedus.nudge.domain.usecase.SetDayStartMinuteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.ZoneId
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -44,7 +47,9 @@ class UnifiedAppConfigViewModel @Inject constructor(
     private val essentialPackages: EssentialPackages,
     private val packageFacts: PackageFacts,
     private val nudgePreferences: NudgePreferences,
-    private val setDayStartMinuteUseCase: SetDayStartMinuteUseCase
+    private val setDayStartMinuteUseCase: SetDayStartMinuteUseCase,
+    /** Only for the text of the Strict Mode prompts, which the dialog shows as a plain string. */
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val packageName: String = savedStateHandle.get<String>("packageName") ?: ""
@@ -188,16 +193,9 @@ class UnifiedAppConfigViewModel @Inject constructor(
             val directRules = allRules.filter { it.packageName == packageName && it.groupId == null }
 
             // Separate into categories
-            // A scheduled rule is either a days-and-times window or a first-unlock one (spec 3.5).
-            // `scheduleDays != null` stays in the test on purpose: a days-only rule (days set, no
-            // times) used to count as the scheduled override, and treating it as the default would
-            // have a save rewrite it as always-on. A first-unlock rule always carries days too, and
-            // an imported one may carry none, which the other two checks catch.
-            fun isScheduled(rule: BlockRule): Boolean =
-                rule.firstUnlockMinutes != null ||
-                    rule.scheduleStartMinute != null ||
-                    rule.scheduleEndMinute != null ||
-                    rule.scheduleDays != null
+            // A scheduled rule is either a days-and-times window or a first-unlock one (spec 3.5);
+            // see [isScheduledRule] for why a days-only rule counts.
+            fun isScheduled(rule: BlockRule): Boolean = rule.isScheduledRule()
 
             val defaultAppRule = directRules.firstOrNull {
                 it.inAppFeatures.isNullOrEmpty() && !isScheduled(it)
@@ -469,7 +467,7 @@ class UnifiedAppConfigViewModel @Inject constructor(
             )
             val weakens = defaultWeakens || scheduledWeakens
             if (weakens) {
-                strictModeGate.run(prompt = "Weaken blocking for this app") {
+                strictModeGate.run(prompt = context.getString(R.string.config_prompt_weaken)) {
                     performSave(state, newDefault)
                 }
             } else {
@@ -599,7 +597,7 @@ class UnifiedAppConfigViewModel @Inject constructor(
             // Deleting an existing rule weakens protection; gate it under Strict Mode.
             // (No existing rule = nothing to weaken; delete proceeds freely.)
             if (existingDefaultRule != null) {
-                strictModeGate.run(prompt = "Delete blocking for this app") {
+                strictModeGate.run(prompt = context.getString(R.string.config_prompt_delete)) {
                     performDelete()
                 }
             } else {
@@ -805,7 +803,10 @@ class UnifiedAppConfigViewModel @Inject constructor(
                 refreshFirstUnlockHints()
             }
             if (setDayStartMinuteUseCase.requiresUnlock(minute)) {
-                strictModeGate.run(prompt = "Change when your day starts", action = write)
+                strictModeGate.run(
+                    prompt = context.getString(R.string.config_prompt_day_start),
+                    action = write
+                )
             } else {
                 write()
             }

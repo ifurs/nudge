@@ -9,6 +9,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.astraedus.nudge.data.preferences.NudgePreferences
@@ -20,6 +21,7 @@ import com.astraedus.nudge.ui.screens.groups.GroupEditorScreen
 import com.astraedus.nudge.ui.screens.groups.GroupEditorViewModel
 import com.astraedus.nudge.ui.screens.home.HomeScreen
 import com.astraedus.nudge.ui.screens.home.HomeViewModel
+import com.astraedus.nudge.ui.screens.home.ShortVideoBlocksViewModel
 import com.astraedus.nudge.ui.screens.nuke.NukeScreen
 import com.astraedus.nudge.ui.screens.nuke.NukeViewModel
 import com.astraedus.nudge.ui.screens.onboarding.OnboardingScreen
@@ -108,187 +110,207 @@ fun NudgeNavGraph(
     LaunchedEffect(deepLinkRoute, onboardingComplete) {
         val route = deepLinkRoute
         if (route != null && onboardingComplete) {
-            navController.navigate(route) { launchSingleTop = true }
+            // A route the bottom bar owns (Home, Stats, Settings) is entered like a tap on it, so
+            // Back from a widget or the protection alert lands on Home and the bar highlights the
+            // right tab; everything else (a detail screen) opens on top, as it always did.
+            val topLevel = TopLevelDestination.fromRoute(route)
+            if (topLevel != null) {
+                navController.navigateTopLevel(topLevel)
+            } else {
+                navController.navigate(route) { launchSingleTop = true }
+            }
             onDeepLinkConsumed()
         }
     }
 
-    NavHost(navController = navController, startDestination = startDestination) {
-        composable(Screen.Onboarding.route) {
-            val scope = rememberCoroutineScope()
-            OnboardingScreen(
-                onComplete = {
-                    scope.launch {
-                        nudgePreferences?.setOnboardingComplete(true)
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+
+    NudgeBottomBarScaffold(
+        currentRoute = currentRoute,
+        onSelect = navController::navigateTopLevel
+    ) {
+        NavHost(navController = navController, startDestination = startDestination) {
+            composable(Screen.Onboarding.route) {
+                val scope = rememberCoroutineScope()
+                val shortVideoViewModel: ShortVideoBlocksViewModel = hiltViewModel()
+                OnboardingScreen(
+                    shortVideoViewModel = shortVideoViewModel,
+                    onComplete = {
+                        scope.launch {
+                            nudgePreferences?.setOnboardingComplete(true)
+                        }
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Onboarding.route) { inclusive = true }
+                        }
                     }
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Onboarding.route) { inclusive = true }
+                )
+            }
+
+            composable(Screen.Home.route) {
+                val viewModel: HomeViewModel = hiltViewModel()
+                val shortVideoViewModel: ShortVideoBlocksViewModel = hiltViewModel()
+                HomeScreen(
+                    viewModel = viewModel,
+                    shortVideoViewModel = shortVideoViewModel,
+                    onNavigateToApps = { navController.navigateTopLevel(TopLevelDestination.Apps) },
+                    onNavigateToStats = { navController.navigateTopLevel(TopLevelDestination.Stats) },
+                    onNavigateToWillpower = { navController.navigate(Screen.Willpower.route) },
+                    onNavigateToInterventions = { navController.navigate(Screen.Interventions.route) },
+                    onNavigateToAppDetail = { pkg ->
+                        navController.navigate(Screen.AppDetail.createRoute(pkg))
+                    },
+                    onNavigateToNuke = { navController.navigate(Screen.Nuke.route) },
+                    onOpenAllAppsRule = { ruleId ->
+                        navController.navigate(Screen.AllAppsEditor.createRoute(ruleId))
+                    },
+                    onOpenAppConfig = { pkg ->
+                        navController.navigate(Screen.AppConfig.createRoute(pkg))
                     }
-                }
-            )
-        }
+                )
+            }
 
-        composable(Screen.Home.route) {
-            val viewModel: HomeViewModel = hiltViewModel()
-            HomeScreen(
-                viewModel = viewModel,
-                onNavigateToApps = { navController.navigate(Screen.Apps.route) },
-                onNavigateToStats = { navController.navigate(Screen.Stats.route) },
-                onNavigateToSettings = { navController.navigate(Screen.Settings.route) },
-                onNavigateToWillpower = { navController.navigate(Screen.Willpower.route) },
-                onNavigateToInterventions = { navController.navigate(Screen.Interventions.route) },
-                onNavigateToAppDetail = { pkg ->
-                    navController.navigate(Screen.AppDetail.createRoute(pkg))
-                },
-                onNavigateToNuke = { navController.navigate(Screen.Nuke.route) },
-                onOpenAllAppsRule = { ruleId ->
-                    navController.navigate(Screen.AllAppsEditor.createRoute(ruleId))
-                }
-            )
-        }
+            composable(Screen.Nuke.route) {
+                val viewModel: NukeViewModel = hiltViewModel()
+                NukeScreen(
+                    viewModel = viewModel,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
 
-        composable(Screen.Nuke.route) {
-            val viewModel: NukeViewModel = hiltViewModel()
-            NukeScreen(
-                viewModel = viewModel,
-                onNavigateBack = { navController.popBackStack() }
-            )
-        }
+            composable(Screen.Willpower.route) {
+                val viewModel: WillpowerViewModel = hiltViewModel()
+                WillpowerScreen(
+                    viewModel = viewModel,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
 
-        composable(Screen.Willpower.route) {
-            val viewModel: WillpowerViewModel = hiltViewModel()
-            WillpowerScreen(
-                viewModel = viewModel,
-                onNavigateBack = { navController.popBackStack() }
-            )
-        }
+            composable(Screen.Interventions.route) {
+                val viewModel: InterventionsViewModel = hiltViewModel()
+                InterventionsScreen(
+                    viewModel = viewModel,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
 
-        composable(Screen.Interventions.route) {
-            val viewModel: InterventionsViewModel = hiltViewModel()
-            InterventionsScreen(
-                viewModel = viewModel,
-                onNavigateBack = { navController.popBackStack() }
-            )
-        }
+            composable(Screen.Apps.route) {
+                val viewModel: AppListViewModel = hiltViewModel()
+                AppListScreen(
+                    viewModel = viewModel,
+                    onNavigateToAppConfig = { pkg ->
+                        navController.navigate(Screen.AppConfig.createRoute(pkg))
+                    },
+                    onOpenGroup = { groupId ->
+                        navController.navigate(Screen.GroupEditor.createRoute(groupId))
+                    },
+                    onOpenAllAppsRule = { ruleId ->
+                        navController.navigate(Screen.AllAppsEditor.createRoute(ruleId))
+                    }
+                )
+            }
 
-        composable(Screen.Apps.route) {
-            val viewModel: AppListViewModel = hiltViewModel()
-            AppListScreen(
-                viewModel = viewModel,
-                onNavigateBack = { navController.popBackStack() },
-                onNavigateToAppConfig = { pkg ->
-                    navController.navigate(Screen.AppConfig.createRoute(pkg))
-                },
-                onOpenGroup = { groupId ->
-                    navController.navigate(Screen.GroupEditor.createRoute(groupId))
-                },
-                onOpenAllAppsRule = { ruleId ->
-                    navController.navigate(Screen.AllAppsEditor.createRoute(ruleId))
-                }
-            )
-        }
+            composable(
+                route = Screen.AppConfig.route,
+                arguments = listOf(navArgument("packageName") { type = NavType.StringType })
+            ) {
+                val viewModel: UnifiedAppConfigViewModel = hiltViewModel()
+                UnifiedAppConfigScreen(
+                    viewModel = viewModel,
+                    onNavigateBack = { navController.popBackStack() },
+                    onOpenGroup = { groupId ->
+                        navController.navigate(Screen.GroupEditor.createRoute(groupId))
+                    },
+                    onOpenAllAppsRule = { ruleId ->
+                        navController.navigate(Screen.AllAppsEditor.createRoute(ruleId))
+                    }
+                )
+            }
 
-        composable(
-            route = Screen.AppConfig.route,
-            arguments = listOf(navArgument("packageName") { type = NavType.StringType })
-        ) {
-            val viewModel: UnifiedAppConfigViewModel = hiltViewModel()
-            UnifiedAppConfigScreen(
-                viewModel = viewModel,
-                onNavigateBack = { navController.popBackStack() },
-                onOpenGroup = { groupId ->
-                    navController.navigate(Screen.GroupEditor.createRoute(groupId))
-                },
-                onOpenAllAppsRule = { ruleId ->
-                    navController.navigate(Screen.AllAppsEditor.createRoute(ruleId))
-                }
-            )
-        }
+            composable(
+                route = Screen.GroupEditor.route,
+                arguments = listOf(
+                    navArgument(GroupEditorViewModel.ARG_GROUP_ID) {
+                        type = NavType.LongType
+                        defaultValue = -1L
+                    }
+                )
+            ) {
+                val viewModel: GroupEditorViewModel = hiltViewModel()
+                GroupEditorScreen(
+                    viewModel = viewModel,
+                    onNavigateBack = { navController.popBackStack() },
+                    onOpenAllAppsRule = { ruleId ->
+                        navController.navigate(Screen.AllAppsEditor.createRoute(ruleId))
+                    }
+                )
+            }
 
-        composable(
-            route = Screen.GroupEditor.route,
-            arguments = listOf(
-                navArgument(GroupEditorViewModel.ARG_GROUP_ID) {
-                    type = NavType.LongType
-                    defaultValue = -1L
-                }
-            )
-        ) {
-            val viewModel: GroupEditorViewModel = hiltViewModel()
-            GroupEditorScreen(
-                viewModel = viewModel,
-                onNavigateBack = { navController.popBackStack() },
-                onOpenAllAppsRule = { ruleId ->
-                    navController.navigate(Screen.AllAppsEditor.createRoute(ruleId))
-                }
-            )
-        }
+            composable(
+                route = Screen.AllAppsEditor.route,
+                arguments = listOf(
+                    navArgument(AllAppsEditorViewModel.ARG_RULE_ID) {
+                        type = NavType.LongType
+                        defaultValue = -1L
+                    }
+                )
+            ) {
+                val viewModel: AllAppsEditorViewModel = hiltViewModel()
+                AllAppsEditorScreen(
+                    viewModel = viewModel,
+                    onNavigateBack = { navController.popBackStack() },
+                    onOpenGroup = { groupId ->
+                        navController.navigate(Screen.GroupEditor.createRoute(groupId))
+                    }
+                )
+            }
 
-        composable(
-            route = Screen.AllAppsEditor.route,
-            arguments = listOf(
-                navArgument(AllAppsEditorViewModel.ARG_RULE_ID) {
-                    type = NavType.LongType
-                    defaultValue = -1L
-                }
-            )
-        ) {
-            val viewModel: AllAppsEditorViewModel = hiltViewModel()
-            AllAppsEditorScreen(
-                viewModel = viewModel,
-                onNavigateBack = { navController.popBackStack() },
-                onOpenGroup = { groupId ->
-                    navController.navigate(Screen.GroupEditor.createRoute(groupId))
-                }
-            )
-        }
+            composable(Screen.Stats.route) {
+                val viewModel: StatsViewModel = hiltViewModel()
+                StatsScreen(
+                    viewModel = viewModel,
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToAppDetail = { pkg ->
+                        navController.navigate(Screen.AppDetail.createRoute(pkg))
+                    },
+                    onNavigateToWillpower = { navController.navigate(Screen.Willpower.route) },
+                    onNavigateToInterventions = { navController.navigate(Screen.Interventions.route) }
+                )
+            }
 
-        composable(Screen.Stats.route) {
-            val viewModel: StatsViewModel = hiltViewModel()
-            StatsScreen(
-                viewModel = viewModel,
-                onNavigateBack = { navController.popBackStack() },
-                onNavigateToAppDetail = { pkg ->
-                    navController.navigate(Screen.AppDetail.createRoute(pkg))
-                },
-                onNavigateToWillpower = { navController.navigate(Screen.Willpower.route) },
-                onNavigateToInterventions = { navController.navigate(Screen.Interventions.route) }
-            )
-        }
+            composable(
+                route = Screen.AppDetail.route,
+                arguments = listOf(navArgument("packageName") { type = NavType.StringType })
+            ) {
+                val viewModel: AppDetailViewModel = hiltViewModel()
+                AppDetailScreen(
+                    viewModel = viewModel,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
 
-        composable(
-            route = Screen.AppDetail.route,
-            arguments = listOf(navArgument("packageName") { type = NavType.StringType })
-        ) {
-            val viewModel: AppDetailViewModel = hiltViewModel()
-            AppDetailScreen(
-                viewModel = viewModel,
-                onNavigateBack = { navController.popBackStack() }
-            )
-        }
+            composable(Screen.Settings.route) {
+                SettingsScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToGrayscaleGuide = {
+                        navController.navigate(Screen.GrayscaleGuide.route)
+                    },
+                    onNavigateToMessagesEditor = {
+                        navController.navigate(Screen.MessagesEditor.route)
+                    }
+                )
+            }
 
-        composable(Screen.Settings.route) {
-            SettingsScreen(
-                onNavigateBack = { navController.popBackStack() },
-                onNavigateToGrayscaleGuide = {
-                    navController.navigate(Screen.GrayscaleGuide.route)
-                },
-                onNavigateToMessagesEditor = {
-                    navController.navigate(Screen.MessagesEditor.route)
-                }
-            )
-        }
+            composable(Screen.GrayscaleGuide.route) {
+                GrayscaleGuideScreen(
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
 
-        composable(Screen.GrayscaleGuide.route) {
-            GrayscaleGuideScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
-        }
-
-        composable(Screen.MessagesEditor.route) {
-            MessagesEditorScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+            composable(Screen.MessagesEditor.route) {
+                MessagesEditorScreen(
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
         }
     }
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_get_started">Get Started</string>
+
+    <string name="onboarding_welcome_tagline">Mindful app usage through gentle friction</string>
+    <string name="onboarding_welcome_body">Take back control of your screen time with breathing exercises, delays, and daily limits.</string>
+
+    <string name="onboarding_permissions_title">Permissions</string>
+    <string name="onboarding_permissions_intro">Nudge needs these permissions to work. No data is ever sent anywhere — the app has no internet permission.</string>
+    <string name="onboarding_accessibility_title">Accessibility Service</string>
+    <string name="onboarding_accessibility_description">Detects which app is in the foreground so Nudge can trigger your block rules. Also identifies in-app screens (like YouTube Shorts or Instagram Reels) by checking navigation elements. Does not read your messages, keystrokes, or screen content.</string>
+    <!-- OverlayPermissionCopyTest pins this text: it must say the overlay draws the block screen AND
+         that granting it helps Nudge restart in the background. -->
+    <string name="onboarding_overlay_title">Display Over Other Apps</string>
+    <string name="onboarding_overlay_description">Shows the delay countdown or breathing exercise overlay on top of blocked apps — this is how Nudge presents the pause before opening. Granting it also helps Nudge restart its own protection if Android stops it in the background. Either way, opening Nudge yourself always brings blocking back if it\'s stopped.</string>
+    <string name="onboarding_usage_title">Usage Stats Access</string>
+    <string name="onboarding_usage_description">Tracks how long you use each app per day to enforce daily time budgets. Usage data is stored locally on your device only.</string>
+    <string name="onboarding_grant_permission">Grant Permission</string>
+
+    <!-- The step after permissions: the Home "Block short videos" rows. -->
+    <string name="onboarding_block_title">What do you want to block?</string>
+    <string name="onboarding_block_body">Keep Instagram, YouTube or TikTok and lose only the short videos. Turning a switch on takes effect at once.</string>
+    <string name="onboarding_block_footer">You can change this any time on the Home screen.</string>
+
+    <string name="onboarding_ready_title">You\'re all set</string>
+    <string name="onboarding_ready_body">Block more apps any time from the Apps tab</string>
+</resources>

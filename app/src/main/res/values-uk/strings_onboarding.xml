@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_next">Далі</string>
+    <string name="onboarding_get_started">Почати</string>
+
+    <string name="onboarding_welcome_tagline">Свідоме користування застосунками через м’яке тертя</string>
+    <string name="onboarding_welcome_body">Поверніть контроль над екранним часом за допомогою дихальних вправ, затримок і денних лімітів.</string>
+
+    <string name="onboarding_permissions_title">Дозволи</string>
+    <string name="onboarding_permissions_intro">Щоб працювати, Nudge потребує цих дозволів. Жодні дані нікуди не надсилаються — застосунок не має дозволу на доступ до інтернету.</string>
+    <string name="onboarding_accessibility_title">Служба спеціальних можливостей</string>
+    <string name="onboarding_accessibility_description">Визначає, який застосунок відкрито на екрані, щоб Nudge міг застосовувати ваші правила блокування. Також розпізнає розділи всередині застосунків (як-от YouTube Shorts чи Instagram Reels) за елементами навігації. Не читає ваші повідомлення, введений текст і вміст екрана.</string>
+    <string name="onboarding_overlay_title">Показ поверх інших застосунків</string>
+    <string name="onboarding_overlay_description">Показує екран затримки або дихальної вправи поверх заблокованих застосунків — саме так Nudge робить паузу перед відкриттям. Цей дозвіл також допомагає Nudge перезапустити свій захист у фоні, якщо Android його зупинить. У будь-якому разі, коли ви самі відкриваєте Nudge, блокування завжди повертається, якщо його було зупинено.</string>
+    <string name="onboarding_usage_title">Доступ до статистики використання</string>
+    <string name="onboarding_usage_description">Відстежує, скільки часу на день ви проводите в кожному застосунку, щоб дотримуватися денних лімітів. Дані про використання зберігаються лише на вашому пристрої.</string>
+    <string name="onboarding_grant_permission">Надати дозвіл</string>
+
+    <string name="onboarding_block_title">Що ви хочете заблокувати?</string>
+    <string name="onboarding_block_body">Залиште Instagram, YouTube чи TikTok і приберіть лише короткі відео. Перемикач діє одразу.</string>
+    <string name="onboarding_block_footer">Це можна змінити будь-коли на головному екрані.</string>
+
+    <string name="onboarding_ready_title">Усе готово</string>
+    <string name="onboarding_ready_body">Блокуйте інші застосунки будь-коли на вкладці «Застосунки»</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Bottom navigation bar: the four top-level screens. One short word each, kept to one line
+         at 360dp and 1.3x font scale. -->
+    <string name="nav_home">Home</string>
+    <string name="nav_apps">Apps</string>
+    <string name="nav_stats">Stats</string>
+    <string name="nav_settings">Settings</string>
+</resources>

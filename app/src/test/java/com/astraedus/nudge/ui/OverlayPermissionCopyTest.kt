@@ -71,8 +71,24 @@ class OverlayPermissionCopyTest {
         return source.substring(titleIndex, nextCallIndex)
     }
 
+    /**
+     * Onboarding's overlay card text lives in `strings_onboarding.xml` (the screen only looks the
+     * resource up), so the English copy is read from there, and the Ukrainian one must say the same
+     * two things. Settings still carries its literal until it is localised.
+     */
+    private fun onboardingString(file: String): String {
+        val xml = read(file)
+        return Regex("""<string name="onboarding_overlay_description">([\s\S]*?)</string>""")
+            .find(xml)?.groupValues?.get(1)
+            ?: error("onboarding_overlay_description not found in $file")
+    }
+
     private val onboardingOverlaySnippet by lazy {
-        overlaySnippet(onboardingSource, "\"Display Over Other Apps\"")
+        onboardingString("res/values/strings_onboarding.xml")
+    }
+
+    private val onboardingOverlaySnippetUk by lazy {
+        onboardingString("res/values-uk/strings_onboarding.xml")
     }
 
     private val settingsOverlaySnippet by lazy {
@@ -95,6 +111,29 @@ class OverlayPermissionCopyTest {
                 "#62) — without this sentence the user has no way to know that declining this " +
                 "permission silently breaks the watchdog's ability to heal a dead service.",
             lower.contains("restart") && lower.contains("background")
+        )
+    }
+
+    @Test
+    fun `onboarding screen looks the overlay card text up instead of repeating it`() {
+        assertTrue(
+            "Onboarding's overlay card must read onboarding_overlay_description, which the copy tests " +
+                "above pin; a literal in the screen would be a second copy nobody pins.",
+            onboardingSource.contains("R.string.onboarding_overlay_description")
+        )
+    }
+
+    @Test
+    fun `the Ukrainian onboarding overlay copy says both things too`() {
+        val lower = onboardingOverlaySnippetUk.lowercase()
+
+        assertTrue(
+            "The Ukrainian overlay card must still say it draws the block/delay screen over other apps.",
+            lower.contains("поверх") && lower.contains("заблокован")
+        )
+        assertTrue(
+            "The Ukrainian overlay card must still say granting it helps Nudge restart in the background.",
+            lower.contains("перезапуст") && lower.contains("у фоні")
         )
     }
 

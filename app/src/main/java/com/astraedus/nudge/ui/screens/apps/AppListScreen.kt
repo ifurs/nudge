@@ -10,13 +10,11 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -32,9 +30,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.astraedus.nudge.R
 import com.astraedus.nudge.ui.components.AppListItem
 import com.astraedus.nudge.ui.components.StrictModeChallengeHost
 import com.astraedus.nudge.ui.components.TonalIcon
@@ -51,7 +51,6 @@ import com.astraedus.nudge.ui.screens.allapps.AllTheTimeConfirmDialog
 @Composable
 fun AppListScreen(
     viewModel: AppListViewModel,
-    onNavigateBack: () -> Unit,
     onNavigateToAppConfig: (String) -> Unit,
     /** Opens the group editor: an existing group's id, or null for a new one. */
     onOpenGroup: (Long?) -> Unit,
@@ -102,7 +101,6 @@ fun AppListScreen(
         state = state,
         listState = listState,
         onSearchQueryChange = { viewModel.updateSearchQuery(it) },
-        onNavigateBack = onNavigateBack,
         onNavigateToAppConfig = onNavigateToAppConfig,
         onOpenGroup = onOpenGroup,
         onOpenAllAppsRule = onOpenAllAppsRule,
@@ -123,7 +121,6 @@ fun AppListScreen(
 fun AppListContent(
     state: AppListUiState,
     onSearchQueryChange: (String) -> Unit,
-    onNavigateBack: () -> Unit,
     onNavigateToAppConfig: (String) -> Unit,
     onOpenGroup: (Long?) -> Unit,
     onOpenAllAppsRule: (Long?) -> Unit,
@@ -137,14 +134,8 @@ fun AppListContent(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Manage Apps") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
+            // A top-level screen (a tab of the bottom bar): no back arrow.
+            TopAppBar(title = { Text(stringResource(R.string.apps_title)) })
         }
     ) { padding ->
         Column(
@@ -158,7 +149,7 @@ fun AppListContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
-                placeholder = { Text("Search apps and groups") },
+                placeholder = { Text(stringResource(R.string.apps_search_placeholder)) },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 singleLine = true
             )
@@ -204,7 +195,7 @@ fun AppListContent(
                 // No group and no app matched: say so, rather than showing a blank list.
                 if (searching && state.sections.nothingMatches) item(key = "no_matches") {
                     Text(
-                        "No apps or groups match \"${state.searchQuery.trim()}\"",
+                        stringResource(R.string.apps_no_matches, state.searchQuery.trim()),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp)
@@ -232,7 +223,7 @@ private fun TopSection(
     onBlockSeveral: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        if (allApps.isNotEmpty()) ListSubheader("All apps")
+        if (allApps.isNotEmpty()) ListSubheader(stringResource(R.string.apps_section_all_apps))
         allApps.forEach { rule ->
             key(rule.ruleId) {
                 ListItem(
@@ -253,7 +244,7 @@ private fun TopSection(
                 )
             }
         }
-        if (groups.isNotEmpty()) ListSubheader("Groups")
+        if (groups.isNotEmpty()) ListSubheader(stringResource(R.string.apps_section_groups))
         groups.forEach { group ->
             key(group.groupId) {
                 ListItem(
@@ -277,7 +268,7 @@ private fun TopSection(
         if (showNewGroup) {
             ListItem(
                 headlineContent = {
-                    Text("Block several apps", color = MaterialTheme.colorScheme.primary)
+                    Text(stringResource(R.string.apps_block_several), color = MaterialTheme.colorScheme.primary)
                 },
                 leadingContent = { TonalIcon(Icons.Default.Add, primary = true) },
                 modifier = Modifier.clickable(onClick = onBlockSeveral)

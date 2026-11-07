@@ -90,24 +90,21 @@ class LockCardTest {
     // -- What it says -----------------------------------------------------------------------
 
     @Test
-    fun `a rule that is on all the time - the headline, and no until line`() {
+    fun `a rule that is on all the time - the title, and no end`() {
         val shown = card(listOf(allApps(7)), monday(10))!!
 
         assertEquals(7L, shown.ruleId)
-        assertEquals("All apps are blocked", shown.headline)
-        assertNull(shown.untilMs)
-        assertNull(shown.untilText { error("an all-the-time rule has no end to format") })
+        assertEquals("All apps", shown.title)
+        assertNull("an all-the-time rule has no end, so no until line", shown.untilMs)
     }
 
     @Test
-    fun `a scheduled rule - until its window end, in the clock text the caller formats`() {
+    fun `a scheduled rule - ends at its window end`() {
         val rule = allApps(1, days = listOf(1, 2, 3, 4, 5), start = 9 * 60, end = 17 * 60)
 
         val shown = card(listOf(rule), monday(10, 30))!!
 
         assertEquals(monday(17).timeInMillis, shown.untilMs)
-        assertEquals("Until 5:00 PM", shown.untilText { "5:00 PM" })
-        assertEquals("Until 17:00", shown.untilText { "17:00" })
     }
 
     @Test
@@ -118,7 +115,7 @@ class LockCardTest {
             exceptGroupNames = listOf("Work")
         )
 
-        assertEquals("All apps except Work, Spotify are blocked", card(listOf(rule), monday(10))!!.headline)
+        assertEquals("All apps except Work, Spotify", card(listOf(rule), monday(10))!!.title)
     }
 
     // -- Disappears at the window end -------------------------------------------------------

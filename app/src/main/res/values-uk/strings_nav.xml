@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nav_home">Головна</string>
+    <string name="nav_apps">Застосунки</string>
+    <string name="nav_stats">Статистика</string>
+    <string name="nav_settings">Налаштування</string>
+</resources>

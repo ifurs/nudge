@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Manage Apps (AppListScreen) -->
+    <string name="apps_title">Manage Apps</string>
+    <string name="apps_search_placeholder">Search apps and groups</string>
+    <string name="apps_no_matches">No apps or groups match \"%1$s\"</string>
+    <string name="apps_section_all_apps">All apps</string>
+    <string name="apps_section_groups">Groups</string>
+    <string name="apps_block_several">Block several apps</string>
+</resources>

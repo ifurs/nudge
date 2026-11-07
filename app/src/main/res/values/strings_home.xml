@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home dashboard tiles. "Screen Time" keeps its capitals: scripts/emulator-smoke.sh waits for it. -->
+    <string name="home_tile_screen_time">Screen Time</string>
+    <string name="home_action_see_breakdown">See breakdown</string>
+    <string name="home_action_tap_to_enable">Tap to enable</string>
+    <!-- The count of apps a rule that is on covers (the old "Active Apps" tile). -->
+    <string name="home_tile_blocked_apps">Blocked apps</string>
+    <string name="home_action_see_apps">Open list</string>
+    <string name="home_section_today">Today</string>
+    <string name="home_section_hint">Tap a tile for charts</string>
+    <string name="home_section_all_time">All Time</string>
+    <string name="home_tile_blocked">Blocked</string>
+    <string name="home_tile_walked_away">Walked Away</string>
+    <string name="home_action_patterns">Temptation patterns</string>
+    <string name="home_action_willpower">Your willpower</string>
+
+    <!-- Week card. The counts string keeps its English shape: scripts/device-qa.sh reads
+         "<n> blocked · <m> walked away" off the card. -->
+    <string name="home_week_open_stats">Open usage stats</string>
+    <string name="home_week_empty">Your screen time and nudges will chart here once there\'s a day of data.</string>
+    <string name="home_week_nudges">Nudges</string>
+    <string name="home_week_counts">%1$d blocked · %2$d walked away</string>
+
+    <!-- Text shown in the Strict Mode / Nuke unlock dialogs. -->
+    <string name="home_prompt_turn_off_all">Turn off all blocking</string>
+
+    <!-- Cards: Nuke and the All apps lock card. -->
+    <string name="home_card_description">%1$s. %2$s.</string>
+    <string name="home_nuke_setup_title">Nuke</string>
+    <string name="home_nuke_setup_subtitle">Set up a no-way-around-it list</string>
+    <plurals name="home_nuke_on_title">
+        <item quantity="one">Nuke is on · %d app</item>
+        <item quantity="other">Nuke is on · %d apps</item>
+    </plurals>
+    <string name="home_nuke_on_subtitle">Scan your code to end it</string>
+    <string name="home_nuke_off_title">Nuke is off</string>
+    <string name="home_nuke_off_incomplete">Add apps and pair a code</string>
+    <plurals name="home_nuke_ready">
+        <item quantity="one">%d app ready</item>
+        <item quantity="other">%d apps ready</item>
+    </plurals>
+    <!-- %1$s is the rule\'s title, e.g. "All apps except Spotify". -->
+    <string name="home_lock_headline">%1$s are blocked</string>
+    <string name="home_lock_until">Until %1$s</string>
+
+    <!-- "Block short videos" card (Home) and the onboarding step that reuses its rows. -->
+    <string name="home_short_title">Block short videos</string>
+    <string name="home_short_subtitle">Keep the app, lose only the Reels or Shorts.</string>
+    <!-- %1$s is the app\'s name: Instagram, YouTube, TikTok. -->
+    <string name="home_short_title_reels">Reels in %1$s</string>
+    <string name="home_short_title_shorts">Shorts in %1$s</string>
+    <string name="home_short_title_tiktok_feed">Feed in %1$s</string>
+    <string name="home_short_title_explore">Explore in %1$s</string>
+    <string name="home_short_status_blocked">Blocked. The rest of %1$s still works.</string>
+    <string name="home_short_status_off">Not blocked</string>
+    <string name="home_short_status_slowed">Slowed down, not blocked. Turn on for a full block.</string>
+    <string name="home_short_status_scheduled">Blocked at set times only. Turn on to block all the time.</string>
+    <string name="home_short_more_options">More options</string>
+    <!-- TalkBack label; %1$s is a row title such as "Reels in Instagram". -->
+    <string name="home_short_more_options_for">More options for %1$s</string>
+    <string name="home_short_none_installed">Instagram, YouTube and TikTok are not installed on this phone.</string>
+    <string name="home_short_accessibility_off">Nudge can\'t see Reels or Shorts yet. Turn on the accessibility service.</string>
+    <string name="home_short_accessibility_action">Turn on</string>
+    <!-- Shown in the Strict Mode unlock dialog; %1$s is the app\'s name. -->
+    <string name="home_short_unlock_prompt">Turn off short-video blocking in %1$s</string>
+</resources>

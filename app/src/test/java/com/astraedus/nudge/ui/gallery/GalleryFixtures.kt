@@ -7,6 +7,7 @@ import com.astraedus.nudge.data.db.entity.AppGroupMember
 import com.astraedus.nudge.data.db.entity.BlockRule
 import com.astraedus.nudge.data.repository.InstalledAppsRepository.AppInfo
 import com.astraedus.nudge.domain.model.BlockMode
+import com.astraedus.nudge.domain.model.FeatureMode
 import com.astraedus.nudge.domain.packages.AppCategory
 import com.astraedus.nudge.ui.overlay.NudgeMessages
 import com.astraedus.nudge.ui.screens.apps.AppListUiState
@@ -15,6 +16,10 @@ import com.astraedus.nudge.ui.screens.home.HomeCharts
 import com.astraedus.nudge.ui.screens.home.HomeUiState
 import com.astraedus.nudge.ui.screens.home.NukeSummary
 import com.astraedus.nudge.ui.screens.home.TopBlockedApp
+import com.astraedus.nudge.ui.screens.config.FeatureOverride
+import com.astraedus.nudge.ui.screens.config.UnifiedAppConfigState
+import com.astraedus.nudge.ui.screens.home.ShortVideoBlocks
+import com.astraedus.nudge.ui.screens.home.ShortVideoState
 import com.astraedus.nudge.ui.screens.stats.charts.DayData
 import com.astraedus.nudge.ui.screens.stats.charts.TrendDay
 
@@ -86,6 +91,57 @@ internal object GalleryFixtures {
             )
         )
     }
+
+    /**
+     * The "Block short videos" card: Instagram with Reels blocked (and Explore not), YouTube with
+     * nothing blocked, TikTok with a Delay on its feed. Built by the production [ShortVideoBlocks],
+     * so the golden shows the rows and subtitles the app derives from these rules.
+     * [accessibilityWorking] false adds the "Nudge can't see Reels yet" notice.
+     */
+    fun shortVideos(accessibilityWorking: Boolean = true): ShortVideoState {
+        val instagram = "com.instagram.android"
+        val tiktok = "com.zhiliaoapp.musically"
+        val rules = listOf(
+            BlockRule(id = 1, packageName = instagram, mode = BlockMode.NONE.name, showCounter = false, createdAt = 0),
+            BlockRule(
+                id = 2,
+                packageName = instagram,
+                mode = BlockMode.HARD_BLOCK.name,
+                inAppFeatures = "REELS",
+                createdAt = 0
+            ),
+            BlockRule(
+                id = 3,
+                packageName = tiktok,
+                mode = BlockMode.DELAY.name,
+                inAppFeatures = "TIKTOK_FEED",
+                createdAt = 0
+            )
+        )
+        return ShortVideoState(
+            loaded = true,
+            rows = ShortVideoBlocks.rowsFor(
+                labels = mapOf(
+                    instagram to "Instagram",
+                    "com.google.android.youtube" to "YouTube",
+                    tiktok to "TikTok"
+                ),
+                rules = rules
+            ),
+            accessibilityWorking = accessibilityWorking
+        )
+    }
+
+    /** The app config screen for Instagram with only Reels blocked: whole-app blocking is off. */
+    fun appConfig(): UnifiedAppConfigState = UnifiedAppConfigState(
+        packageName = BLOCKED_PACKAGE,
+        appName = BLOCKED_LABEL,
+        defaultMode = BlockMode.NONE,
+        availableFeatures = UnifiedAppConfigState.FEATURES_BY_PACKAGE.getValue(BLOCKED_PACKAGE),
+        featureOverrides = mapOf("REELS" to FeatureOverride(mode = FeatureMode.BLOCK)),
+        isLoading = false,
+        hasExistingRules = true
+    )
 
     /** Nuke set up (a key exists) but idle, guarding four apps. */
     fun nukeSummary(): NukeSummary = NukeSummary(active = false, hasKey = true, appCount = 4)

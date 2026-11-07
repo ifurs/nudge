@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.astraedus.nudge.R
 import com.astraedus.nudge.data.db.entity.UsageEvent
 import com.astraedus.nudge.data.preferences.NudgePreferences
 import com.astraedus.nudge.data.repository.BlockRuleRepository
@@ -452,11 +453,12 @@ class HomeViewModel @Inject constructor(
                 // Nuke first, then Strict Mode: both locks guard this switch, and each is asked
                 // only once the one before it has been satisfied.
                 val nuke = nudgePreferences.nukeState.first()
+                val prompt = context.getString(R.string.home_prompt_turn_off_all)
                 nukeGate.run(
-                    prompt = "Turn off all blocking",
+                    prompt = prompt,
                     weaken = NukePolicy.masterToggleOffRequiresUnlock(nuke)
                 ) {
-                    strictModeGate.run(prompt = "Turn off all blocking") {
+                    strictModeGate.run(prompt = prompt) {
                         nudgePreferences.setGlobalEnabled(false)
                     }
                 }

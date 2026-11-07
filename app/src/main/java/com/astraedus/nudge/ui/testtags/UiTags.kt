@@ -22,4 +22,7 @@ object UiTags {
      * node at all with the tag on the Text).
      */
     const val WEEK_CARD = "nudge_week_card"
+
+    /** The Home "Block short videos" card (`ShortVideoCard`). */
+    const val SHORT_VIDEO_CARD = "nudge_short_video_card"
 }

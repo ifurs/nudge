@@ -1,5 +1,6 @@
 package com.astraedus.nudge.ui.screens.config
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -51,10 +52,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.astraedus.nudge.R
 import com.astraedus.nudge.domain.model.BlockMode
 import com.astraedus.nudge.ui.components.blockModeDescription
 import com.astraedus.nudge.domain.model.FeatureMode
@@ -89,10 +93,6 @@ fun UnifiedAppConfigScreen(
     val coveredBy by viewModel.coveredBy.collectAsStateWithLifecycle()
     val coveredByAllApps by viewModel.coveredByAllApps.collectAsStateWithLifecycle()
     val challenge by viewModel.challenge.collectAsStateWithLifecycle()
-    val context = LocalContext.current
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-    var showDayStartDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.isSaved) {
         if (state.isSaved) onNavigateBack()
@@ -104,6 +104,38 @@ fun UnifiedAppConfigScreen(
         onCancel = viewModel::cancelChallenge
     )
 
+    UnifiedAppConfigContent(
+        state = state,
+        coveredBy = coveredBy,
+        coveredByAllApps = coveredByAllApps,
+        actions = remember(viewModel) { viewModel.asActions() },
+        onNavigateBack = onNavigateBack,
+        onOpenGroup = onOpenGroup,
+        onOpenAllAppsRule = onOpenAllAppsRule
+    )
+}
+
+/**
+ * The app config screen drawn from plain state: no ViewModel, no flows. [UnifiedAppConfigScreen]
+ * collects and passes in; the screenshot gallery (`ui/gallery/`) renders this from fixture state.
+ */
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@Composable
+fun UnifiedAppConfigContent(
+    state: UnifiedAppConfigState,
+    coveredBy: List<CoveringGroup>,
+    coveredByAllApps: List<CoveringAllApps>,
+    actions: UnifiedAppConfigActions,
+    onNavigateBack: () -> Unit,
+    onOpenGroup: (Long) -> Unit,
+    onOpenAllAppsRule: (Long) -> Unit
+) {
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    var showDayStartDialog by remember { mutableStateOf(false) }
+    val grayscaleSetupMessage = stringResource(R.string.config_grayscale_setup)
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -112,12 +144,12 @@ fun UnifiedAppConfigScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.config_back))
                     }
                 },
                 actions = {
-                    TextButton(onClick = viewModel::save) {
-                        Text("Save")
+                    TextButton(onClick = actions::save) {
+                        Text(stringResource(R.string.config_save))
                     }
                 }
             )
@@ -141,13 +173,13 @@ fun UnifiedAppConfigScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "Enabled",
+                    stringResource(R.string.config_enabled),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Medium
                 )
                 Switch(
                     checked = state.enabled,
-                    onCheckedChange = viewModel::setEnabled
+                    onCheckedChange = actions::setEnabled
                 )
             }
 
@@ -160,10 +192,105 @@ fun UnifiedAppConfigScreen(
                 )
             }
 
-            HorizontalDivider()
+            // ═══ FEATURE BLOCKS ═══
+            // First, above "Always Active" and "Default Behavior": for Instagram, YouTube and
+            // TikTok this is the section most people came for ("keep the app, lose the Reels"),
+            // and it used to sit at the bottom of a screen-long form.
+            if (state.supportsFeatures) {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        SectionHeader(featureHeadline(state), modifier = Modifier.weight(1f, fill = false))
+                        InfoButton(stringResource(R.string.config_feature_rules_info))
+                    }
+
+                    // The whole-app block is set further down and is on by default for a new app, so
+                    // a user who only picks Block here would still gate the entire app. Say so.
+                    if (state.blocksWholeApp) {
+                        Text(
+                            stringResource(R.string.config_feature_whole_app_hint, state.appName),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    state.availableFeatures.forEach { feature ->
+                        FeatureOverrideCard(
+                            featureName = featureTitle(feature),
+                            override = state.featureOverrides[feature.key] ?: FeatureOverride(),
+                            onUpdate = { actions.setFeatureOverride(feature.key, it) }
+                        )
+                    }
+
+                    // Tab Vanish -- covers the in-app tab (e.g. Instagram's Reels tab) while a rule
+                    // covering that feature resolves to a hard block, so the icon disappears rather
+                    // than merely refusing to open. Visibility asks the registry (supportsTabVanish),
+                    // never a hardcoded package check.
+                    if (state.supportsTabVanish) {
+                        val vanishLabel = state.vanishableFeatureLabel ?: REELS_LABEL
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    stringResource(R.string.config_tab_vanish_title, vanishLabel),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                Text(
+                                    stringResource(
+                                        R.string.config_tab_vanish_description,
+                                        vanishLabel,
+                                        state.appName
+                                    ),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                            Switch(
+                                checked = state.tabVanish,
+                                onCheckedChange = actions::setTabVanish
+                            )
+                        }
+                    }
+
+                    // Following steer -- experimental, default off. Opens Instagram's Following feed
+                    // instead of Home. Visibility asks the registry (supportsFollowingSteer).
+                    if (state.supportsFollowingSteer) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    stringResource(R.string.config_following_title),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                Text(
+                                    stringResource(R.string.config_following_description),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                            Switch(
+                                checked = state.followingSteer,
+                                onCheckedChange = actions::setFollowingSteer
+                            )
+                        }
+                    }
+                }
+
+                HorizontalDivider()
+            }
+
+            if (!state.supportsFeatures) HorizontalDivider()
 
             // ═══ ALWAYS ACTIVE ═══
-            SectionHeader("Always Active")
+            SectionHeader(stringResource(R.string.config_section_always_active))
 
             // Daily Time Limit
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -177,38 +304,34 @@ fun UnifiedAppConfigScreen(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
-                            "Daily Time Limit",
+                            stringResource(R.string.config_daily_limit),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Medium
                         )
                         InfoButton(
-                            "Set a daily usage budget for this app.\n\n" +
-                            "Once you've used the app for this many minutes today, it switches to a hard block for the rest of the day. " +
-                            "The block lands as soon as the budget runs out, even if you're still inside the app." +
                             // Honest about the one direction that does not work rather than letting
                             // the budget silently never count web time. The reverse DOES work and is
                             // worth saying: spending the budget in the app closes the website too.
-                            if (state.webDomainEnabled) {
-                                "\n\nThis budget counts time in the app only. Once it runs out the " +
-                                    "websites below are hard-blocked as well, but time spent on " +
-                                    "them does not yet count towards it -- use Auto-kick's time " +
-                                    "trigger to limit the websites."
-                            } else {
-                                ""
-                            }
+                            stringResource(
+                                if (state.webDomainEnabled) {
+                                    R.string.config_daily_limit_info_web
+                                } else {
+                                    R.string.config_daily_limit_info
+                                }
+                            )
                         )
                     }
                     Switch(
                         checked = state.dailyLimitEnabled,
-                        onCheckedChange = viewModel::setDailyLimitEnabled
+                        onCheckedChange = actions::setDailyLimitEnabled
                     )
                 }
 
                 if (state.dailyLimitEnabled) {
                     DailyLimitChips(
                         minutes = state.dailyLimitMinutes,
-                        onSelect = viewModel::setDailyLimitMinutes,
-                        customDialogTitle = "Custom Daily Limit"
+                        onSelect = actions::setDailyLimitMinutes,
+                        customDialogTitle = stringResource(R.string.config_daily_limit_custom)
                     )
 
                     // Show time remaining sub-toggle
@@ -222,17 +345,14 @@ fun UnifiedAppConfigScreen(
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             Text(
-                                "Show time remaining",
+                                stringResource(R.string.config_show_time_remaining),
                                 style = MaterialTheme.typography.bodyMedium
                             )
-                            InfoButton(
-                                "Displays remaining daily time as a floating overlay.\n\n" +
-                                "Changes color as time runs out: green (>50%), orange (25-50%), red (<25%)."
-                            )
+                            InfoButton(stringResource(R.string.config_show_time_remaining_info))
                         }
                         Switch(
                             checked = state.showTimeRemaining,
-                            onCheckedChange = viewModel::setShowTimeRemaining
+                            onCheckedChange = actions::setShowTimeRemaining
                         )
                     }
                 }
@@ -249,20 +369,15 @@ fun UnifiedAppConfigScreen(
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
-                        "Interaction counter",
+                        stringResource(R.string.config_counter),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Medium
                     )
-                    InfoButton(
-                        "Shows a floating counter while you use this app.\n\n" +
-                        "For YouTube/Instagram/TikTok: counts Reels or Shorts scrolled.\n" +
-                        "For other apps: counts screen taps.\n\n" +
-                        "Turns orange at 10, deep orange at 20, red at 30."
-                    )
+                    InfoButton(stringResource(R.string.config_counter_info))
                 }
                 Switch(
                     checked = state.showCounter,
-                    onCheckedChange = viewModel::setShowCounter
+                    onCheckedChange = actions::setShowCounter
                 )
             }
 
@@ -278,27 +393,24 @@ fun UnifiedAppConfigScreen(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
-                            "Grayscale",
+                            stringResource(R.string.config_grayscale),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Medium
                         )
-                        InfoButton(
-                            "Makes your screen black-and-white while this app is open.\n\n" +
-                            "Removes the color reward that makes scrolling engaging.\n\n" +
-                            "Requires one-time ADB setup -- check Settings for the guide."
-                        )
+                        InfoButton(stringResource(R.string.config_grayscale_info))
                     }
                     Text(
                         // Honest about the limitation rather than promising a setting that
                         // silently does nothing: grayscale rides inside a BlockDecision.Block, so
                         // with the app itself unblocked only a feature override can trigger it.
                         // See BlockMode.NONE.
-                        if (state.blocksWholeApp) {
-                            "Requires ADB permission setup"
-                        } else {
-                            "Requires ADB permission setup. With the whole app unblocked, this " +
-                                "only applies while a blocked feature below is on screen."
-                        },
+                        stringResource(
+                            if (state.blocksWholeApp) {
+                                R.string.config_grayscale_hint
+                            } else {
+                                R.string.config_grayscale_hint_features
+                            }
+                        ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -308,12 +420,10 @@ fun UnifiedAppConfigScreen(
                     onCheckedChange = { enabled ->
                         if (enabled && !hasGrayscalePermission(context)) {
                             scope.launch {
-                                snackbarHostState.showSnackbar(
-                                    "Grayscale requires setup -- check Settings"
-                                )
+                                snackbarHostState.showSnackbar(grayscaleSetupMessage)
                             }
                         } else {
-                            viewModel.setGrayscale(enabled)
+                            actions.setGrayscale(enabled)
                         }
                     }
                 )
@@ -331,37 +441,31 @@ fun UnifiedAppConfigScreen(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
-                            "Block on web too",
+                            stringResource(R.string.config_web_title),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Medium
                         )
-                        InfoButton(
-                            "Also blocks this app's website in the browser.\n\n" +
-                            "Works even with \"Block the whole app\" off — the app opens " +
-                            "normally while the website is still blocked, with the mode you " +
-                            "pick here.\n\n" +
-                            "Currently supports Chrome only."
-                        )
+                        InfoButton(stringResource(R.string.config_web_info))
                     }
                     Switch(
                         checked = state.webDomainEnabled,
-                        onCheckedChange = viewModel::setWebDomainEnabled
+                        onCheckedChange = actions::setWebDomainEnabled
                     )
                 }
 
                 if (state.webDomainEnabled) {
                     OutlinedTextField(
                         value = state.webDomains,
-                        onValueChange = viewModel::setWebDomains,
-                        label = { Text("Domains (comma-separated)") },
-                        placeholder = { Text("instagram.com, www.instagram.com") },
+                        onValueChange = actions::setWebDomains,
+                        label = { Text(stringResource(R.string.config_web_domains_label)) },
+                        placeholder = { Text(stringResource(R.string.config_web_domains_placeholder)) },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = false,
                         maxLines = 3,
                         textStyle = MaterialTheme.typography.bodySmall
                     )
                     Text(
-                        "Subdomains like www. and m. are matched automatically",
+                        stringResource(R.string.config_web_subdomains),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -372,23 +476,26 @@ fun UnifiedAppConfigScreen(
                     // silently enforcing nothing (which is what used to happen).
                     if (state.blocksWholeApp) {
                         Text(
-                            "Websites use the same block mode as the app.",
+                            stringResource(R.string.config_web_same_mode),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     } else {
                         Text(
-                            "Website block mode",
+                            stringResource(R.string.config_web_mode),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Medium
                         )
                         BlockModeSegmentedRow(
                             selected = state.webBlockMode,
-                            onSelect = viewModel::setWebBlockMode
+                            onSelect = actions::setWebBlockMode
                         )
                         Text(
-                            "${state.appName} opens normally; these websites are still blocked. " +
-                                blockModeDescription(state.webBlockMode, manyApps = false),
+                            stringResource(
+                                R.string.config_web_opens_normally,
+                                state.appName,
+                                blockModeDescription(state.webBlockMode, manyApps = false)
+                            ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -403,8 +510,8 @@ fun UnifiedAppConfigScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                SectionHeader("Default Behavior")
-                InfoButton("These settings apply whenever no scheduled override is active.")
+                SectionHeader(stringResource(R.string.config_section_default))
+                InfoButton(stringResource(R.string.config_section_default_info))
             }
 
             // Whether the app itself is gated at all. Off => the app-level rule is BlockMode.NONE,
@@ -416,14 +523,14 @@ fun UnifiedAppConfigScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("Block the whole app", style = MaterialTheme.typography.bodyLarge)
+                    Text(stringResource(R.string.config_block_whole_app), style = MaterialTheme.typography.bodyLarge)
                     Text(
                         if (state.blocksWholeApp) {
-                            "Opening ${state.appName} triggers the block below."
+                            stringResource(R.string.config_whole_app_on, state.appName)
                         } else if (state.supportsFeatures) {
-                            "${state.appName} opens normally. Only the features you turn on below are blocked."
+                            stringResource(R.string.config_whole_app_off_features, state.appName)
                         } else {
-                            "${state.appName} opens normally. Any daily limit below still applies."
+                            stringResource(R.string.config_whole_app_off, state.appName)
                         },
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -431,7 +538,7 @@ fun UnifiedAppConfigScreen(
                 }
                 Switch(
                     checked = state.blocksWholeApp,
-                    onCheckedChange = { viewModel.setBlocksWholeApp(it) }
+                    onCheckedChange = { actions.setBlocksWholeApp(it) }
                 )
             }
 
@@ -440,7 +547,7 @@ fun UnifiedAppConfigScreen(
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     BlockModeSegmentedRow(
                         selected = state.defaultMode,
-                        onSelect = viewModel::setDefaultMode,
+                        onSelect = actions::setDefaultMode,
                         compact = true
                     )
 
@@ -459,14 +566,17 @@ fun UnifiedAppConfigScreen(
             if (state.showDelayDuration) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        state.delayDurationLabel,
+                        stringResource(state.delayDurationLabelRes),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Medium
                     )
                     WaitTimeChips(
                         seconds = state.defaultDelaySeconds,
-                        onSelect = viewModel::setDefaultDelaySeconds,
-                        customDialogTitle = "Custom ${state.delayDurationLabel}"
+                        onSelect = actions::setDefaultDelaySeconds,
+                        customDialogTitle = stringResource(
+                            R.string.config_custom_duration_title,
+                            stringResource(state.delayDurationLabelRes)
+                        )
                     )
                 }
             }
@@ -486,20 +596,15 @@ fun UnifiedAppConfigScreen(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
-                            "Keep the pass on short trips",
+                            stringResource(R.string.config_keep_pass),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Medium
                         )
-                        InfoButton(
-                            "Once you have waited, going to the home screen or switching apps for a " +
-                                "moment keeps your pass. Come back within 2 minutes and the app opens " +
-                                "straight away.\n\n" +
-                                "Off: going to the home screen ends the pass, and the next open waits again."
-                        )
+                        InfoButton(stringResource(R.string.config_keep_pass_info))
                     }
                     Switch(
                         checked = state.keepPassOnShortTrips,
-                        onCheckedChange = viewModel::setKeepPassOnShortTrips
+                        onCheckedChange = actions::setKeepPassOnShortTrips
                     )
                 }
             }
@@ -516,29 +621,26 @@ fun UnifiedAppConfigScreen(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
-                            "Auto-kick",
+                            stringResource(R.string.config_auto_kick),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Medium
                         )
+                        // The two triggers differ on the web: the timer measures browser time on
+                        // the blocked site, while scrolls/taps arrive carrying the browser's
+                        // package, not the site's, so they cannot be attributed to it.
                         InfoButton(
-                            "Sends you to the home screen after a set number of scrolls/taps, or after a set amount " +
-                            "of time in the app -- whichever fires first.\n\n" +
-                            "The counter and timer reset when you re-open the app. This is the nuclear option for stopping infinite scroll." +
-                            // The two triggers differ on the web: the timer measures browser time on
-                            // the blocked site, while scrolls/taps arrive carrying the browser's
-                            // package, not the site's, so they cannot be attributed to it.
-                            if (state.webDomainEnabled) {
-                                "\n\nThe time trigger also covers the websites below -- each site " +
-                                    "gets its own timer and its own cooldown. The interaction " +
-                                    "trigger is app-only."
-                            } else {
-                                ""
-                            }
+                            stringResource(
+                                if (state.webDomainEnabled) {
+                                    R.string.config_auto_kick_info_web
+                                } else {
+                                    R.string.config_auto_kick_info
+                                }
+                            )
                         )
                     }
                     Switch(
                         checked = state.defaultAutoKickEnabled,
-                        onCheckedChange = viewModel::setDefaultAutoKickEnabled
+                        onCheckedChange = actions::setDefaultAutoKickEnabled
                     )
                 }
 
@@ -548,7 +650,7 @@ fun UnifiedAppConfigScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
-                            "Whichever trigger fires first sends you to the home screen.",
+                            stringResource(R.string.config_auto_kick_either),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -559,26 +661,30 @@ fun UnifiedAppConfigScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                "After N interactions",
+                                stringResource(R.string.config_auto_kick_by_interactions),
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Medium
                             )
                             Switch(
                                 checked = state.defaultAutoKickByInteractions,
-                                onCheckedChange = viewModel::setDefaultAutoKickByInteractions
+                                onCheckedChange = actions::setDefaultAutoKickByInteractions
                             )
                         }
 
                         if (state.defaultAutoKickByInteractions) {
                             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                 Text(
-                                    "After ${state.defaultAutoKickAfter} interactions",
+                                    pluralStringResource(
+                                    R.plurals.config_auto_kick_after_interactions,
+                                    state.defaultAutoKickAfter,
+                                    state.defaultAutoKickAfter
+                                ),
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                                 Slider(
                                     value = state.defaultAutoKickAfter.toFloat(),
-                                    onValueChange = { viewModel.setDefaultAutoKickAfter(it.toInt()) },
-                                    valueRange = 5f..100f,
+                                    onValueChange = { actions.setDefaultAutoKickAfter(it.toInt()) },
+                                    valueRange = AUTO_KICK_MIN.toFloat()..AUTO_KICK_MAX.toFloat(),
                                     steps = 18,
                                     modifier = Modifier.fillMaxWidth()
                                 )
@@ -586,24 +692,24 @@ fun UnifiedAppConfigScreen(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
-                                    Text("5", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                    Text("100", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text(AUTO_KICK_MIN.toString(), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text(AUTO_KICK_MAX.toString(), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 }
                             }
                         }
 
                         MinutesField(
                             value = state.defaultAutoKickAfterMinutesText,
-                            onValueChange = viewModel::setDefaultAutoKickAfterMinutesText,
-                            labelText = "Or after this long in the app",
-                            supportingText = "Counts foreground time in one session. Leave blank for off."
+                            onValueChange = actions::setDefaultAutoKickAfterMinutesText,
+                            labelText = stringResource(R.string.config_auto_kick_minutes_label),
+                            supportingText = stringResource(R.string.config_auto_kick_minutes_hint)
                         )
 
                         MinutesField(
                             value = state.defaultAutoKickCooldownMinutesText,
-                            onValueChange = viewModel::setDefaultAutoKickCooldownMinutesText,
-                            labelText = "Cooldown",
-                            supportingText = "Wait this long before you can re-open the app after an auto-close."
+                            onValueChange = actions::setDefaultAutoKickCooldownMinutesText,
+                            labelText = stringResource(R.string.config_cooldown),
+                            supportingText = stringResource(R.string.config_cooldown_hint)
                         )
                     }
                 }
@@ -621,88 +727,10 @@ fun UnifiedAppConfigScreen(
                     )
                 } else null,
                 websitesConfigured = state.webDomainEnabled,
-                onEnabledChange = viewModel::setReminderEnabled,
-                onMinutesTextChange = viewModel::setRemindAfterMinutesText,
+                onEnabledChange = actions::setReminderEnabled,
+                onMinutesTextChange = actions::setRemindAfterMinutesText,
                 info = { InfoButton(it) }
             )
-
-            // ═══ FEATURE OVERRIDES ═══
-            if (state.supportsFeatures) {
-                HorizontalDivider()
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    SectionHeader("Feature Rules")
-                    InfoButton("Override behavior for specific app features. 'Inherit' uses the default behavior above.")
-                }
-
-                state.availableFeatures.forEach { feature ->
-                    FeatureOverrideCard(
-                        featureName = feature.displayName,
-                        override = state.featureOverrides[feature.key] ?: FeatureOverride(),
-                        onUpdate = { viewModel.setFeatureOverride(feature.key, it) }
-                    )
-                }
-
-                // Tab Vanish -- covers the in-app tab (e.g. Instagram's Reels tab) while a rule
-                // covering that feature resolves to a hard block, so the icon disappears rather
-                // than merely refusing to open. Visibility asks the registry (supportsTabVanish),
-                // never a hardcoded package check.
-                if (state.supportsTabVanish) {
-                    val vanishLabel = state.vanishableFeatureLabel ?: "Reels"
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("Hide the $vanishLabel tab", style = MaterialTheme.typography.bodyLarge)
-                            Text(
-                                "While $vanishLabel is blocked, Nudge covers the $vanishLabel tab in " +
-                                    "Instagram's bottom bar, so the icon is not there and tapping it does " +
-                                    "nothing. The rest of Instagram works as normal.",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                        Switch(
-                            checked = state.tabVanish,
-                            onCheckedChange = viewModel::setTabVanish
-                        )
-                    }
-                }
-
-                // Following steer -- experimental, default off. Opens Instagram's Following feed
-                // instead of Home. Visibility asks the registry (supportsFollowingSteer).
-                if (state.supportsFollowingSteer) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                "Open to Following instead of Home",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            Text(
-                                "Experimental. When you open Instagram's home feed, Nudge switches it to " +
-                                    "Following, so you see posts from people you follow rather than " +
-                                    "suggested ones. You can switch back at any time. If Instagram changes " +
-                                    "its layout this quietly stops working.",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                        Switch(
-                            checked = state.followingSteer,
-                            onCheckedChange = viewModel::setFollowingSteer
-                        )
-                    }
-                }
-            }
 
             HorizontalDivider()
 
@@ -711,8 +739,8 @@ fun UnifiedAppConfigScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                SectionHeader("Scheduled Override")
-                InfoButton("Apply different settings during specific times. Outside this schedule, the default behavior above is used.")
+                SectionHeader(stringResource(R.string.config_section_schedule))
+                InfoButton(stringResource(R.string.config_section_schedule_info))
             }
 
             Row(
@@ -721,26 +749,26 @@ fun UnifiedAppConfigScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "Enable schedule",
+                    stringResource(R.string.config_schedule_enable),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Medium
                 )
                 Switch(
                     checked = state.scheduledOverrideEnabled,
-                    onCheckedChange = viewModel::setScheduledOverrideEnabled
+                    onCheckedChange = actions::setScheduledOverrideEnabled
                 )
             }
 
             if (state.scheduledOverrideEnabled) {
                 val scheduleKinds = listOf(
-                    "Days and times" to false,
-                    "After first unlock" to true
+                    stringResource(R.string.config_schedule_days_times) to false,
+                    stringResource(R.string.config_schedule_first_unlock) to true
                 )
                 SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
                     scheduleKinds.forEachIndexed { index, (label, isFirstUnlock) ->
                         SegmentedButton(
                             selected = state.scheduledOverrideFirstUnlock == isFirstUnlock,
-                            onClick = { viewModel.setScheduledOverrideFirstUnlock(isFirstUnlock) },
+                            onClick = { actions.setScheduledOverrideFirstUnlock(isFirstUnlock) },
                             shape = SegmentedButtonDefaults.itemShape(
                                 index = index,
                                 count = scheduleKinds.size
@@ -754,50 +782,53 @@ fun UnifiedAppConfigScreen(
                 if (!state.scheduledOverrideFirstUnlock) {
                     ScheduleSection(
                         days = state.scheduleDays,
-                        onDaysChange = viewModel::setScheduleDays,
+                        onDaysChange = actions::setScheduleDays,
                         startHour = state.scheduleStartHour,
                         startMinute = state.scheduleStartMinute,
-                        onStartTimeChange = viewModel::setScheduleStartTime,
+                        onStartTimeChange = actions::setScheduleStartTime,
                         endHour = state.scheduleEndHour,
                         endMinute = state.scheduleEndMinute,
-                        onEndTimeChange = viewModel::setScheduleEndTime,
+                        onEndTimeChange = actions::setScheduleEndTime,
                         mode = state.scheduledMode,
-                        onModeChange = viewModel::setScheduledMode,
+                        onModeChange = actions::setScheduledMode,
                         waitSeconds = state.scheduledDelaySeconds,
-                        onWaitSecondsChange = viewModel::setScheduledDelaySeconds
+                        onWaitSecondsChange = actions::setScheduledDelaySeconds
                     ) {
                         ScheduledFeatureOverridesSection(
                             state = state,
-                            onUpdate = viewModel::setScheduledFeatureOverride
+                            onUpdate = actions::setScheduledFeatureOverride
                         )
                     }
                 } else {
                     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                         BlockModeSegmentedRow(
                             selected = state.scheduledMode,
-                            onSelect = viewModel::setScheduledMode
+                            onSelect = actions::setScheduledMode
                         )
                         if (state.scheduledMode != BlockMode.HARD_BLOCK) {
                             WaitTimeChips(
                                 seconds = state.scheduledDelaySeconds,
-                                onSelect = viewModel::setScheduledDelaySeconds,
-                                customDialogTitle = "Custom ${state.delayDurationLabel}"
+                                onSelect = actions::setScheduledDelaySeconds,
+                                customDialogTitle = stringResource(
+                            R.string.config_custom_duration_title,
+                            stringResource(state.delayDurationLabelRes)
+                        )
                             )
                         }
                         // The same layout the group and All apps editors use, labels to the
                         // left: one first-unlock row for all three editors (review should-fix 3).
                         FirstUnlockFields(
                             days = state.scheduleDays,
-                            onDaysChange = viewModel::setScheduleDays,
+                            onDaysChange = actions::setScheduleDays,
                             firstUnlockMinutes = state.firstUnlockMinutes,
-                            onFirstUnlockMinutesChange = viewModel::setFirstUnlockMinutes,
+                            onFirstUnlockMinutesChange = actions::setFirstUnlockMinutes,
                             dayStartMinute = state.dayStartMinute,
                             onDayStartClick = { showDayStartDialog = true },
                             startsAtNextUnlock = state.startsAtNextUnlock
                         )
                         ScheduledFeatureOverridesSection(
                             state = state,
-                            onUpdate = viewModel::setScheduledFeatureOverride
+                            onUpdate = actions::setScheduledFeatureOverride
                         )
                     }
                 }
@@ -806,7 +837,7 @@ fun UnifiedAppConfigScreen(
             if (showDayStartDialog) {
                 DayStartDialog(
                     minute = state.dayStartMinute,
-                    onPick = viewModel::setDayStartMinute,
+                    onPick = actions::setDayStartMinute,
                     onDismiss = { showDayStartDialog = false }
                 )
             }
@@ -815,13 +846,13 @@ fun UnifiedAppConfigScreen(
             if (state.hasExistingRules) {
                 HorizontalDivider()
                 OutlinedButton(
-                    onClick = viewModel::showDeleteConfirmation,
+                    onClick = actions::showDeleteConfirmation,
                     colors = ButtonDefaults.outlinedButtonColors(
                         contentColor = MaterialTheme.colorScheme.error
                     ),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Remove All Rules")
+                    Text(stringResource(R.string.config_remove_all))
                 }
             }
 
@@ -832,27 +863,29 @@ fun UnifiedAppConfigScreen(
     // Delete confirmation dialog
     if (state.showDeleteConfirmation) {
         AlertDialog(
-            onDismissRequest = viewModel::dismissDeleteConfirmation,
-            title = { Text("Remove all rules?") },
+            onDismissRequest = actions::dismissDeleteConfirmation,
+            title = { Text(stringResource(R.string.config_remove_all_title)) },
             text = {
                 Text(
-                    "This will delete all rules for ${state.appName.ifEmpty { state.packageName }}. " +
-                    "The app will no longer be blocked."
+                    stringResource(
+                        R.string.config_remove_all_body,
+                        state.appName.ifEmpty { state.packageName }
+                    )
                 )
             },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        viewModel.dismissDeleteConfirmation()
-                        viewModel.deleteAllRules()
+                        actions.dismissDeleteConfirmation()
+                        actions.deleteAllRules()
                     }
                 ) {
-                    Text("Remove", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.config_remove), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
-                TextButton(onClick = viewModel::dismissDeleteConfirmation) {
-                    Text("Cancel")
+                TextButton(onClick = actions::dismissDeleteConfirmation) {
+                    Text(stringResource(R.string.config_cancel))
                 }
             }
         )
@@ -871,13 +904,13 @@ private fun ScheduledFeatureOverridesSection(
     if (!state.supportsFeatures) return
     Spacer(Modifier.height(8.dp))
     Text(
-        "Feature overrides during schedule",
+        stringResource(R.string.config_schedule_feature_overrides),
         style = MaterialTheme.typography.titleSmall,
         fontWeight = FontWeight.Medium
     )
     state.availableFeatures.forEach { feature ->
         FeatureOverrideCard(
-            featureName = feature.displayName,
+            featureName = featureTitle(feature),
             override = state.scheduledFeatureOverrides[feature.key] ?: FeatureOverride(),
             onUpdate = { onUpdate(feature.key, it) }
         )
@@ -887,11 +920,12 @@ private fun ScheduledFeatureOverridesSection(
 // ═══ Reusable composables ═══
 
 @Composable
-private fun SectionHeader(title: String) {
+private fun SectionHeader(title: String, modifier: Modifier = Modifier) {
     Text(
         title,
         style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.Medium
+        fontWeight = FontWeight.Medium,
+        modifier = modifier
     )
 }
 
@@ -926,7 +960,7 @@ private fun FeatureOverrideCard(
                         onClick = { onUpdate(override.copy(mode = mode)) },
                         label = {
                             Text(
-                                featureModeLabel(mode),
+                                stringResource(featureModeLabel(mode)),
                                 style = MaterialTheme.typography.bodySmall
                             )
                         }
@@ -948,7 +982,7 @@ private fun FeatureOverrideCard(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Auto-kick", style = MaterialTheme.typography.bodySmall)
+                    Text(stringResource(R.string.config_auto_kick), style = MaterialTheme.typography.bodySmall)
                     Switch(
                         checked = override.autoKickEnabled,
                         onCheckedChange = { onUpdate(override.copy(autoKickEnabled = it)) }
@@ -957,20 +991,24 @@ private fun FeatureOverrideCard(
 
                 if (override.autoKickEnabled) {
                     Text(
-                        "After ${override.autoKickAfter} scrolls",
+                        pluralStringResource(
+                            R.plurals.config_auto_kick_after_scrolls,
+                            override.autoKickAfter,
+                            override.autoKickAfter
+                        ),
                         style = MaterialTheme.typography.bodySmall
                     )
                     Slider(
                         value = override.autoKickAfter.toFloat(),
                         onValueChange = { onUpdate(override.copy(autoKickAfter = it.toInt())) },
-                        valueRange = 5f..100f,
+                        valueRange = AUTO_KICK_MIN.toFloat()..AUTO_KICK_MAX.toFloat(),
                         steps = 18,
                         modifier = Modifier.fillMaxWidth()
                     )
                     MinutesField(
                         value = override.autoKickCooldownMinutesText,
                         onValueChange = { onUpdate(override.copy(autoKickCooldownMinutesText = it)) },
-                        labelText = "Cooldown"
+                        labelText = stringResource(R.string.config_cooldown)
                     )
                 }
             }
@@ -983,13 +1021,47 @@ private fun FeatureOverrideCard(
  * [FeatureMode] carries [FeatureMode.INHERIT], which is not a block mode at all; the rest read the
  * same as the app-level picker on purpose.
  */
-private fun featureModeLabel(mode: FeatureMode): String = when (mode) {
-    FeatureMode.INHERIT -> "Inherit"
-    FeatureMode.BLOCK -> "Block"
-    FeatureMode.DELAY -> "Delay"
-    FeatureMode.HOLD -> "Hold"
-    FeatureMode.BREATHING -> "Breathing"
+@StringRes
+private fun featureModeLabel(mode: FeatureMode): Int = when (mode) {
+    FeatureMode.INHERIT -> R.string.config_mode_inherit
+    FeatureMode.BLOCK -> R.string.config_mode_block
+    FeatureMode.DELAY -> R.string.config_mode_delay
+    FeatureMode.HOLD -> R.string.config_mode_hold
+    FeatureMode.BREATHING -> R.string.config_mode_breathing
 }
+
+/**
+ * The name of an in-app feature for the user. Reels and Shorts are brand names and stay as they
+ * are; Explore and the TikTok feed are ordinary words and come from resources.
+ */
+@Composable
+private fun featureTitle(feature: FeatureInfo): String = when (feature.key) {
+    "EXPLORE" -> stringResource(R.string.config_feature_explore)
+    "TIKTOK_FEED" -> stringResource(R.string.config_feature_tiktok_feed)
+    else -> feature.displayName
+}
+
+/**
+ * The headline of the feature section: "Block only Reels, keep the rest of Instagram". It names the
+ * app's first feature (Reels for Instagram, Shorts for YouTube); TikTok's only one is its video feed.
+ */
+@Composable
+private fun featureHeadline(state: UnifiedAppConfigState): String {
+    val first = state.availableFeatures.first()
+    val app = state.appName.ifEmpty { state.packageName }
+    return if (first.key == "TIKTOK_FEED") {
+        stringResource(R.string.config_features_headline_feed, app)
+    } else {
+        stringResource(R.string.config_features_headline, featureTitle(first), app)
+    }
+}
+
+/** The label Tab Vanish falls back to when the registry names no feature; a brand name. */
+private const val REELS_LABEL = "Reels"
+
+/** The auto-kick interaction slider's range. */
+private const val AUTO_KICK_MIN = 5
+private const val AUTO_KICK_MAX = 100
 
 /**
  * "Also covered by" (spec 3.7): the groups that block this app as well, so "why is it blocked when
@@ -1004,7 +1076,7 @@ private fun AlsoCoveredBy(
 ) {
     Column {
         Text(
-            "Also covered by",
+            stringResource(R.string.config_also_covered_by),
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
