@@ -12,6 +12,7 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.astraedus.nudge.R
+import com.astraedus.nudge.ui.testtags.UiTags
 
 /**
  * The four places the bottom bar switches between. A destination is top-level when it is one of
@@ -25,12 +26,20 @@ enum class TopLevelDestination(
     val route: String,
     @StringRes val labelRes: Int,
     val icon: ImageVector,
-    val selectedIcon: ImageVector
+    val selectedIcon: ImageVector,
+    /** The device-QA handle of this tab's bar item ([UiTags]). */
+    val qaTag: String
 ) {
-    Home(Screen.Home.route, R.string.nav_home, Icons.Outlined.Home, Icons.Filled.Home),
-    Apps(Screen.Apps.route, R.string.nav_apps, Icons.Outlined.Apps, Icons.Filled.Apps),
-    Stats(Screen.Stats.route, R.string.nav_stats, Icons.Outlined.BarChart, Icons.Filled.BarChart),
-    Settings(Screen.Settings.route, R.string.nav_settings, Icons.Outlined.Settings, Icons.Filled.Settings);
+    Home(Screen.Home.route, R.string.nav_home, Icons.Outlined.Home, Icons.Filled.Home, UiTags.NAV_HOME),
+    Apps(Screen.Apps.route, R.string.nav_apps, Icons.Outlined.Apps, Icons.Filled.Apps, UiTags.NAV_APPS),
+    Stats(Screen.Stats.route, R.string.nav_stats, Icons.Outlined.BarChart, Icons.Filled.BarChart, UiTags.NAV_STATS),
+    Settings(
+        Screen.Settings.route,
+        R.string.nav_settings,
+        Icons.Outlined.Settings,
+        Icons.Filled.Settings,
+        UiTags.NAV_SETTINGS
+    );
 
     companion object {
         /** The destination whose route is [route], or null for a detail screen (or no route yet). */

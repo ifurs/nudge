@@ -25,4 +25,14 @@ object UiTags {
 
     /** The Home "Block short videos" card (`ShortVideoCard`). */
     const val SHORT_VIDEO_CARD = "nudge_short_video_card"
+
+    /**
+     * The bottom bar's tabs (`NudgeBottomBar`), on the item itself (the selectable node). The device
+     * scripts reach Manage Apps through [NAV_APPS]; the Home "Manage Apps" cards they used to tap
+     * are gone.
+     */
+    const val NAV_HOME = "nudge_nav_home"
+    const val NAV_APPS = "nudge_nav_apps"
+    const val NAV_STATS = "nudge_nav_stats"
+    const val NAV_SETTINGS = "nudge_nav_settings"
 }

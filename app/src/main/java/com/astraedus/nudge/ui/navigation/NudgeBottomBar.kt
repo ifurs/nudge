@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.Modifier
+import com.astraedus.nudge.ui.components.qaTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
@@ -84,6 +85,7 @@ private fun BottomBarItems(
                 NavigationBarItem(
                     selected = isSelected,
                     onClick = { onSelect(destination) },
+                    modifier = Modifier.qaTag(destination.qaTag),
                     icon = {
                         // The label below says it; a second description would be read twice.
                         Icon(

@@ -119,7 +119,9 @@ ui_tap_text() {
             FAKE_DIALOG=1; FAKE_FIELD="$FAKE_LIMIT" ;;
     Set)    (( FAKE_DIALOG )) || return 1; FAKE_LIMIT="$FAKE_FIELD"; FAKE_DIALOG=0 ;;
     Save)   FAKE_SAVED="$FAKE_LIMIT" ;;
-    *)      : ;;   # Manage Apps, Search apps..., Calculator, Value (minutes)
+    id:*)   FAKE_TAPPED="${FAKE_TAPPED:-} $1" ;;   # a UiTags handle (the bottom bar's Apps tab)
+    "Manage Apps") FAKE_TAPPED="${FAKE_TAPPED:-} $1" ;;
+    *)      : ;;   # Search apps..., Calculator, Value (minutes)
   esac
 }
 ash() {
@@ -139,6 +141,14 @@ check "a '1h 30m' custom limit: sets and saves 5"                              t
 check "480m (the maximum): sets and saves 1 (restore_daily_limit's value)"     test "$(limit_from 480 1)" = "rc=0 saved=1"
 check "a preset limit (2h: the chip says 'Custom'): sets and saves 5"          test "$(limit_from 120 5)" = "rc=0 saved=5"
 check "the 15m preset: sets and saves 1"                                       test "$(limit_from 15 1)"  = "rc=0 saved=1"
+
+# Manage Apps is reached through the bottom bar's Apps tab (found by its UiTags handle, read from
+# the app's own source), never through a Home card: the "Manage Apps" cards no longer exist.
+run_qa "$OUT" FAKE_LIMIT=7 -- ". '$TMP/fake-ui.sh'; set_daily_limit_minutes 5; echo \"tapped:\$FAKE_TAPPED\"" || true
+tapped="$(tail -1 "$OUT")"
+check "set_daily_limit_minutes opens Manage Apps from the Apps tab, by tag" \
+  test "$tapped" = "tapped: id:$(sed -n 's/.*const val NAV_APPS = "\([^"]*\)".*/\1/p' "$ROOT/app/src/main/java/com/astraedus/nudge/ui/testtags/UiTags.kt")"
+check "and the script never taps a Home 'Manage Apps' card" bash -c "! grep -q 'ui_tap_text \"Manage Apps\"' '$QA'"
 
 # ─── 3. (c) the chunks cover `all`, exactly and in order ──────────────────────
 echo "group1 / group2 / group3:"

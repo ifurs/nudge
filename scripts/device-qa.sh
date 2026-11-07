@@ -808,7 +808,8 @@ write_locator() {
   cat >"${WORK}/locate.py" <<'PYEOF'
 """Print "<cx> <cy>" for the first node whose text or content-desc EXACTLY equals the
 needle, else nothing. Exact match on purpose: "Delay" must not select "Delay Duration",
-and "5s" must not select "15s"."""
+and "5s" must not select "15s". A needle of the form "id:<tag>" matches the node's
+resource-id instead (the UiTags handles, which survive a reworded or translated label)."""
 import re
 import sys
 
@@ -818,7 +819,10 @@ for attrs in re.findall(r"<node([^>]*)>", xml):
     def attr(name):
         m = re.search(r'\b%s="([^"]*)"' % name, attrs)
         return m.group(1) if m else ""
-    if needle not in (attr("text"), attr("content-desc")):
+    if needle.startswith("id:"):
+        if attr("resource-id") != needle[3:]:
+            continue
+    elif needle not in (attr("text"), attr("content-desc")):
         continue
     b = re.match(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", attr("bounds") or "")
     if not b:
@@ -866,6 +870,27 @@ ui_tap_text() { # text [timeout_secs] — locate and tap in ONE pass, retrying u
   done
   fail "cannot tap '${needle}': not on screen within ${timeout}s"
   return 1
+}
+
+# The value of a UiTags constant, read from the source the app is built from, so the harness never
+# retypes a tag (it would silently stop finding the control the day one is renamed).
+ui_tag() { # CONSTANT_NAME, e.g. NAV_APPS
+  local v
+  v="$(sed -n "s/.*const val $1 = \"\([^\"]*\)\".*/\1/p" \
+    "${REPO_ROOT}/app/src/main/java/com/astraedus/nudge/ui/testtags/UiTags.kt" | head -1)"
+  [[ -n "$v" ]] || { fail "UiTags.$1 not found"; return 1; }
+  printf '%s' "$v"
+}
+
+# Opens Manage Apps from the dashboard through the bottom bar's "Apps" tab. The Home "Manage Apps"
+# card this used to tap is gone (the bar replaced it), and the tab is found by its tag, not its
+# label, so a translated or reworded label does not break the gate.
+open_manage_apps() {
+  local tag
+  tag="$(ui_tag NAV_APPS)" || return 1
+  nudge_route_home
+  ui_tap_text "id:${tag}" 10 || return 1
+  ui_wait_text "Search apps and groups" 10 || { fail "the app list did not open"; return 1; }
 }
 
 go_home() {
@@ -916,7 +941,7 @@ nudge_route_home() {
   # The predicate is "IS A BACK CONTROL PRESENT", not "can I see some dashboard content". Every
   # sub-screen's TopAppBar has `navigationIcon = IconButton { Icon(ArrowBack, "Back") }`; the
   # dashboard's (HomeScreen.kt) has no navigationIcon at all. Probing for dashboard CONTENT
-  # instead is the bug this comment exists to prevent: "Quick Actions" and "Manage Apps" are
+  # instead is the bug this comment exists to prevent: "Quick Actions" and "Manage Apps" were
   # both BELOW THE FOLD, so on a freshly-cleared dashboard neither was found, four Back presses
   # fired, and the app was closed — which failed walkaway-count and daily-limit-refresh in the
   # first full run with "could not read the week summary".
@@ -1324,10 +1349,7 @@ case_daily_limit_refresh() {
   # Raise the limit 1m -> 2h. Chip taps only: the "Daily Time Limit" switch is already ON
   # (the fixture set a limit), so its chips are on screen and no Compose Switch — which has
   # no text node of its own and cannot be reached by an element selector — is needed.
-  nudge_route_home
-  ui_wait_text "Manage Apps" 5 || scroll_to_text "Manage Apps" 6
-  ui_tap_text "Manage Apps" || return 1
-  ui_wait_text "Search apps and groups" 10 || { fail "the app list did not open"; return 1; }
+  open_manage_apps || return 1
   ui_tap_text "Search apps and groups" || return 1
   # A PREFIX, not the full name: the search field's own text is a node too, so typing
   # "Calculator" makes the field itself the first match for the app name.
@@ -1389,9 +1411,7 @@ case_daily_limit_refresh() {
 # that screen moves.
 set_daily_limit_minutes() { # minutes
   local minutes="$1" i
-  nudge_route_home
-  ui_wait_text "Manage Apps" 5 || scroll_to_text "Manage Apps" 6
-  ui_tap_text "Manage Apps" 10 || return 1
+  open_manage_apps || return 1
   ui_tap_text "Search apps and groups" 10 || return 1
   ash input text "Calcul" >/dev/null 2>&1
   sleep 2
