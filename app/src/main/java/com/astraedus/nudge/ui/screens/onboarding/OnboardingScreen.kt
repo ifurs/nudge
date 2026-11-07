@@ -293,7 +293,7 @@ private fun WhatToBlockPage(
             state = state,
             onToggle = onToggle,
             // The app's config screen is not reachable from setup; Home offers it later.
-            onMoreOptions = null,
+            onOpenApp = null,
             onEnableAccessibility = { showAccessibilityDisclosure = true }
         )
         Spacer(Modifier.height(16.dp))

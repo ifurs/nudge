@@ -93,7 +93,8 @@ class StatsInsightEntryContractTest {
      */
     @Test
     fun `each insight callback is wired to exactly one entry point`() {
-        val text = source(statsScreen)
+        // StatsContent is the layout; StatsScreen above it only passes the callbacks through.
+        val text = source(statsScreen).substringAfter("fun StatsContent(")
 
         callbacks.forEach { name ->
             assertEquals(

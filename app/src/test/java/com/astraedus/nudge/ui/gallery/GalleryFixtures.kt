@@ -1,7 +1,7 @@
 package com.astraedus.nudge.ui.gallery
 
-import com.astraedus.nudge.testing.XmlTextResolver
 import com.astraedus.nudge.ui.text.DurationText
+import com.astraedus.nudge.testing.XmlTextResolver
 import com.astraedus.nudge.domain.text.UiText
 import com.astraedus.nudge.R
 import android.graphics.drawable.Drawable
@@ -24,6 +24,8 @@ import com.astraedus.nudge.ui.screens.config.FeatureOverride
 import com.astraedus.nudge.ui.screens.config.UnifiedAppConfigState
 import com.astraedus.nudge.ui.screens.home.ShortVideoBlocks
 import com.astraedus.nudge.ui.screens.home.ShortVideoState
+import com.astraedus.nudge.ui.screens.stats.AppUsageStat
+import com.astraedus.nudge.ui.screens.stats.StatsUiState
 import com.astraedus.nudge.ui.screens.stats.charts.DayData
 import com.astraedus.nudge.ui.screens.stats.charts.TrendDay
 
@@ -209,5 +211,37 @@ internal object GalleryFixtures {
             }
         }
         return AppInfo(packageName = pkg, appName = name, icon = icon, category = category)
+    }
+
+    /** Stats on a typical day: the week's bars, the nudge trend, a busy afternoon, four apps. */
+    fun stats(): StatsUiState {
+        val home = home()
+        val apps = listOf(
+            Triple(BLOCKED_PACKAGE, BLOCKED_LABEL, 62 * MINUTE_MS),
+            Triple("com.google.android.youtube", "YouTube", 41 * MINUTE_MS),
+            Triple("com.reddit.frontpage", "Reddit", 18 * MINUTE_MS),
+            Triple("com.spotify.music", "Spotify", 9 * MINUTE_MS)
+        )
+        val top = apps.first().third
+        return StatsUiState(
+            totalFormatted = DurationText.of(apps.sumOf { it.third }),
+            appStats = apps.map { (pkg, label, ms) ->
+                AppUsageStat(pkg, label, ms, DurationText.of(ms), fraction = ms.toFloat() / top)
+            },
+            weeklyData = home.charts.weeklyScreenTime,
+            trendData = home.charts.weeklyTrend,
+            hourlyMs = List(24) { hour ->
+                when (hour) {
+                    in 8..10 -> 12 * MINUTE_MS
+                    in 12..13 -> 18 * MINUTE_MS
+                    in 17..22 -> 25 * MINUTE_MS
+                    else -> 2 * MINUTE_MS
+                }
+            },
+            streakDays = 4,
+            weekTotalFormatted = home.weekTotalFormatted,
+            selectedDayBlocked = 7,
+            selectedDayWalkedAway = 3
+        )
     }
 }

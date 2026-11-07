@@ -50,13 +50,12 @@
     <string name="home_short_title_shorts">Shorts in %1$s</string>
     <string name="home_short_title_tiktok_feed">Feed in %1$s</string>
     <string name="home_short_title_explore">Explore in %1$s</string>
-    <string name="home_short_status_blocked">Blocked. The rest of %1$s still works.</string>
+    <string name="home_short_status_blocked">Blocked</string>
     <string name="home_short_status_off">Not blocked</string>
-    <string name="home_short_status_slowed">Slowed down, not blocked. Turn on for a full block.</string>
-    <string name="home_short_status_scheduled">Blocked at set times only. Turn on to block all the time.</string>
-    <string name="home_short_more_options">More options</string>
-    <!-- TalkBack label; %1$s is a row title such as "Reels in Instagram". -->
-    <string name="home_short_more_options_for">More options for %1$s</string>
+    <string name="home_short_status_slowed">Slowed down, not blocked</string>
+    <string name="home_short_status_scheduled">Blocked at set times only</string>
+    <!-- TalkBack action label of a row's body; %1$s is the app name. -->
+    <string name="home_short_open_settings">Open settings for %1$s</string>
     <string name="home_short_none_installed">Instagram, YouTube and TikTok are not installed on this phone.</string>
     <string name="home_short_accessibility_off">Nudge can\'t see Reels or Shorts yet. Turn on the accessibility service.</string>
     <string name="home_short_accessibility_action">Turn on</string>

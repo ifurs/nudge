@@ -45,12 +45,11 @@
     <string name="home_short_title_shorts">Shorts у %1$s</string>
     <string name="home_short_title_tiktok_feed">Стрічка у %1$s</string>
     <string name="home_short_title_explore">Розділ «Цікаве» у %1$s</string>
-    <string name="home_short_status_blocked">Заблоковано. Решта %1$s працює як завжди.</string>
+    <string name="home_short_status_blocked">Заблоковано</string>
     <string name="home_short_status_off">Не заблоковано</string>
-    <string name="home_short_status_slowed">Лише сповільнено, не заблоковано. Увімкніть, щоб заблокувати повністю.</string>
-    <string name="home_short_status_scheduled">Блокується лише за розкладом. Увімкніть, щоб блокувати завжди.</string>
-    <string name="home_short_more_options">Більше параметрів</string>
-    <string name="home_short_more_options_for">Більше параметрів: %1$s</string>
+    <string name="home_short_status_slowed">Лише сповільнено</string>
+    <string name="home_short_status_scheduled">Блокується лише за розкладом</string>
+    <string name="home_short_open_settings">Відкрити налаштування: %1$s</string>
     <string name="home_short_none_installed">Застосунків Instagram, YouTube і TikTok на цьому телефоні немає.</string>
     <string name="home_short_accessibility_off">Nudge поки не бачить Reels і Shorts. Увімкніть службу спеціальних можливостей.</string>
     <string name="home_short_accessibility_action">Увімкнути</string>

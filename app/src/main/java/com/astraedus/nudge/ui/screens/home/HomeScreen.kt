@@ -70,7 +70,7 @@ fun HomeScreen(
     onNavigateToAppDetail: (String) -> Unit = {},
     onNavigateToNuke: () -> Unit = {},
     onOpenAllAppsRule: (Long) -> Unit = {},
-    /** Opens an app's config screen, from a short-video row's "More options". */
+    /** Opens an app's config screen, from a short-video row. */
     onOpenAppConfig: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -124,7 +124,7 @@ fun HomeScreen(
         shortVideos = shortVideos,
         onToggleGlobalEnabled = { viewModel.toggleGlobalEnabled() },
         onToggleShortVideo = shortVideoViewModel::setBlocked,
-        onShortVideoMoreOptions = onOpenAppConfig,
+        onShortVideoOpenApp = onOpenAppConfig,
         onEnableAccessibility = { showAccessibilityDisclosure = true },
         onNavigateToApps = onNavigateToApps,
         onNavigateToStats = onNavigateToStats,
@@ -149,7 +149,7 @@ fun HomeContent(
     shortVideos: ShortVideoState,
     onToggleGlobalEnabled: () -> Unit,
     onToggleShortVideo: (ShortVideoRow, Boolean) -> Unit,
-    onShortVideoMoreOptions: (String) -> Unit,
+    onShortVideoOpenApp: (String) -> Unit,
     onEnableAccessibility: () -> Unit,
     onNavigateToApps: () -> Unit,
     onNavigateToStats: () -> Unit,
@@ -201,7 +201,7 @@ fun HomeContent(
             ShortVideoCard(
                 state = shortVideos,
                 onToggle = onToggleShortVideo,
-                onMoreOptions = onShortVideoMoreOptions,
+                onOpenApp = onShortVideoOpenApp,
                 onEnableAccessibility = onEnableAccessibility
             )
 
@@ -524,13 +524,19 @@ private fun SectionHeader(title: String, hint: String? = null) {
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-            modifier = Modifier.weight(1f)
+            // Without a hint the title takes the row; with one, the hint takes what the title
+            // leaves (a long translation once squeezed the title to a letter per line).
+            modifier = if (hint == null) Modifier.weight(1f) else Modifier
         )
         if (hint != null) {
             Text(
                 hint,
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.End,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 12.dp)
             )
         }
     }

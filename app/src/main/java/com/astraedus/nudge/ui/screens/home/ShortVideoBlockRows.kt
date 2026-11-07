@@ -6,14 +6,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.AccessibilityNew
 import androidx.compose.material.icons.outlined.SmartDisplay
 import androidx.compose.material3.Button
@@ -21,7 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,14 +45,14 @@ import com.astraedus.nudge.ui.components.TonalIcon
  * Stateless and previewable: the Home card and the onboarding step both draw it from a
  * [ShortVideoState] (`ShortVideoBlocksViewModel` produces it) and hand the taps back.
  *
- * @param onMoreOptions opens an app's own config screen; null hides the "More options" button (the
- *   onboarding step, where that screen is not reachable yet).
+ * @param onOpenApp opens an app's own config screen from the row body; null makes the whole row the
+ *   switch (the onboarding step, where that screen is not reachable yet).
  */
 @Composable
 fun ShortVideoBlockRows(
     state: ShortVideoState,
     onToggle: (ShortVideoRow, Boolean) -> Unit,
-    onMoreOptions: ((packageName: String) -> Unit)?,
+    onOpenApp: ((packageName: String) -> Unit)?,
     onEnableAccessibility: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -66,7 +69,7 @@ fun ShortVideoBlockRows(
             )
         }
         state.rows.forEach { row ->
-            ShortVideoRowItem(row, onToggle, onMoreOptions)
+            ShortVideoRowItem(row, onToggle, onOpenApp)
         }
     }
 }
@@ -102,18 +105,24 @@ private fun AccessibilityNotice(onEnable: () -> Unit) {
     }
 }
 
+/**
+ * One short-video switch. With [onOpenApp] it is Android Settings' split row: the body (icon,
+ * title, subtitle, a chevron) opens that app's config screen, a thin divider, then the switch,
+ * which only toggles. Without it (the onboarding step, where that screen is not reachable yet) the
+ * whole row is the switch.
+ */
 @Composable
 private fun ShortVideoRowItem(
     row: ShortVideoRow,
     onToggle: (ShortVideoRow, Boolean) -> Unit,
-    onMoreOptions: ((String) -> Unit)?
+    onOpenApp: ((String) -> Unit)?
 ) {
     val title = stringResource(titleRes(row.target.kind), row.appLabel)
-    Column(modifier = Modifier.fillMaxWidth()) {
+    if (onOpenApp == null) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 64.dp)
+                .heightIn(min = ROW_MIN_HEIGHT_DP.dp)
                 .toggleable(
                     value = row.blocked,
                     role = Role.Switch,
@@ -122,36 +131,79 @@ private fun ShortVideoRowItem(
                 .padding(vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            RowIcon(row)
-            Spacer(Modifier.width(16.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    title,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Medium
-                )
-                Text(
-                    stringResource(subtitleRes(row.status), row.appLabel),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+            RowBody(row, title, Modifier.weight(1f))
             Spacer(Modifier.width(12.dp))
             // The row is the switch (toggleable above), so this one draws state only and is not a
             // second focus target for TalkBack.
             Switch(checked = row.blocked, onCheckedChange = null)
         }
-        if (onMoreOptions != null) {
-            val moreLabel = stringResource(R.string.home_short_more_options_for, title)
-            TextButton(
-                onClick = { onMoreOptions(row.target.packageName) },
-                modifier = Modifier
-                    .padding(start = ICON_BOX_DP.dp + 16.dp - 12.dp)
-                    .defaultMinSize(minHeight = 48.dp)
-                    .semantics { contentDescription = moreLabel }
-            ) {
-                Text(stringResource(R.string.home_short_more_options))
-            }
+        return
+    }
+
+    val openLabel = stringResource(R.string.home_short_open_settings, row.appLabel)
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = ROW_MIN_HEIGHT_DP.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // The body: one target, named by its text ("Reels in Instagram. Blocked..."), and the
+        // click label says where it goes. Its height follows the text, never under 64dp.
+        Row(
+            modifier = Modifier
+                .weight(1f)
+                .heightIn(min = ROW_MIN_HEIGHT_DP.dp)
+                .clickable(onClickLabel = openLabel, role = Role.Button) { onOpenApp(row.target.packageName) }
+                .padding(vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RowBody(row, title, Modifier.weight(1f))
+            Icon(
+                Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        VerticalDivider(
+            modifier = Modifier
+                .height(32.dp)
+                .padding(horizontal = 4.dp),
+            color = MaterialTheme.colorScheme.outlineVariant
+        )
+        // The switch is its own target, named for the feature it controls, 56 x 64dp.
+        Box(
+            modifier = Modifier
+                .size(width = SWITCH_TARGET_WIDTH_DP.dp, height = ROW_MIN_HEIGHT_DP.dp)
+                .toggleable(
+                    value = row.blocked,
+                    role = Role.Switch,
+                    onValueChange = { onToggle(row, it) }
+                )
+                .semantics { contentDescription = title },
+            contentAlignment = Alignment.Center
+        ) {
+            Switch(checked = row.blocked, onCheckedChange = null)
+        }
+    }
+}
+
+/** Icon, title and status: the part of a row that says what it is. */
+@Composable
+private fun RowBody(row: ShortVideoRow, title: String, modifier: Modifier) {
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        RowIcon(row)
+        Spacer(Modifier.width(16.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                title,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Medium
+            )
+            Text(
+                stringResource(subtitleRes(row.status)),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
@@ -190,3 +242,9 @@ private fun subtitleRes(status: ShortVideoStatus): Int = when (status) {
 
 /** The icon box in dp; the ViewModel rasterises launcher icons at the same size. */
 private const val ICON_BOX_DP = 40
+
+/** A row's minimum height and the switch target's side: above the 48dp touch minimum. */
+private const val ROW_MIN_HEIGHT_DP = 64
+
+/** The switch target's width: the switch is 52dp, so the target is wider than 48dp and no wider. */
+private const val SWITCH_TARGET_WIDTH_DP = 56

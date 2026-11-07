@@ -99,7 +99,8 @@ import com.astraedus.nudge.util.hasUsageAccess
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    onNavigateBack: () -> Unit,
+    /** Null when Settings is a tab of the bottom bar (the usual case): then there is no back arrow. */
+    onNavigateBack: (() -> Unit)? = null,
     onNavigateToGrayscaleGuide: () -> Unit = {},
     onNavigateToMessagesEditor: () -> Unit = {},
     backupViewModel: BackupViewModel = hiltViewModel(),
@@ -187,9 +188,12 @@ fun SettingsScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.settings_title)) },
+                // A tab of the bottom bar has nothing to go back to: no arrow when [onNavigateBack] is null.
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.components_action_back))
+                    if (onNavigateBack != null) {
+                        IconButton(onClick = onNavigateBack) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.components_action_back))
+                        }
                     }
                 }
             )

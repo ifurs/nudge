@@ -58,13 +58,52 @@ import com.astraedus.nudge.ui.screens.stats.charts.WeeklyBarChart
 @Composable
 fun StatsScreen(
     viewModel: StatsViewModel,
-    onNavigateBack: () -> Unit,
+    /** Null when Stats is a tab of the bottom bar (the usual case): then there is no back arrow. */
+    onNavigateBack: (() -> Unit)? = null,
     onNavigateToAppDetail: (String) -> Unit = {},
     onNavigateToWillpower: () -> Unit = {},
     onNavigateToInterventions: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    StatsContent(
+        state = state,
+        onNavigateBack = onNavigateBack,
+        onPreviousDay = viewModel::goToPreviousDay,
+        onNextDay = viewModel::goToNextDay,
+        onJumpToToday = viewModel::jumpToToday,
+        onSelectDay = viewModel::selectDay,
+        onOpenUsageAccess = {
+            context.startActivity(
+                Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+            )
+        },
+        onNavigateToAppDetail = onNavigateToAppDetail,
+        onNavigateToWillpower = onNavigateToWillpower,
+        onNavigateToInterventions = onNavigateToInterventions
+    )
+}
+
+/**
+ * Stats drawn from plain state: no ViewModel, no `Context`. [StatsScreen] collects the state and
+ * wires the callbacks; the screenshot gallery (`ui/gallery/`) renders this from fixture state.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun StatsContent(
+    state: StatsUiState,
+    onNavigateBack: (() -> Unit)?,
+    onPreviousDay: () -> Unit,
+    onNextDay: () -> Unit,
+    onJumpToToday: () -> Unit,
+    onSelectDay: (Int) -> Unit,
+    onOpenUsageAccess: () -> Unit,
+    onNavigateToAppDetail: (String) -> Unit,
+    onNavigateToWillpower: () -> Unit,
+    onNavigateToInterventions: () -> Unit
+) {
     val dateLabel = state.dateLabel.asString()
     val rangeLabel = state.weekRangeLabel.asString()
 
@@ -72,9 +111,12 @@ fun StatsScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.stats_title)) },
+                // A tab of the bottom bar has nothing to go back to: no arrow when [onNavigateBack] is null.
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.components_action_back))
+                    if (onNavigateBack != null) {
+                        IconButton(onClick = onNavigateBack) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.components_action_back))
+                        }
                     }
                 }
             )
@@ -92,9 +134,9 @@ fun StatsScreen(
                     rangeLabel = rangeLabel,
                     canGoForward = state.canGoForward,
                     isToday = state.isToday,
-                    onPreviousDay = viewModel::goToPreviousDay,
-                    onNextDay = viewModel::goToNextDay,
-                    onJumpToToday = viewModel::jumpToToday
+                    onPreviousDay = onPreviousDay,
+                    onNextDay = onNextDay,
+                    onJumpToToday = onJumpToToday
                 )
             }
 
@@ -104,13 +146,7 @@ fun StatsScreen(
                     .padding(horizontal = 16.dp)
                     .let { mod ->
                         if (!state.hasUsagePermission) {
-                            mod.clickable {
-                                context.startActivity(
-                                    Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
-                                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                                    }
-                                )
-                            }
+                            mod.clickable(onClick = onOpenUsageAccess)
                         } else mod
                     }
 
@@ -195,7 +231,7 @@ fun StatsScreen(
                     WeeklyBarChart(
                         days = state.weeklyData,
                         selectedIndex = state.selectedDayIndex,
-                        onSelectDay = viewModel::selectDay,
+                        onSelectDay = onSelectDay,
                         modifier = Modifier.padding(horizontal = 4.dp)
                     )
                 }
@@ -209,7 +245,7 @@ fun StatsScreen(
                     BlockedTrendChart(
                         days = state.trendData,
                         selectedIndex = state.selectedDayIndex,
-                        onSelectDay = viewModel::selectDay,
+                        onSelectDay = onSelectDay,
                         modifier = Modifier.padding(horizontal = 4.dp)
                     )
                     Spacer(Modifier.height(12.dp))

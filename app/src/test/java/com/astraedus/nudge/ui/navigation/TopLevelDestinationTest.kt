@@ -58,6 +58,19 @@ class TopLevelDestinationTest {
         )
     }
 
+    /**
+     * Shape bug: Stats and Settings are tabs, and a back arrow on a tab pops to wherever the user
+     * happened to be before (or leaves the app). Nothing but the call site decides it.
+     */
+    @Test
+    fun `the tab screens are composed without a back arrow`() {
+        val graph = SourceScan.code(SourceScan.kotlinFile("com/astraedus/nudge/ui/navigation/NavGraph.kt"))
+        listOf("StatsScreen", "SettingsScreen").forEach { screen ->
+            val call = graph.substringAfter("$screen(").substringBefore("onNavigateTo")
+            assertTrue("$screen is a tab: onNavigateBack = null", call.contains("onNavigateBack = null"))
+        }
+    }
+
     @Test
     fun `a widget or alert deep link into a tab is entered as a tab, the rest on top`() {
         assertEquals(TopLevelDestination.Stats, TopLevelDestination.fromRoute(WidgetDeepLink.routeFor("stats")))

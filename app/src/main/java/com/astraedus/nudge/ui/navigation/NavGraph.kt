@@ -268,7 +268,8 @@ fun NudgeNavGraph(
                 val viewModel: StatsViewModel = hiltViewModel()
                 StatsScreen(
                     viewModel = viewModel,
-                    onNavigateBack = { navController.popBackStack() },
+                    // A bottom-bar tab: no back arrow.
+                    onNavigateBack = null,
                     onNavigateToAppDetail = { pkg ->
                         navController.navigate(Screen.AppDetail.createRoute(pkg))
                     },
@@ -290,7 +291,8 @@ fun NudgeNavGraph(
 
             composable(Screen.Settings.route) {
                 SettingsScreen(
-                    onNavigateBack = { navController.popBackStack() },
+                    // A bottom-bar tab: no back arrow.
+                    onNavigateBack = null,
                     onNavigateToGrayscaleGuide = {
                         navController.navigate(Screen.GrayscaleGuide.route)
                     },

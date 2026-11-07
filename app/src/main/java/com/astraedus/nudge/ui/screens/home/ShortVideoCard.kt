@@ -29,7 +29,7 @@ import com.astraedus.nudge.ui.theme.NudgeTheme
 fun ShortVideoCard(
     state: ShortVideoState,
     onToggle: (ShortVideoRow, Boolean) -> Unit,
-    onMoreOptions: (packageName: String) -> Unit,
+    onOpenApp: (packageName: String) -> Unit,
     onEnableAccessibility: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -56,7 +56,7 @@ fun ShortVideoCard(
             ShortVideoBlockRows(
                 state = state,
                 onToggle = onToggle,
-                onMoreOptions = onMoreOptions,
+                onOpenApp = onOpenApp,
                 onEnableAccessibility = onEnableAccessibility
             )
         }
@@ -77,7 +77,7 @@ private fun ShortVideoCardPreview() {
                 accessibilityWorking = false
             ),
             onToggle = { _, _ -> },
-            onMoreOptions = {},
+            onOpenApp = {},
             onEnableAccessibility = {}
         )
     }

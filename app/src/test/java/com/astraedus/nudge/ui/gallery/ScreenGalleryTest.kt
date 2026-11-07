@@ -34,6 +34,7 @@ import com.astraedus.nudge.ui.screens.config.UnifiedAppConfigActions
 import com.astraedus.nudge.ui.screens.config.UnifiedAppConfigContent
 import com.astraedus.nudge.ui.screens.home.HomeContent
 import com.astraedus.nudge.ui.screens.home.ShortVideoState
+import com.astraedus.nudge.ui.screens.stats.StatsContent
 import com.astraedus.nudge.ui.theme.NudgeTheme
 import io.mockk.every
 import io.mockk.mockk
@@ -145,6 +146,14 @@ class ScreenGalleryTest {
     }
 
     @Test
+    fun stats_light() = snapshot(dark = false) { tab(Screen.Stats.route) { stats() } }
+
+    @Test
+    fun stats_uk() = snapshot(dark = false, deviceConfig = ukrainian()) {
+        tab(Screen.Stats.route) { stats() }
+    }
+
+    @Test
     fun appConfig_instagram_light() = snapshot(dark = false) { appConfig() }
 
     @Test
@@ -213,7 +222,7 @@ class ScreenGalleryTest {
             shortVideos = shortVideos,
             onToggleGlobalEnabled = {},
             onToggleShortVideo = { _, _ -> },
-            onShortVideoMoreOptions = {},
+            onShortVideoOpenApp = {},
             onEnableAccessibility = {},
             onNavigateToApps = {},
             onNavigateToStats = {},
@@ -222,6 +231,23 @@ class ScreenGalleryTest {
             onNavigateToAppDetail = {},
             onNavigateToNuke = {},
             onOpenAllAppsRule = {}
+        )
+    }
+
+    @Composable
+    private fun stats() {
+        StatsContent(
+            state = GalleryFixtures.stats(),
+            // A bottom-bar tab: no back arrow.
+            onNavigateBack = null,
+            onPreviousDay = {},
+            onNextDay = {},
+            onJumpToToday = {},
+            onSelectDay = {},
+            onOpenUsageAccess = {},
+            onNavigateToAppDetail = {},
+            onNavigateToWillpower = {},
+            onNavigateToInterventions = {}
         )
     }
 
