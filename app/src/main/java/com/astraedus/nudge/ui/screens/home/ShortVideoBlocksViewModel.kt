@@ -47,7 +47,8 @@ import kotlinx.coroutines.sync.withLock
  * block, which is a weakening: it goes through [StrictModeGate.run], so with Strict Mode on it waits
  * for the typed unlock challenge exactly like the app config screen's Save and Manage Apps' switch
  * (`docs/architecture/strict-mode.md`). Whether a removal weakens is [UnblockPlan.weakens], decided
- * by `RuleWeakening`, so a rule that was already off is not challenged.
+ * by `RuleWeakening`, so a rule that was already off is not challenged. That decision is taken under
+ * the write lock from the snapshot the writes are planned from (see [switchOff]).
  *
  * Nuke Mode is not consulted here: Nuke gates the master switch and its own list, and says so in
  * `docs/architecture/nuke-mode.md` ("a nuked app's own rules are simply overridden"); no per-app
@@ -99,37 +100,61 @@ class ShortVideoBlocksViewModel @Inject constructor(
         viewModelScope.launch {
             val target = row.target
             if (blocked) {
-                applyPlan(target.packageName) { ShortVideoBlocks.planBlock(it, target) }
+                writeLock.withLock { apply(planBlockLocked(target)) }
                 return@launch
             }
+            switchOff(row, challengePassed = false)
+        }
+    }
+
+    /**
+     * Switches [row] OFF. Whether that weakens protection is decided HERE, under [writeLock], from
+     * the very rule snapshot the writes are planned from, so no write can slip in between the
+     * decision and the removal (CWE-367: a lock-free read at tap time, then a re-plan under the lock,
+     * let a switch-ON that landed in between make the removal weakening after it had been judged
+     * free).
+     *
+     * - The removal does not weaken (the block was already off), or [challengePassed]: apply it.
+     * - It weakens and the challenge has not been passed: write nothing, release the lock, and ask
+     *   the Strict Mode gate. Its continuation is this same function for the same [row] with
+     *   [challengePassed] set, so it re-plans from the rules as they are when the challenge passes,
+     *   and the answer unlocks this target only. The mutex is never held while the dialog is up.
+     *
+     * With Strict Mode off the gate runs the continuation at once, which is the old behaviour.
+     */
+    private suspend fun switchOff(row: ShortVideoRow, challengePassed: Boolean) {
+        val target = row.target
+        val needsChallenge = writeLock.withLock {
             val plan = ShortVideoBlocks.planUnblock(currentRules(target.packageName), target)
-            val remove: suspend () -> Unit = {
-                // Planned again from the rules as they are when it runs (after a challenge: when
-                // it passes), not as they were when the switch was tapped.
-                applyPlan(target.packageName) { ShortVideoBlocks.planUnblock(it, target).writes }
-            }
-            if (plan.weakens) {
-                strictModeGate.run(
-                    prompt = context.getString(R.string.home_short_unlock_prompt, row.appLabel),
-                    action = remove
-                )
+            if (plan.weakens && !challengePassed) {
+                true
             } else {
-                remove()
+                apply(plan.writes)
+                false
             }
+        }
+        if (needsChallenge) {
+            strictModeGate.run(
+                prompt = context.getString(R.string.home_short_unlock_prompt, row.appLabel),
+                action = { switchOff(row, challengePassed = true) }
+            )
         }
     }
 
     private suspend fun currentRules(packageName: String): List<BlockRule> =
         blockRuleRepository.getRulesForPackage(packageName).first()
 
-    private suspend fun applyPlan(packageName: String, plan: (List<BlockRule>) -> List<RuleWrite>) {
-        writeLock.withLock {
-            plan(currentRules(packageName)).forEach { write ->
-                when (write) {
-                    is RuleWrite.Add -> blockRuleRepository.addRule(write.rule)
-                    is RuleWrite.Update -> blockRuleRepository.updateRule(write.rule)
-                    is RuleWrite.Delete -> blockRuleRepository.deleteRule(write.ruleId)
-                }
+    /** Plans a switch-ON from the rules as they are now. Call with [writeLock] held. */
+    private suspend fun planBlockLocked(target: ShortVideoTarget): List<RuleWrite> =
+        ShortVideoBlocks.planBlock(currentRules(target.packageName), target)
+
+    /** Applies [writes] in order. Call with [writeLock] held. */
+    private suspend fun apply(writes: List<RuleWrite>) {
+        writes.forEach { write ->
+            when (write) {
+                is RuleWrite.Add -> blockRuleRepository.addRule(write.rule)
+                is RuleWrite.Update -> blockRuleRepository.updateRule(write.rule)
+                is RuleWrite.Delete -> blockRuleRepository.deleteRule(write.ruleId)
             }
         }
     }
