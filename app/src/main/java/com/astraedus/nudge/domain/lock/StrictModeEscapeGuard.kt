@@ -1,5 +1,7 @@
 package com.astraedus.nudge.domain.lock
 
+import java.util.Locale
+
 /**
  * Pure-Kotlin decision logic for Strict Mode "OS escape route" guarding (Phase 2).
  *
@@ -54,9 +56,10 @@ object StrictModeEscapeGuard {
 
     /**
      * Keywords that, alongside the app label, mark the Accessibility detail page for our service:
-     * the toggle row is "<label> shortcut" / "Use <label>". We deliberately avoid the bare word
+     * the shortcut row ("<label> shortcut"). We deliberately avoid the bare word
      * "accessibility" because it appears as a header on the Accessibility LIST page (which also
-     * lists our label) and would cause a false positive there. Lowercased; matched case-insensitively.
+     * lists our label) and would cause a false positive there. Written in natural case and
+     * normalised with [normalize] before use, so case, NBSP and apostrophe variants do not matter.
      *
      * ## Languages
      * The guard has to bite whatever language the PHONE is set to, because Settings draws these
@@ -64,37 +67,111 @@ object StrictModeEscapeGuard {
      * we know, and the matcher accepts ANY of them (no locale is consulted: a phone's language is
      * not a trustworthy read of what the Settings window shows, e.g. per-app language).
      *
-     * - **English**: AOSP/Pixel `accessibility_shortcut_title` "...shortcut"; master switch
-     *   `accessibility_service_master_switch_title` "Use %1$s".
-     * - **Ukrainian**: the same two AOSP strings in `values-uk`: "Ярлик ..." and
-     *   "Використовувати %1$s". Taken from the AOSP resource names and the common Pixel/Samsung
-     *   wording, NOT from a captured Ukrainian device dump: it needs a check on a uk phone.
+     * - **English**: AOSP/Pixel `accessibility_shortcut_title` "...shortcut".
+     * - **Ukrainian** and **Russian**: the same AOSP string in `values-uk` / `values-ru`
+     *   ("Ярлик ..." / "Ярлык ..."), and the shortcut title of the AOSP `Accessibility` page
+     *   ("Швидке ввімкнення" / "Быстрое включение").
+     *
+     * NONE of the Ukrainian or Russian words was read off a device: they are the AOSP resource
+     * wording from memory and need an a11y-capture on a uk and a ru phone (L6).
      */
     private val ACCESSIBILITY_DETAIL_SIGNALS = listOf(
         "shortcut",            // en
-        "ярлик"                // uk: "Ярлик служби", "Ярлик Nudge"
-    )
-
-    /** The "<prefix> <label>" master-switch row of the accessibility detail page, per language. */
-    private val ACCESSIBILITY_SWITCH_PREFIXES = listOf(
-        "use ",                // en: "Use Nudge - App Blocker"
-        "використовувати "     // uk: "Використовувати Nudge - App Blocker"
-    )
+        "ярлик",               // uk: "Ярлик служби", "Ярлик Nudge"
+        "швидке ввімкнення",   // uk: "Швидке ввімкнення"
+        "ярлык",               // ru: "Ярлык службы", "Ярлык Nudge"
+        "быстрое включение"    // ru: "Быстрое включение"
+    ).map(::normalize)
 
     /**
-     * Keywords that, when present ALONGSIDE the app label, indicate the App Info / App details page
-     * (Force stop / Uninstall). Lowercased; matched case-insensitively. Same rule as above: any
-     * known language matches.
+     * The "<prefix> <label>" master-switch row of the accessibility detail page, per language.
+     * The prefixes are followed by the app label, which makes them specific (the list page shows
+     * the label alone).
+     */
+    private val ACCESSIBILITY_SWITCH_PREFIXES = listOf(
+        "Use ",                       // en: "Use Nudge - App Blocker"
+        "Використовувати ",           // uk: "Використовувати Nudge - App Blocker"
+        "Використовувати сервіс ",    // uk: "Використовувати сервіс Nudge - App Blocker"
+        "Использовать ",              // ru: "Использовать Nudge - App Blocker"
+        "Использовать сервис "        // ru: "Использовать сервис Nudge - App Blocker"
+    ).map { normalize(it) + " " } // normalize trims, the separating space is part of the prefix
+
+    /**
+     * Phrases that, alongside the app label, mark the App Info page (Force stop / Uninstall) when
+     * they appear ANYWHERE in the window text. They are specific enough to be safe as substrings.
      *
      * - en: "Force stop", "Uninstall" (AOSP `force_stop`, `uninstall_text`).
-     * - uk: "Примусово зупинити" (AOSP/Pixel), "Примусова зупинка" (Samsung One UI), "Видалити"
-     *   (AOSP `uninstall_text`; also Samsung). "Видалити" is a common word, which is safe here only
-     *   because the app label AND a Settings package are required alongside it.
+     * - uk: "Примусово зупинити" (AOSP/Pixel), "Примусова зупинка" (Samsung One UI).
+     * - ru: "Принудительно остановить", "Принудительная остановка".
      */
     private val APP_INFO_SIGNALS = listOf(
-        "force stop", "uninstall",
-        "примусово зупинити", "примусова зупинка", "видалити"
-    )
+        "Force stop", "Uninstall",
+        "Примусово зупинити", "Примусова зупинка",
+        "Принудительно остановить", "Принудительная остановка"
+    ).map(::normalize)
+
+    /**
+     * The bare button words of the App Info page. They are common words that also START longer
+     * labels elsewhere ("Видалити дані" / "Удалить данные" on the storage sub-page, which also
+     * shows the app's label), so they count only when a whole node of the window says exactly this
+     * (the button's own text), never as a substring of a longer line.
+     *
+     * - uk: "Видалити" (AOSP `uninstall_text`), "Зупинити" (AOSP `force_stop`).
+     * - ru: "Удалить" (AOSP `uninstall_text`), "Остановить" (AOSP `force_stop`).
+     *
+     * Same device-capture caveat as above. A miss here costs nothing the force-stop phrase or the
+     * accessibility page does not also catch, and a wrongful hit would trap the user on a page
+     * that only clears data.
+     */
+    private val APP_INFO_BUTTONS = listOf(
+        "Видалити", "Зупинити",
+        "Удалить", "Остановить"
+    ).map(::normalize)
+
+    /**
+     * The one text form the matcher compares in, applied to the screen text, the label and every
+     * keyword list alike:
+     *  - lowercase with [Locale.ROOT] (never the device locale: Turkish would turn "I" into a
+     *    dotless "ı");
+     *  - every Unicode space (NBSP U+00A0, figure space U+2007, narrow NBSP U+202F, thin, ideographic
+     *    ...) and every control or tab becomes a plain space, and runs of spaces collapse to one, so
+     *    "Примусова\u00A0зупинка" equals "примусова зупинка";
+     *  - invisible format characters (zero-width space/joiner, word joiner, soft hyphen, BOM) go;
+     *  - the apostrophe family (U+2019 right quote, U+02BC modifier letter, U+2018, U+0060, U+00B4,
+     *    U+2032) becomes ASCII `'`, so "Пам’ять" and "Пам'ять" agree.
+     * Line breaks are kept (as `\n`) because the service separates window nodes with them, and the
+     * button check below needs node boundaries.
+     */
+    internal fun normalize(text: String): String {
+        val sb = StringBuilder(text.length)
+        var lastWasSpace = true // also trims the start of every line
+        for (ch in text.lowercase(Locale.ROOT)) {
+            when {
+                ch == '\n' || ch == '\r' || ch == '\u2028' || ch == '\u2029' || ch == '\u0085' -> {
+                    if (sb.isNotEmpty() && sb.last() == ' ') sb.setLength(sb.length - 1)
+                    if (sb.isEmpty() || sb.last() != '\n') sb.append('\n')
+                    lastWasSpace = true
+                }
+                ch in INVISIBLE -> Unit
+                ch in APOSTROPHES -> {
+                    sb.append('\'')
+                    lastWasSpace = false
+                }
+                Character.isSpaceChar(ch) || Character.isWhitespace(ch) || Character.isISOControl(ch) -> {
+                    if (!lastWasSpace) sb.append(' ')
+                    lastWasSpace = true
+                }
+                else -> {
+                    sb.append(ch)
+                    lastWasSpace = false
+                }
+            }
+        }
+        return sb.toString().trim()
+    }
+
+    private const val INVISIBLE = "\u200B\u200C\u200D\u2060\uFEFF\u00AD"
+    private const val APOSTROPHES = "\u2019\u02BC\u2018\u0060\u00B4\u2032"
 
     /**
      * Decide whether to launch the unlock challenge over the current foreground screen.
@@ -121,8 +198,8 @@ object StrictModeEscapeGuard {
         if (withinGrace) return false
         if (foregroundPkg !in SETTINGS_PACKAGES) return false
 
-        val haystack = windowText.lowercase()
-        val needleLabel = appLabel.trim().lowercase()
+        val haystack = normalize(windowText)
+        val needleLabel = normalize(appLabel)
         // Without a non-blank label we cannot anchor the match → fail closed (do not guard).
         if (needleLabel.isEmpty()) return false
         if (!haystack.contains(needleLabel)) return false
@@ -131,7 +208,10 @@ object StrictModeEscapeGuard {
         // only on the detail page, not the list of all services.
         val isAccessibilityDetail = ACCESSIBILITY_DETAIL_SIGNALS.any { haystack.contains(it) } ||
             ACCESSIBILITY_SWITCH_PREFIXES.any { haystack.contains(it + needleLabel) }
-        val isAppInfo = APP_INFO_SIGNALS.any { haystack.contains(it) }
+        // App Info: a force-stop / uninstall phrase anywhere, or a bare button word that is a whole
+        // node of its own (so "Видалити дані" on a storage page is not the uninstall button).
+        val isAppInfo = APP_INFO_SIGNALS.any { haystack.contains(it) } ||
+            haystack.lineSequence().any { it in APP_INFO_BUTTONS }
         return isAccessibilityDetail || isAppInfo
     }
 }
