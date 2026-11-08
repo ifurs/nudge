@@ -328,76 +328,11 @@ class StrictModeEscapeGuardTest {
         assertTrue(guards(appInfoText))
     }
 
-    // ── Russian Settings (AOSP `values-ru` wording; NOT captured from a device, needs an L6 capture) ──
-
-    private val ruAccessibilityDetailText = """
-        Использовать Nudge - App Blocker
-        Ярлык Nudge - App Blocker
-        Nudge отслеживает, какое приложение открыто на переднем плане.
-        Параметры
-        Выкл.
-    """.trimIndent()
-
-    private val ruAppInfoText = """
-        Nudge - App Blocker
-        Открыть
-        Удалить
-        Остановить
-        Уведомления
-        Разрешения
-    """.trimIndent()
-
-    private val ruAccessibilityListText = """
-        Скачанные приложения
-        Nudge - App Blocker
-        Выкл.
-        TalkBack
-        Экранный диктор
-        Текст и экран
-    """.trimIndent()
-
-    @Test
-    fun `russian force stop page -- guard, whichever wording`() {
-        assertTrue(guards(ruAppInfoText))
-        assertTrue(guards("Nudge - App Blocker\nПринудительно остановить"))
-        assertTrue(guards("Nudge - App Blocker\nПринудительная остановка"))
-        assertTrue(guards("Nudge - App Blocker\nОстановить"))
-    }
-
-    @Test
-    fun `russian uninstall button -- guard`() {
-        assertTrue(guards("Nudge - App Blocker\nУдалить"))
-    }
-
-    @Test
-    fun `russian accessibility shortcut page -- guard`() {
-        assertTrue(guards(ruAccessibilityDetailText))
-        assertTrue(guards("Nudge - App Blocker\nЯрлык службы"))
-        assertTrue(guards("Nudge - App Blocker\nБыстрое включение"))
-    }
-
-    @Test
-    fun `russian use-label toggle alone -- guard, with or without the word service`() {
-        assertTrue(guards("Использовать Nudge - App Blocker\nВыкл."))
-        assertTrue(guards("Использовать сервис Nudge - App Blocker\nВыкл."))
-    }
-
     @Test
     fun `ukrainian use-service toggle, stop and quick-enable wording -- guard`() {
         assertTrue(guards("Використовувати сервіс Nudge - App Blocker\nВимкнено"))
         assertTrue(guards("Nudge - App Blocker\nЗупинити"))
         assertTrue(guards("Nudge - App Blocker\nШвидке ввімкнення"))
-    }
-
-    @Test
-    fun `russian accessibility LIST page is NOT guarded`() {
-        assertFalse(guards(ruAccessibilityListText))
-    }
-
-    @Test
-    fun `an unrelated russian settings page and another app's russian app info -- no guard`() {
-        assertFalse(guards("Сеть и интернет\nПодключённые устройства\nПриложения\nУведомления\nБатарея\nПамять"))
-        assertFalse(guards("Другое приложение\nУдалить\nОстановить\nПринудительно остановить"))
     }
 
     // ── Unicode noise in the Settings text ──
@@ -408,9 +343,8 @@ class StrictModeEscapeGuardTest {
         assertTrue(guards("Nudge - App Blocker\nПримусова\u202Fзупинка"))
         assertTrue(guards("Nudge - App Blocker\nForce\u00A0stop"))
         assertTrue(guards("Nudge\u00A0-\u00A0App\u00A0Blocker\nForce stop"))
-        assertTrue(guards("Nudge\u202F-\u202FApp\u202FBlocker\nПринудительная\u2007остановка"))
+        assertTrue(guards("Nudge\u202F-\u202FApp\u202FBlocker\nПримусова\u2007зупинка"))
         assertTrue(guards("Використовувати\u00A0Nudge - App Blocker\nВимкнено"))
-        assertTrue(guards("Использовать\u202FNudge - App Blocker\nВыкл."))
     }
 
     @Test
@@ -449,25 +383,23 @@ class StrictModeEscapeGuardTest {
         )
         assertTrue(guardsWith("Nudge's Blocker", "$settingsLabel\nForce stop"))
         assertTrue(guardsWith("Nudge\u02BCs Blocker", "Nudge's Blocker\nForce stop"))
-        assertTrue(guardsWith(settingsLabel, "Nudge's Blocker\nУдалить"))
+        assertTrue(guardsWith(settingsLabel, "Nudge's Blocker\nВидалити"))
     }
 
     // ── "Delete data" on a storage sub-page is not the uninstall button ──
     //
-    // The bare uninstall / stop words (Видалити, Удалить, Зупинити, Остановить) count only when a
+    // The bare uninstall / stop words (Видалити, Зупинити) count only when a
     // whole node says exactly that. The storage page also shows the app's label, and "Видалити дані"
-    // / "Удалить данные" only clear data, so guarding it would trap the user on a page that is not
+    // only clears data, so guarding it would trap the user on a page that is not
     // an escape route. The English "Uninstall" and the force-stop phrases stay substring matches.
 
     @Test
-    fun `storage sub-page with Видалити дані or Удалить данные is not guarded`() {
+    fun `storage sub-page with Видалити дані is not guarded`() {
         assertFalse(guards("Nudge - App Blocker\nВидалити дані\nОчистити кеш\nВикористано 12 МБ"))
-        assertFalse(guards("Nudge - App Blocker\nУдалить данные\nОчистить кэш\nИспользовано 12 МБ"))
     }
 
     @Test
     fun `the same storage page with the real buttons next to it is still guarded`() {
         assertTrue(guards("Nudge - App Blocker\nВидалити дані\nВидалити"))
-        assertTrue(guards("Nudge - App Blocker\nУдалить данные\nУдалить"))
     }
 }

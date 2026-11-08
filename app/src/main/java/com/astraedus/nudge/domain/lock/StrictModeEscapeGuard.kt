@@ -68,19 +68,16 @@ object StrictModeEscapeGuard {
      * not a trustworthy read of what the Settings window shows, e.g. per-app language).
      *
      * - **English**: AOSP/Pixel `accessibility_shortcut_title` "...shortcut".
-     * - **Ukrainian** and **Russian**: the same AOSP string in `values-uk` / `values-ru`
-     *   ("Ярлик ..." / "Ярлык ..."), and the shortcut title of the AOSP `Accessibility` page
-     *   ("Швидке ввімкнення" / "Быстрое включение").
+     * - **Ukrainian**: the same AOSP string in `values-uk` ("Ярлик ..."), and the shortcut title of
+     *   the AOSP `Accessibility` page ("Швидке ввімкнення").
      *
-     * NONE of the Ukrainian or Russian words was read off a device: they are the AOSP resource
-     * wording from memory and need an a11y-capture on a uk and a ru phone (L6).
+     * NONE of the Ukrainian words was read off a device: they are the AOSP resource wording from
+     * memory and need an a11y-capture on a uk phone (L6).
      */
     private val ACCESSIBILITY_DETAIL_SIGNALS = listOf(
         "shortcut",            // en
         "ярлик",               // uk: "Ярлик служби", "Ярлик Nudge"
-        "швидке ввімкнення",   // uk: "Швидке ввімкнення"
-        "ярлык",               // ru: "Ярлык службы", "Ярлык Nudge"
-        "быстрое включение"    // ru: "Быстрое включение"
+        "швидке ввімкнення"    // uk: "Швидке ввімкнення"
     ).map(::normalize)
 
     /**
@@ -91,9 +88,7 @@ object StrictModeEscapeGuard {
     private val ACCESSIBILITY_SWITCH_PREFIXES = listOf(
         "Use ",                       // en: "Use Nudge - App Blocker"
         "Використовувати ",           // uk: "Використовувати Nudge - App Blocker"
-        "Використовувати сервіс ",    // uk: "Використовувати сервіс Nudge - App Blocker"
-        "Использовать ",              // ru: "Использовать Nudge - App Blocker"
-        "Использовать сервис "        // ru: "Использовать сервис Nudge - App Blocker"
+        "Використовувати сервіс "     // uk: "Використовувати сервіс Nudge - App Blocker"
     ).map { normalize(it) + " " } // normalize trims, the separating space is part of the prefix
 
     /**
@@ -102,30 +97,26 @@ object StrictModeEscapeGuard {
      *
      * - en: "Force stop", "Uninstall" (AOSP `force_stop`, `uninstall_text`).
      * - uk: "Примусово зупинити" (AOSP/Pixel), "Примусова зупинка" (Samsung One UI).
-     * - ru: "Принудительно остановить", "Принудительная остановка".
      */
     private val APP_INFO_SIGNALS = listOf(
         "Force stop", "Uninstall",
-        "Примусово зупинити", "Примусова зупинка",
-        "Принудительно остановить", "Принудительная остановка"
+        "Примусово зупинити", "Примусова зупинка"
     ).map(::normalize)
 
     /**
      * The bare button words of the App Info page. They are common words that also START longer
-     * labels elsewhere ("Видалити дані" / "Удалить данные" on the storage sub-page, which also
+     * labels elsewhere ("Видалити дані" on the storage sub-page, which also
      * shows the app's label), so they count only when a whole node of the window says exactly this
      * (the button's own text), never as a substring of a longer line.
      *
      * - uk: "Видалити" (AOSP `uninstall_text`), "Зупинити" (AOSP `force_stop`).
-     * - ru: "Удалить" (AOSP `uninstall_text`), "Остановить" (AOSP `force_stop`).
      *
      * Same device-capture caveat as above. A miss here costs nothing the force-stop phrase or the
      * accessibility page does not also catch, and a wrongful hit would trap the user on a page
      * that only clears data.
      */
     private val APP_INFO_BUTTONS = listOf(
-        "Видалити", "Зупинити",
-        "Удалить", "Остановить"
+        "Видалити", "Зупинити"
     ).map(::normalize)
 
     /**
